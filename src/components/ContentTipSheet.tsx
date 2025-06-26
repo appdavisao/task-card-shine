@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -141,22 +140,47 @@ const ContentTipSheet = ({ isOpen, onClose, day }: ContentTipSheetProps) => {
           <Card key={index} className="bg-gray-700 border-gray-600">
             <CardHeader className="pb-3">
               <CardTitle className="text-white text-sm">
-                Cena {scene.scene || index + 1} ({scene.duration || 'Duração não definida'})
+                Cena {scene.scene_number || scene.scene || index + 1} 
+                {scene.duration && ` (${scene.duration})`}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <div>
-                <span className="text-blue-300 font-medium">Ação/Visual:</span>
-                <p className="text-gray-300 text-sm mt-1">{scene.action || 'Não definido'}</p>
-              </div>
-              <div>
-                <span className="text-green-300 font-medium">Narração:</span>
-                <p className="text-gray-300 text-sm mt-1">{scene.audio || 'Não definido'}</p>
-              </div>
-              <div>
-                <span className="text-yellow-300 font-medium">Texto na Tela:</span>
-                <p className="text-gray-300 text-sm mt-1">{scene.text_overlay || 'Não definido'}</p>
-              </div>
+              {scene.hook && (
+                <div>
+                  <span className="text-red-300 font-medium">Gancho:</span>
+                  <p className="text-gray-300 text-sm mt-1">{scene.hook}</p>
+                </div>
+              )}
+              {scene.visual && (
+                <div>
+                  <span className="text-blue-300 font-medium">Visual:</span>
+                  <p className="text-gray-300 text-sm mt-1">{scene.visual}</p>
+                </div>
+              )}
+              {scene.description && (
+                <div>
+                  <span className="text-green-300 font-medium">Descrição:</span>
+                  <p className="text-gray-300 text-sm mt-1">{scene.description}</p>
+                </div>
+              )}
+              {scene.identification && (
+                <div>
+                  <span className="text-purple-300 font-medium">Identificação:</span>
+                  <p className="text-gray-300 text-sm mt-1">{scene.identification}</p>
+                </div>
+              )}
+              {scene.text_overlay && (
+                <div>
+                  <span className="text-yellow-300 font-medium">Texto na Tela:</span>
+                  <p className="text-gray-300 text-sm mt-1">{scene.text_overlay}</p>
+                </div>
+              )}
+              {scene.call_to_action && (
+                <div>
+                  <span className="text-orange-300 font-medium">Call to Action:</span>
+                  <p className="text-gray-300 text-sm mt-1">{scene.call_to_action}</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}
