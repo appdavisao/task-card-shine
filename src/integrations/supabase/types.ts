@@ -9,6 +9,54 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      content_templates: {
+        Row: {
+          content_structure: Json
+          created_at: string | null
+          examples: Json | null
+          format: string
+          id: string
+          intentions: string[]
+          key_elements: Json | null
+          platforms: string[]
+          reference_link: string | null
+          roteiro_number: number | null
+          title: string
+          updated_at: string | null
+          variations: string[] | null
+        }
+        Insert: {
+          content_structure: Json
+          created_at?: string | null
+          examples?: Json | null
+          format: string
+          id?: string
+          intentions: string[]
+          key_elements?: Json | null
+          platforms: string[]
+          reference_link?: string | null
+          roteiro_number?: number | null
+          title: string
+          updated_at?: string | null
+          variations?: string[] | null
+        }
+        Update: {
+          content_structure?: Json
+          created_at?: string | null
+          examples?: Json | null
+          format?: string
+          id?: string
+          intentions?: string[]
+          key_elements?: Json | null
+          platforms?: string[]
+          reference_link?: string | null
+          roteiro_number?: number | null
+          title?: string
+          updated_at?: string | null
+          variations?: string[] | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           archetype: string | null
@@ -48,6 +96,48 @@ export type Database = {
           title?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      prompts: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          model_config: Json | null
+          name: string
+          output_format: Json | null
+          prompt_template: string
+          updated_at: string | null
+          variables: Json | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          model_config?: Json | null
+          name: string
+          output_format?: Json | null
+          prompt_template: string
+          updated_at?: string | null
+          variables?: Json | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          model_config?: Json | null
+          name?: string
+          output_format?: Json | null
+          prompt_template?: string
+          updated_at?: string | null
+          variables?: Json | null
         }
         Relationships: []
       }

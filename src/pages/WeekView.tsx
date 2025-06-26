@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -152,6 +153,19 @@ const WeekView = () => {
     setContentTipOpen(true);
   };
 
+  const getContentTypeDisplay = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'reels':
+        return 'Reels';
+      case 'carousel':
+        return 'Carrossel';
+      case 'youtube':
+        return 'YouTube';
+      default:
+        return type;
+    }
+  };
+
   const getContentTypeColor = (type: string) => {
     switch (type.toLowerCase()) {
       case 'reels':
@@ -165,8 +179,41 @@ const WeekView = () => {
     }
   };
 
+  const getPlatformIcons = (contentType: string) => {
+    const isReels = contentType.toLowerCase() === 'reels';
+    const isCarousel = contentType.toLowerCase() === 'carousel';
+
+    if (isReels) {
+      return [
+        { name: 'yt', color: 'bg-red-600', textColor: 'text-white' },
+        { name: 'li', color: 'bg-blue-600', textColor: 'text-white' },
+        { name: 'fb', color: 'bg-blue-800', textColor: 'text-white' },
+        { name: 'ig', color: 'bg-pink-500', textColor: 'text-white' },
+        { name: 'tk', color: 'bg-black', textColor: 'text-white' }
+      ];
+    } else if (isCarousel) {
+      return [
+        { name: 'ig', color: 'bg-pink-500', textColor: 'text-white' },
+        { name: 'tk', color: 'bg-black', textColor: 'text-white' },
+        { name: 'fb', color: 'bg-blue-600', textColor: 'text-white' }
+      ];
+    }
+    return [];
+  };
+
   const renderScenes = (scenes: any[]) => {
-    if (!scenes || scenes.length === 0) return null;
+    if (!scenes || scenes.length === 0) {
+      return (
+        <div className="space-y-4">
+          <h4 className="text-lg font-semibold text-gray-900">Roteiro de Cenas</h4>
+          <Card className="bg-gray-50 border-gray-200">
+            <CardContent className="p-4 text-center">
+              <p className="text-gray-500 italic">Nenhuma cena configurada ainda</p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
 
     return (
       <div className="space-y-4">
@@ -175,21 +222,21 @@ const WeekView = () => {
           <Card key={index} className="bg-white border-gray-200">
             <CardHeader className="pb-3">
               <CardTitle className="text-gray-900 text-sm">
-                Cena {scene.scene} ({scene.duration})
+                Cena {scene.scene || index + 1} ({scene.duration || 'Duração não definida'})
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <div>
                 <span className="text-blue-600 font-medium">Ação/Visual:</span>
-                <p className="text-gray-700 text-sm mt-1">{scene.action}</p>
+                <p className="text-gray-700 text-sm mt-1">{scene.action || 'Não definido'}</p>
               </div>
               <div>
                 <span className="text-green-600 font-medium">Narração:</span>
-                <p className="text-gray-700 text-sm mt-1">{scene.audio}</p>
+                <p className="text-gray-700 text-sm mt-1">{scene.audio || 'Não definido'}</p>
               </div>
               <div>
                 <span className="text-yellow-600 font-medium">Texto na Tela:</span>
-                <p className="text-gray-700 text-sm mt-1">{scene.text_overlay}</p>
+                <p className="text-gray-700 text-sm mt-1">{scene.text_overlay || 'Não definido'}</p>
               </div>
             </CardContent>
           </Card>
@@ -199,7 +246,18 @@ const WeekView = () => {
   };
 
   const renderSlides = (slides: any[]) => {
-    if (!slides || slides.length === 0) return null;
+    if (!slides || slides.length === 0) {
+      return (
+        <div className="space-y-4">
+          <h4 className="text-lg font-semibold text-gray-900">Lâminas do Carrossel</h4>
+          <Card className="bg-gray-50 border-gray-200">
+            <CardContent className="p-4 text-center">
+              <p className="text-gray-500 italic">Nenhuma lâmina configurada ainda</p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
 
     return (
       <div className="space-y-4">
@@ -208,13 +266,13 @@ const WeekView = () => {
           <Card key={index} className="bg-white border-gray-200">
             <CardHeader className="pb-3">
               <CardTitle className="text-gray-900 text-sm">
-                Lâmina {slide.slide} - {slide.type}
+                Lâmina {slide.slide || index + 1} - {slide.type || 'Tipo não definido'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <div>
                 <span className="text-blue-600 font-medium">Visual:</span>
-                <p className="text-gray-700 text-sm mt-1">{slide.visual}</p>
+                <p className="text-gray-700 text-sm mt-1">{slide.visual || 'Não definido'}</p>
               </div>
               {slide.title && (
                 <div>
@@ -439,9 +497,21 @@ const WeekView = () => {
                               Dica de Conteúdo - Dia {selectedTask.day}
                             </h3>
                             {dailyContent && (
-                              <Badge className={`${getContentTypeColor(dailyContent.content_type)} text-white`}>
-                                {dailyContent.content_type.toUpperCase()}
-                              </Badge>
+                              <div className="flex items-center gap-2">
+                                <Badge className={`${getContentTypeColor(dailyContent.content_type)} text-white`}>
+                                  {getContentTypeDisplay(dailyContent.content_type)}
+                                </Badge>
+                                <div className="flex gap-1">
+                                  {getPlatformIcons(dailyContent.content_type).map((platform, index) => (
+                                    <Badge 
+                                      key={index}
+                                      className={`${platform.color} ${platform.textColor} text-xs px-1.5 py-0.5`}
+                                    >
+                                      {platform.name}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
                             )}
                           </div>
                           {contentTipOpen ? (
@@ -478,8 +548,8 @@ const WeekView = () => {
                             )}
 
                             {/* Content Structure */}
-                            {dailyContent.scenes && dailyContent.scenes.length > 0 && renderScenes(dailyContent.scenes)}
-                            {dailyContent.slides && dailyContent.slides.length > 0 && renderSlides(dailyContent.slides)}
+                            {dailyContent.content_type.toLowerCase() === 'reels' && renderScenes(dailyContent.scenes)}
+                            {dailyContent.content_type.toLowerCase() === 'carousel' && renderSlides(dailyContent.slides)}
                             {dailyContent.video_structure && renderVideoStructure(dailyContent.video_structure)}
 
                             {/* Audio Suggestion */}

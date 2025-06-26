@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -71,6 +72,19 @@ const ContentTipSheet = ({ isOpen, onClose, day }: ContentTipSheetProps) => {
     }
   };
 
+  const getContentTypeDisplay = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'reels':
+        return 'Reels';
+      case 'carousel':
+        return 'Carrossel';
+      case 'youtube':
+        return 'YouTube';
+      default:
+        return type;
+    }
+  };
+
   const getContentTypeColor = (type: string) => {
     switch (type.toLowerCase()) {
       case 'reels':
@@ -84,8 +98,41 @@ const ContentTipSheet = ({ isOpen, onClose, day }: ContentTipSheetProps) => {
     }
   };
 
+  const getPlatformIcons = (contentType: string) => {
+    const isReels = contentType.toLowerCase() === 'reels';
+    const isCarousel = contentType.toLowerCase() === 'carousel';
+
+    if (isReels) {
+      return [
+        { name: 'yt', color: 'bg-red-600', textColor: 'text-white' },
+        { name: 'li', color: 'bg-blue-600', textColor: 'text-white' },
+        { name: 'fb', color: 'bg-blue-800', textColor: 'text-white' },
+        { name: 'ig', color: 'bg-pink-500', textColor: 'text-white' },
+        { name: 'tk', color: 'bg-black', textColor: 'text-white' }
+      ];
+    } else if (isCarousel) {
+      return [
+        { name: 'ig', color: 'bg-pink-500', textColor: 'text-white' },
+        { name: 'tk', color: 'bg-black', textColor: 'text-white' },
+        { name: 'fb', color: 'bg-blue-600', textColor: 'text-white' }
+      ];
+    }
+    return [];
+  };
+
   const renderScenes = (scenes: any[]) => {
-    if (!scenes || scenes.length === 0) return null;
+    if (!scenes || scenes.length === 0) {
+      return (
+        <div className="space-y-4">
+          <h4 className="text-lg font-semibold text-white">Roteiro de Cenas</h4>
+          <Card className="bg-gray-700 border-gray-600">
+            <CardContent className="p-4 text-center">
+              <p className="text-gray-300 italic">Nenhuma cena configurada ainda</p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
 
     return (
       <div className="space-y-4">
@@ -94,21 +141,21 @@ const ContentTipSheet = ({ isOpen, onClose, day }: ContentTipSheetProps) => {
           <Card key={index} className="bg-gray-700 border-gray-600">
             <CardHeader className="pb-3">
               <CardTitle className="text-white text-sm">
-                Cena {scene.scene} ({scene.duration})
+                Cena {scene.scene || index + 1} ({scene.duration || 'Duração não definida'})
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <div>
                 <span className="text-blue-300 font-medium">Ação/Visual:</span>
-                <p className="text-gray-300 text-sm mt-1">{scene.action}</p>
+                <p className="text-gray-300 text-sm mt-1">{scene.action || 'Não definido'}</p>
               </div>
               <div>
                 <span className="text-green-300 font-medium">Narração:</span>
-                <p className="text-gray-300 text-sm mt-1">{scene.audio}</p>
+                <p className="text-gray-300 text-sm mt-1">{scene.audio || 'Não definido'}</p>
               </div>
               <div>
                 <span className="text-yellow-300 font-medium">Texto na Tela:</span>
-                <p className="text-gray-300 text-sm mt-1">{scene.text_overlay}</p>
+                <p className="text-gray-300 text-sm mt-1">{scene.text_overlay || 'Não definido'}</p>
               </div>
             </CardContent>
           </Card>
@@ -118,7 +165,18 @@ const ContentTipSheet = ({ isOpen, onClose, day }: ContentTipSheetProps) => {
   };
 
   const renderSlides = (slides: any[]) => {
-    if (!slides || slides.length === 0) return null;
+    if (!slides || slides.length === 0) {
+      return (
+        <div className="space-y-4">
+          <h4 className="text-lg font-semibold text-white">Lâminas do Carrossel</h4>
+          <Card className="bg-gray-700 border-gray-600">
+            <CardContent className="p-4 text-center">
+              <p className="text-gray-300 italic">Nenhuma lâmina configurada ainda</p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
 
     return (
       <div className="space-y-4">
@@ -127,13 +185,13 @@ const ContentTipSheet = ({ isOpen, onClose, day }: ContentTipSheetProps) => {
           <Card key={index} className="bg-gray-700 border-gray-600">
             <CardHeader className="pb-3">
               <CardTitle className="text-white text-sm">
-                Lâmina {slide.slide} - {slide.type}
+                Lâmina {slide.slide || index + 1} - {slide.type || 'Tipo não definido'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <div>
                 <span className="text-blue-300 font-medium">Visual:</span>
-                <p className="text-gray-300 text-sm mt-1">{slide.visual}</p>
+                <p className="text-gray-300 text-sm mt-1">{slide.visual || 'Não definido'}</p>
               </div>
               {slide.title && (
                 <div>
@@ -246,11 +304,21 @@ const ContentTipSheet = ({ isOpen, onClose, day }: ContentTipSheetProps) => {
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="bg-gray-800 border-gray-700 text-white overflow-y-auto max-w-4xl">
         <SheetHeader>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <SheetTitle className="text-white">{content.title}</SheetTitle>
             <Badge className={`${getContentTypeColor(content.content_type)} text-white`}>
-              {content.content_type.toUpperCase()}
+              {getContentTypeDisplay(content.content_type)}
             </Badge>
+            <div className="flex gap-1">
+              {getPlatformIcons(content.content_type).map((platform, index) => (
+                <Badge 
+                  key={index}
+                  className={`${platform.color} ${platform.textColor} text-xs px-1.5 py-0.5`}
+                >
+                  {platform.name}
+                </Badge>
+              ))}
+            </div>
           </div>
           <SheetDescription className="text-gray-300">
             Dica de Conteúdo para o Dia {day}
@@ -271,8 +339,8 @@ const ContentTipSheet = ({ isOpen, onClose, day }: ContentTipSheetProps) => {
           )}
 
           {/* Content Structure */}
-          {content.scenes && content.scenes.length > 0 && renderScenes(content.scenes)}
-          {content.slides && content.slides.length > 0 && renderSlides(content.slides)}
+          {content.content_type.toLowerCase() === 'reels' && renderScenes(content.scenes)}
+          {content.content_type.toLowerCase() === 'carousel' && renderSlides(content.slides)}
           {content.video_structure && renderVideoStructure(content.video_structure)}
 
           {/* Audio Suggestion */}
