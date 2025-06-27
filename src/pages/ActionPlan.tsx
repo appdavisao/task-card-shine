@@ -268,8 +268,8 @@ const ActionPlan = () => {
                   {question.description}
                 </p>
                 
-                {/* File Upload Area */}
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                {/* Small Upload Button */}
+                <div className="flex justify-end">
                   <input
                     type="file"
                     id={`file-${question.id}`}
@@ -284,21 +284,24 @@ const ActionPlan = () => {
                   />
                   <label 
                     htmlFor={`file-${question.id}`}
-                    className="cursor-pointer flex flex-col items-center space-y-2"
+                    className="cursor-pointer"
                   >
-                    {uploading[question.id] ? (
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                    ) : (
-                      <Upload className="w-8 h-8 text-gray-400" />
-                    )}
-                    <div className="text-sm">
-                      <span className="font-medium text-blue-600 hover:text-blue-500">
-                        Enviar arquivo
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex items-center space-x-2 text-xs"
+                      disabled={uploading[question.id]}
+                      asChild
+                    >
+                      <span>
+                        {uploading[question.id] ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                        ) : (
+                          <Upload className="w-4 h-4" />
+                        )}
+                        <span>Enviar arquivo</span>
                       </span>
-                    </div>
-                    <p className="text-xs text-gray-400">
-                      PDF, TXT, PNG (máx. 10MB)
-                    </p>
+                    </Button>
                   </label>
                 </div>
               </CardContent>
