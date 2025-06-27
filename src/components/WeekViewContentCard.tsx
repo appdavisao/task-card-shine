@@ -17,6 +17,14 @@ const WeekViewContentCard = ({
   expandedExamples, 
   onExpandExamples 
 }: WeekViewContentCardProps) => {
+  
+  // Debug logging to see what data we're receiving
+  console.log('WeekViewContentCard received contentCard:', contentCard);
+  console.log('contentCard.how_to_structure:', (contentCard as any).how_to_structure);
+  console.log('contentCard.video_structure:', (contentCard as any).video_structure);
+  console.log('contentCard.viral_tips:', (contentCard as any).viral_tips);
+  console.log('contentCard.engagement_benefits:', (contentCard as any).engagement_benefits);
+  
   return (
     <div className="space-y-6">
       {/* Format Section */}

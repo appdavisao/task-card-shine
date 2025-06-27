@@ -58,6 +58,15 @@ export const useWeekViewData = (weekNumber: string) => {
         console.log('Raw daily content data:', data);
         console.log('Content card data:', data.content_card);
         
+        // Debug specific fields that should be present
+        if (data.content_card) {
+          console.log('Content card how_to_structure:', data.content_card.how_to_structure);
+          console.log('Content card video_structure:', data.content_card.video_structure);
+          console.log('Content card viral_tips:', data.content_card.viral_tips);
+          console.log('Content card examples:', data.content_card.examples);
+          console.log('Content card engagement_benefits:', data.content_card.engagement_benefits);
+        }
+        
         const dailyContent: DailyContent = {
           id: data.id,
           day: data.day,
