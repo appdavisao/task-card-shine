@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from '@/components/ui/card';
-import { Lightbulb, Calendar, FileText, Trophy, LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Lightbulb, Calendar, FileText, Trophy, LogOut, ArrowLeft } from 'lucide-react';
 import { Task, DailyContent } from '@/types/weekView';
 import { useWeekViewData } from '@/hooks/useWeekViewData';
 import WeekViewDayCard from '@/components/WeekViewDayCard';
@@ -26,6 +26,19 @@ const WeekView = () => {
   const [dailyContentList, setDailyContentList] = useState<DailyContent[]>([]);
 
   const { tasks, loading, fetchDailyContent } = useWeekViewData(weekNumber || '1');
+
+  // Route protection - redirect if trying to access weeks 2-5
+  useEffect(() => {
+    const week = parseInt(weekNumber || '1');
+    if (week >= 2 && week <= 5) {
+      toast({
+        title: "Acesso Restrito",
+        description: "Esta semana estará disponível em breve!",
+        variant: "destructive"
+      });
+      navigate('/dashboard');
+    }
+  }, [weekNumber, navigate]);
 
   // Fetch all daily content for the week
   useEffect(() => {
@@ -130,12 +143,34 @@ const WeekView = () => {
         <div className="mb-6 sm:mb-8">
           <Card className="bg-white/80 backdrop-blur-sm shadow-sm border border-slate-200/60 rounded-xl overflow-hidden">
             <CardContent className="p-6 sm:p-8">
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
-                Semana {weekNumber} - Modelos de Conteúdo
-              </h1>
-              <p className="text-gray-600 text-sm sm:text-base font-medium">
-                Clique em um dia para ver os detalhes do modelo de conteúdo.
-              </p>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
+                    Semana {weekNumber} - Modelos de Conteúdo
+                  </h1>
+                  <p className="text-gray-600 text-sm sm:text-base font-medium">
+                    Clique em um dia para ver os detalhes do modelo de conteúdo.
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => navigate('/dashboard')}
+                    className="flex items-center gap-2"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Voltar
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    onClick={handleSignOut}
+                    className="flex items-center gap-2"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sair
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
