@@ -54,7 +54,7 @@ const WeekViewContentCard = ({
         <div className="section-container">
           <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
             <span className="text-lg mr-2">📋</span>
-            Como Estruturar o Conteúdo
+            Como Criar o Conteúdo
           </h4>
           <div className="steps-container bg-gray-50 border border-gray-200 rounded-lg p-4">
             <div className="step-item flex mb-3 items-start">
@@ -73,7 +73,7 @@ const WeekViewContentCard = ({
         </div>
       )}
 
-      {/* Video Structure Section */}
+      {/* Video Structure Section - Updated for 5 elements */}
       {(contentCard as any).video_structure && (
         <div className="section-container">
           <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
@@ -82,20 +82,28 @@ const WeekViewContentCard = ({
           </h4>
           <div className="video-structure-container bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg p-5 text-white">
             <div className="video-step bg-white bg-opacity-15 p-3 rounded-lg mb-3 border-l-4 border-yellow-400">
-              <strong className="block text-yellow-200 text-sm uppercase tracking-wide mb-1">Hook</strong>
+              <strong className="block text-yellow-200 text-sm uppercase tracking-wide mb-1">1. Hook</strong>
               <span className="text-white">{(contentCard as any).video_structure.hook}</span>
             </div>
+            
             <div className="video-step bg-white bg-opacity-15 p-3 rounded-lg mb-3 border-l-4 border-green-400">
-              <strong className="block text-green-200 text-sm uppercase tracking-wide mb-2">Desenvolvimento</strong>
-              <ul className="list-disc list-inside space-y-1 ml-2">
-                <li className="text-white text-sm">{(contentCard as any).video_structure.tipo_1}</li>
-                <li className="text-white text-sm">{(contentCard as any).video_structure.tipo_2}</li>
-                <li className="text-white text-sm">{(contentCard as any).video_structure.tipo_3}</li>
-              </ul>
+              <strong className="block text-green-200 text-sm uppercase tracking-wide mb-1">2. Apresentação</strong>
+              <span className="text-white">{(contentCard as any).video_structure.apresentacao}</span>
             </div>
+            
+            <div className="video-step bg-white bg-opacity-15 p-3 rounded-lg mb-3 border-l-4 border-blue-400">
+              <strong className="block text-blue-200 text-sm uppercase tracking-wide mb-1">3. Desafio</strong>
+              <span className="text-white">{(contentCard as any).video_structure.desafio}</span>
+            </div>
+            
+            <div className="video-step bg-white bg-opacity-15 p-3 rounded-lg mb-3 border-l-4 border-purple-400">
+              <strong className="block text-purple-200 text-sm uppercase tracking-wide mb-1">4. Revelação</strong>
+              <span className="text-white">{(contentCard as any).video_structure.revelacao}</span>
+            </div>
+            
             <div className="video-step bg-white bg-opacity-15 p-3 rounded-lg border-l-4 border-red-400">
-              <strong className="block text-red-200 text-sm uppercase tracking-wide mb-1">Finalização</strong>
-              <span className="text-white">{(contentCard as any).video_structure.cta}</span>
+              <strong className="block text-red-200 text-sm uppercase tracking-wide mb-1">5. Educação</strong>
+              <span className="text-white">{(contentCard as any).video_structure.educacao}</span>
             </div>
           </div>
         </div>
@@ -122,7 +130,7 @@ const WeekViewContentCard = ({
             </CollapsibleTrigger>
             <CollapsibleContent>
               <CardContent>
-                <div className="examples-grid grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="examples-grid grid gap-4 md:grid-cols-2 lg:grid-cols-2">
                   {Object.entries(contentCard.examples).map(([niche, types]: [string, any]) => (
                     <div key={niche} className="example-niche-card bg-green-50 border border-green-200 rounded-lg p-4 border-l-4 border-l-green-500">
                       <h4 className="niche-title text-green-700 font-semibold text-sm uppercase tracking-wide mb-3 text-center">
@@ -149,6 +157,24 @@ const WeekViewContentCard = ({
             </CollapsibleContent>
           </Card>
         </Collapsible>
+      )}
+
+      {/* Psychological Triggers Section - NEW */}
+      {(contentCard as any).psychological_triggers && Array.isArray((contentCard as any).psychological_triggers) && (contentCard as any).psychological_triggers.length > 0 && (
+        <div className="section-container">
+          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+            <span className="text-lg mr-2">🧠</span>
+            Gatilhos Psicológicos
+          </h4>
+          <div className="psychological-triggers-container bg-purple-50 border border-purple-200 rounded-lg p-4">
+            {(contentCard as any).psychological_triggers.map((trigger: string, index: number) => (
+              <div key={index} className="trigger-item flex items-start mb-3 last:mb-0 p-3 bg-white rounded-lg border-l-4 border-l-purple-500">
+                <span className="trigger-icon text-lg mr-3 flex-shrink-0">🎯</span>
+                <span className="trigger-text text-purple-800 text-sm leading-relaxed font-medium">{trigger}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
 
       {/* Intentions Section */}
@@ -187,11 +213,11 @@ const WeekViewContentCard = ({
         <div className="section-container">
           <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
             <span className="text-lg mr-2">🚀</span>
-            Dicas para Viralizar
+            Elementos Virais
           </h4>
           <div className="viral-tips-container bg-orange-50 border border-orange-200 rounded-lg p-4">
             {(contentCard as any).viral_tips.map((tip: string, index: number) => (
-              <div key={index} className="viral-tip-item flex items-start mb-3 last:mb-0 p-3 bg-white rounded-lg border-l-3 border-l-orange-500">
+              <div key={index} className="viral-tip-item flex items-start mb-3 last:mb-0 p-3 bg-white rounded-lg border-l-4 border-l-orange-500">
                 <span className="tip-icon text-lg mr-2 flex-shrink-0">💥</span>
                 <span className="tip-text text-orange-800 text-sm leading-relaxed font-medium">{tip}</span>
               </div>
@@ -225,10 +251,10 @@ const WeekViewContentCard = ({
         <div className="section-container">
           <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
             <span className="text-lg mr-2">📈</span>
-            Benefícios de Engajamento
+            Predição de Engajamento
           </h4>
           <div className="benefits-container">
-            <div className="benefits-grid grid gap-3 md:grid-cols-2">
+            <div className="benefits-grid grid gap-3 md:grid-cols-1">
               {(contentCard as any).engagement_benefits.map((benefit: string, index: number) => (
                 <div key={index} className="benefit-item flex items-center bg-green-50 p-3 rounded-lg border border-green-200">
                   <span className="check-icon text-green-600 mr-2 flex-shrink-0">✅</span>

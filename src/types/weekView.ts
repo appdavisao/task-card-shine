@@ -34,13 +34,18 @@ export interface ContentCard {
   };
   video_structure?: {
     hook: string;
-    tipo_1: string;
-    tipo_2: string;
-    tipo_3: string;
-    cta: string;
+    apresentacao?: string;
+    desafio?: string;
+    revelacao?: string;
+    educacao?: string;
+    tipo_1?: string;
+    tipo_2?: string;
+    tipo_3?: string;
+    cta?: string;
   };
   viral_tips?: string[];
   engagement_benefits?: string[];
+  psychological_triggers?: string[];
   viral_potential?: string;
   reference_link?: string;
   roteiro_number?: number;
