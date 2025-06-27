@@ -1,13 +1,14 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Lightbulb, Calendar, FileText, Trophy, LogOut } from 'lucide-react';
-import { Task } from '@/types/weekView';
+import { Task, DailyContent } from '@/types/weekView';
 import { useWeekViewData } from '@/hooks/useWeekViewData';
 import WeekViewDayCard from '@/components/WeekViewDayCard';
 import WeekViewTaskDetails from '@/components/WeekViewTaskDetails';
+import WeekViewContentTip from '@/components/WeekViewContentTip';
 import { NavBar } from '@/components/ui/tubelight-navbar';
 import { toast } from '@/components/ui/use-toast';
 import { AnimatedGridPattern } from '@/components/ui/animated-grid-pattern';
@@ -18,13 +19,35 @@ const WeekView = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [contentTipOpen, setContentTipOpen] = useState(false);
+  const [dailyContent, setDailyContent] = useState<DailyContent | null>(null);
+  const [contentLoading, setContentLoading] = useState(false);
+  const [expandedExamples, setExpandedExamples] = useState(false);
 
-  const { tasks, loading } = useWeekViewData(weekNumber || '1');
+  const { tasks, loading, fetchDailyContent } = useWeekViewData(weekNumber || '1');
 
   const handleDaySelect = async (day: number) => {
     // Don't allow selection of locked days
     if (day > 20) return;
+    
     setSelectedDay(day);
+    
+    // Fetch daily content for selected day
+    if (day <= 7) { // Only fetch social media content for days 1-7
+      setContentLoading(true);
+      try {
+        const content = await fetchDailyContent(day);
+        setDailyContent(content);
+        console.log('Daily content loaded for day', day, ':', content);
+      } catch (error) {
+        console.error('Error fetching daily content:', error);
+        setDailyContent(null);
+      } finally {
+        setContentLoading(false);
+      }
+    } else {
+      setDailyContent(null);
+    }
   };
 
   const handleSignOut = async () => {
@@ -113,7 +136,22 @@ const WeekView = () => {
           {/* Right Content - Task Details */}
           <div className="flex-1 order-1 lg:order-2 space-y-4">
             {selectedTask ? (
-              <WeekViewTaskDetails task={selectedTask} />
+              <>
+                <WeekViewTaskDetails task={selectedTask} />
+                
+                {/* Social Media Content Tip - Only show for days 1-7 */}
+                {selectedDay && selectedDay <= 7 && (
+                  <WeekViewContentTip
+                    contentTipOpen={contentTipOpen}
+                    onContentTipToggle={setContentTipOpen}
+                    selectedDay={selectedDay}
+                    dailyContent={dailyContent}
+                    contentLoading={contentLoading}
+                    expandedExamples={expandedExamples}
+                    onExpandExamples={setExpandedExamples}
+                  />
+                )}
+              </>
             ) : (
               <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-sm border border-slate-200/60 rounded-xl overflow-hidden">
                 <CardContent className="p-8 sm:p-12 text-center">
