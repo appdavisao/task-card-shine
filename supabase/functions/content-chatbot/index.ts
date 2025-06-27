@@ -28,7 +28,6 @@ interface ChatRequest {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -38,32 +37,34 @@ serve(async (req) => {
     
     console.log('Chatbot request:', { user_id, message, thread_id, context, is_initial_message });
 
-    // Get user variables
     const userVariables = await getUserVariables(user_id);
-    
-    // Create or use existing thread
     const currentThreadId = thread_id || await createThread();
     
-    // Build comprehensive context message
-    const contextMessage = buildEnhancedContextMessage(userVariables, context);
-    
-    // For initial message, send the comprehensive context first
+    // For initial message, send comprehensive context
     if (is_initial_message) {
+      const contextMessage = buildEnhancedContextMessage(userVariables, context);
       await addMessageToThread(currentThreadId, contextMessage, 'user');
+      
+      // Add instruction for natural response format
+      const instructionMessage = `
+IMPORTANTE: Responda SEMPRE em texto natural e conversacional em português brasileiro. 
+NUNCA use formato JSON, estruturas técnicas ou listas formatadas.
+Seja um copywriter brasileiro experiente conversando naturalmente com o usuário.
+Use parágrafos fluidos, linguagem acessível e tom consultivo.
+Transforme insights técnicos em conselhos práticos e diretos.
+      `;
+      await addMessageToThread(currentThreadId, instructionMessage, 'user');
     } else if (!thread_id) {
-      // For new threads (not initial), still add context
+      const contextMessage = buildEnhancedContextMessage(userVariables, context);
       await addMessageToThread(currentThreadId, contextMessage, 'user');
     }
     
-    // Add user message to thread (if not initial context setup)
     if (!is_initial_message) {
       await addMessageToThread(currentThreadId, message, 'user');
     }
     
-    // Run assistant
     const response = await runAssistant(currentThreadId);
     
-    // Save conversation to database
     await saveConversation(user_id, is_initial_message ? 'Contexto inicial' : message, response, currentThreadId, context);
     
     return new Response(JSON.stringify({
@@ -105,7 +106,6 @@ async function getUserVariables(user_id: string) {
 function buildEnhancedContextMessage(userVariables: any, context: any) {
   const { profile, dashboard } = userVariables;
   
-  // Helper function to safely access nested properties
   const safeGet = (obj: any, path: string, defaultValue: any = 'Não informado') => {
     const keys = path.split('.');
     let current = obj;
@@ -123,13 +123,24 @@ function buildEnhancedContextMessage(userVariables: any, context: any) {
 
 📊 ESTRATÉGIA DE CONTEÚDO - DIA ${context?.day || 'ATUAL'}`;
 
-  // Add content card information if available
   if (context?.content_card) {
     const card = context.content_card;
     contextMessage += `
 
 🎯 CONTENT CARD ATUAL:
-${JSON.stringify(card, null, 2)}`;
+${card.title}
+${card.format}
+${card.main_content || ''}
+
+📋 ESTRUTURA DO CONTEÚDO:
+${JSON.stringify(card.video_structure || card.content_variations || {}, null, 2)}
+
+🎯 OBJETIVOS: ${(card.intentions || []).join(', ')}
+📱 PLATAFORMAS: ${(card.platforms || []).join(', ')}
+🚀 DICAS VIRAIS: ${(card.viral_tips || []).join(' • ')}
+
+💡 EXEMPLOS POR NICHO:
+${JSON.stringify(card.examples || {}, null, 2)}`;
   }
 
   contextMessage += `
@@ -163,7 +174,6 @@ ${dashboard.strategy_text || 'Não definida'}
 📋 CONTEXTO ATUAL:
 ${dashboard.context_text || 'Não definido'}`;
 
-  // Add profile highlights if available
   if (dashboard.profile_highlights && Array.isArray(dashboard.profile_highlights)) {
     contextMessage += `\n\n🏆 DESTAQUES DO PERFIL:`;
     dashboard.profile_highlights.forEach((highlight: any) => {
@@ -171,7 +181,6 @@ ${dashboard.context_text || 'Não definido'}`;
     });
   }
 
-  // Add authority scores
   if (dashboard.scores) {
     contextMessage += `\n\n📈 SCORES DE AUTORIDADE:
 - Digital: ${dashboard.scores.digital || 0}/10
@@ -180,7 +189,6 @@ ${dashboard.context_text || 'Não definido'}`;
 - Book: ${dashboard.scores.book || 0}/10`;
   }
 
-  // Add motivational quote
   if (dashboard.motivation_quote) {
     contextMessage += `\n\n💡 QUOTE MOTIVACIONAL:
 "${dashboard.motivation_quote}"`;
@@ -234,7 +242,6 @@ async function addMessageToThread(threadId: string, content: string, role: strin
 }
 
 async function runAssistant(threadId: string) {
-  // Create run
   const runResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs`, {
     method: 'POST',
     headers: {
@@ -249,7 +256,6 @@ async function runAssistant(threadId: string) {
 
   const run = await runResponse.json();
   
-  // Poll for completion
   let runStatus = run;
   while (runStatus.status === 'queued' || runStatus.status === 'in_progress') {
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -264,7 +270,6 @@ async function runAssistant(threadId: string) {
     runStatus = await statusResponse.json();
   }
 
-  // Get messages
   const messagesResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
     headers: {
       'Authorization': `Bearer ${OPENAI_API_KEY}`,
