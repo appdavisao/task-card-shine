@@ -1,6 +1,5 @@
-
 import { Badge } from '@/components/ui/badge';
-import { Play, Users } from 'lucide-react';
+import { Play, Users, Sparkles, Target, Lightbulb } from 'lucide-react';
 import { ContentCard } from '@/types/weekView';
 import { getIntentionColor } from '@/utils/weekViewUtils';
 import { Roteiro181Section1, Roteiro181Section2, Roteiro181Section3, Roteiro181Section4 } from './WeekViewRoteiro181Sections';
@@ -26,13 +25,21 @@ const WeekViewContentCard = ({
   console.log('Content type detected:', (contentCard as any).content_type);
   
   return (
-    <div className="space-y-8">
-      {/* Header with Day and Roteiro Number */}
+    <div className="space-y-6">
+      {/* Premium Header with Roteiro Number */}
       {(contentCard as any).roteiro_number && (
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">{contentCard.title}</h2>
-          <div className="bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 px-4 py-2 rounded-full text-sm font-semibold shadow-sm border border-slate-200">
-            Roteiro #{(contentCard as any).roteiro_number}
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 sm:p-8 rounded-2xl shadow-elevated">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <Sparkles className="h-8 w-8 mr-4 text-blue-200" />
+              <div>
+                <h2 className="text-2xl sm:text-3xl font-bold mb-2">{contentCard.title}</h2>
+                <p className="text-blue-100 text-sm sm:text-base opacity-90">Conteúdo estratégico para redes sociais</p>
+              </div>
+            </div>
+            <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm border border-white/30">
+              Roteiro #{(contentCard as any).roteiro_number}
+            </div>
           </div>
         </div>
       )}
@@ -48,12 +55,12 @@ const WeekViewContentCard = ({
 
       {/* Strategic Analysis */}
       {(contentCard as any).strategic_analysis && (
-        <div className="bg-gradient-to-r from-slate-50 to-stone-50 p-6 rounded-xl border border-slate-200/60 shadow-sm">
-          <h4 className="text-slate-800 font-semibold text-lg mb-4 flex items-center">
-            <span className="text-lg mr-3">📊</span>
+        <div className="bg-gradient-to-br from-slate-50 to-blue-50/30 p-6 rounded-2xl border border-slate-200/60 shadow-soft">
+          <h4 className="text-slate-800 font-bold text-lg mb-4 flex items-center">
+            <Target className="h-5 w-5 mr-3 text-blue-600" />
             Análise Estratégica
           </h4>
-          <p className="text-slate-700 text-sm leading-relaxed">{(contentCard as any).strategic_analysis}</p>
+          <p className="text-slate-700 text-sm leading-relaxed bg-white/60 p-4 rounded-xl">{(contentCard as any).strategic_analysis}</p>
         </div>
       )}
 
@@ -85,9 +92,9 @@ const WeekViewContentCard = ({
         fieldName="psychological_triggers"
         title="Gatilhos Psicológicos"
         icon="🧠"
-        bgColor="bg-gradient-to-r from-slate-50 to-zinc-50"
-        borderColor="border-slate-200"
-        textColor="text-slate-800"
+        bgColor="bg-gradient-to-br from-purple-50 to-indigo-50"
+        borderColor="border-purple-200"
+        textColor="text-purple-800"
         itemIcon="🎯"
       />
 
@@ -100,16 +107,16 @@ const WeekViewContentCard = ({
       {/* Day 2 (Roteiro 32) Specific Section 2: Framework de Análise */}
       <Roteiro32Section2 contentCard={contentCard} />
 
-      {/* Intentions Section */}
+      {/* Enhanced Intentions Section */}
       {contentCard.intentions && Array.isArray(contentCard.intentions) && contentCard.intentions.length > 0 && (
-        <div className="bg-white p-6 rounded-xl border border-slate-200/60 shadow-sm">
-          <h4 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
-            <Users className="h-5 w-5 mr-3 text-slate-600" />
+        <div className="bg-gradient-to-br from-white to-blue-50/30 p-6 rounded-2xl border border-slate-200/60 shadow-soft">
+          <h4 className="text-lg font-bold text-slate-900 mb-4 flex items-center">
+            <Users className="h-5 w-5 mr-3 text-blue-600" />
             Objetivos do Conteúdo
           </h4>
           <div className="flex flex-wrap gap-3">
             {contentCard.intentions.map((intention, index) => (
-              <Badge key={index} className="bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 border border-slate-300 text-sm px-4 py-2 hover:from-slate-200 hover:to-slate-300 transition-all">
+              <Badge key={index} className="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 border border-blue-200 text-sm px-4 py-2 hover:from-blue-200 hover:to-indigo-200 transition-all rounded-full shadow-sm">
                 {intention}
               </Badge>
             ))}
@@ -117,13 +124,16 @@ const WeekViewContentCard = ({
         </div>
       )}
 
-      {/* Platforms Section */}
+      {/* Enhanced Platforms Section */}
       {contentCard.platforms && Array.isArray(contentCard.platforms) && contentCard.platforms.length > 0 && (
-        <div className="bg-white p-6 rounded-xl border border-slate-200/60 shadow-sm">
-          <h4 className="text-lg font-semibold text-slate-900 mb-4">Plataformas Recomendadas</h4>
+        <div className="bg-gradient-to-br from-slate-800 to-slate-900 text-white p-6 rounded-2xl shadow-elevated">
+          <h4 className="text-lg font-bold mb-4 flex items-center">
+            <Play className="h-5 w-5 mr-3" />
+            Plataformas Recomendadas
+          </h4>
           <div className="flex flex-wrap gap-3">
             {contentCard.platforms.map((platform, index) => (
-              <Badge key={index} className="bg-gradient-to-r from-slate-700 to-slate-800 text-white text-sm px-4 py-2 hover:from-slate-800 hover:to-slate-900 transition-all shadow-sm">
+              <Badge key={index} className="bg-white/20 backdrop-blur-sm text-white border border-white/30 text-sm px-4 py-2 hover:bg-white/30 transition-all rounded-full shadow-sm">
                 {platform}
               </Badge>
             ))}
@@ -131,28 +141,28 @@ const WeekViewContentCard = ({
         </div>
       )}
 
-      {/* Viral Tips Section */}
+      {/* Enhanced Viral Tips Section */}
       <ArraySection 
         contentCard={contentCard}
         fieldName="viral_tips"
         title="Elementos Virais"
         icon="🚀"
-        bgColor="bg-gradient-to-r from-amber-50 to-yellow-50"
+        bgColor="bg-gradient-to-br from-amber-50 to-orange-50"
         borderColor="border-amber-200"
         textColor="text-amber-900"
         itemIcon="💥"
       />
 
-      {/* Engagement Benefits Section */}
+      {/* Enhanced Engagement Benefits Section */}
       {(contentCard as any).engagement_benefits && Array.isArray((contentCard as any).engagement_benefits) && (contentCard as any).engagement_benefits.length > 0 && (
-        <div className="bg-white p-6 rounded-xl border border-slate-200/60 shadow-sm">
-          <h4 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
-            <span className="text-lg mr-3">📈</span>
+        <div className="bg-gradient-to-br from-emerald-50 to-green-50 p-6 rounded-2xl border border-emerald-200/60 shadow-soft">
+          <h4 className="text-lg font-bold text-emerald-900 mb-4 flex items-center">
+            <Sparkles className="h-5 w-5 mr-3 text-emerald-600" />
             Predição de Engajamento
           </h4>
           <div className="space-y-3">
             {(contentCard as any).engagement_benefits.map((benefit: string, index: number) => (
-              <div key={index} className="flex items-center bg-gradient-to-r from-emerald-50 to-green-50 p-4 rounded-lg border border-emerald-200/60">
+              <div key={index} className="flex items-center bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-emerald-200/60 shadow-sm">
                 <span className="text-emerald-600 mr-3 flex-shrink-0">✅</span>
                 <span className="text-emerald-800 text-sm font-medium leading-tight">{benefit}</span>
               </div>
@@ -160,24 +170,25 @@ const WeekViewContentCard = ({
           </div>
           
           {(contentCard as any).viral_potential && (
-            <div className="bg-gradient-to-r from-slate-700 to-slate-800 text-white p-4 rounded-lg text-center font-semibold mt-4 shadow-sm">
+            <div className="bg-gradient-to-r from-emerald-600 to-green-600 text-white p-4 rounded-xl text-center font-bold mt-4 shadow-sm">
               <strong>Potencial Viral:</strong> {(contentCard as any).viral_potential}
             </div>
           )}
         </div>
       )}
 
-      {/* Content Variations Section */}
+      {/* Enhanced Content Variations Section */}
       {(contentCard as any).content_variations && Array.isArray((contentCard as any).content_variations) && (contentCard as any).content_variations.length > 0 && (
-        <div className="bg-white p-6 rounded-xl border border-slate-200/60 shadow-sm">
-          <h4 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
-            🎭 Variações do Formato
+        <div className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-2xl border border-slate-200/60 shadow-soft">
+          <h4 className="text-lg font-bold text-slate-900 mb-4 flex items-center">
+            <Lightbulb className="h-5 w-5 mr-3 text-blue-600" />
+            Variações do Formato
           </h4>
           <div className="space-y-3">
             {(contentCard as any).content_variations.map((variation: string, index: number) => (
-              <div key={index} className="flex items-start space-x-3 p-4 bg-gradient-to-r from-slate-50 to-zinc-50 rounded-lg border-l-4 border-l-slate-400">
-                <span className="w-2 h-2 bg-slate-500 rounded-full mt-2 flex-shrink-0"></span>
-                <span className="text-slate-700 text-sm leading-relaxed">{variation}</span>
+              <div key={index} className="flex items-start space-x-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200/60">
+                <span className="w-6 h-6 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5 flex-shrink-0">{index + 1}</span>
+                <span className="text-slate-700 text-sm leading-relaxed font-medium">{variation}</span>
               </div>
             ))}
           </div>
@@ -199,11 +210,14 @@ const WeekViewContentCard = ({
       {/* Day 2 (Roteiro 32) Specific Section 4: Sinais de que É Hora de Decidir */}
       <Roteiro32Section4 contentCard={contentCard} />
 
-      {/* CTA Section */}
+      {/* Enhanced CTA Section */}
       {contentCard.cta_text && (
-        <div className="bg-white p-6 rounded-xl border border-slate-200/60 shadow-sm">
-          <h4 className="text-lg font-semibold text-slate-900 mb-3">Call to Action</h4>
-          <p className="text-slate-700 font-medium bg-gradient-to-r from-slate-50 to-zinc-50 p-4 rounded-lg border border-slate-200">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-2xl shadow-elevated">
+          <h4 className="text-lg font-bold mb-3 flex items-center">
+            <Target className="h-5 w-5 mr-3" />
+            Call to Action
+          </h4>
+          <p className="font-medium bg-white/20 backdrop-blur-sm p-4 rounded-xl border border-white/30">
             {contentCard.roteiro_number === 181 
               ? "Já passaram por algo parecido? Comenta aí!" 
               : contentCard.roteiro_number === 32
@@ -216,11 +230,14 @@ const WeekViewContentCard = ({
         </div>
       )}
 
-      {/* Observations Section */}
+      {/* Enhanced Observations Section */}
       {contentCard.observations && (
-        <div className="bg-white p-6 rounded-xl border border-slate-200/60 shadow-sm">
-          <h4 className="text-lg font-semibold text-slate-900 mb-3">Observações Importantes</h4>
-          <p className="text-slate-700 leading-relaxed">{contentCard.observations}</p>
+        <div className="bg-gradient-to-br from-slate-50 to-blue-50/30 p-6 rounded-2xl border border-slate-200/60 shadow-soft">
+          <h4 className="text-lg font-bold text-slate-900 mb-3 flex items-center">
+            <Lightbulb className="h-5 w-5 mr-3 text-amber-600" />
+            Observações Importantes
+          </h4>
+          <p className="text-slate-700 leading-relaxed bg-white/60 p-4 rounded-xl">{contentCard.observations}</p>
         </div>
       )}
     </div>
