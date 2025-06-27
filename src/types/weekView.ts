@@ -16,16 +16,35 @@ export interface ContentCard {
   format: string;
   cta_text?: string;
   examples?: {
-    saude?: string;
-    financas?: string;
-    marketing?: string;
-    relacionamentos?: string;
+    [key: string]: {
+      tipo_1: string;
+      tipo_2: string;
+      tipo_3: string;
+    };
   };
   platforms?: string[];
   intentions?: string[];
   main_content?: string;
   observations?: string;
   practical_steps?: string[];
+  how_to_structure?: {
+    step_1: string;
+    step_2: string;
+    step_3: string;
+  };
+  video_structure?: {
+    hook: string;
+    tipo_1: string;
+    tipo_2: string;
+    tipo_3: string;
+    cta: string;
+  };
+  viral_tips?: string[];
+  engagement_benefits?: string[];
+  viral_potential?: string;
+  reference_link?: string;
+  roteiro_number?: number;
+  strategic_analysis?: string;
 }
 
 export interface DailyContent {

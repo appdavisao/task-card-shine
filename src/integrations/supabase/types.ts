@@ -198,6 +198,7 @@ export type Database = {
           created_at: string
           cta_text: string | null
           day: number
+          enhanced_content_card: Json | null
           hashtags: string | null
           id: string
           scenes: Json | null
@@ -216,6 +217,7 @@ export type Database = {
           created_at?: string
           cta_text?: string | null
           day: number
+          enhanced_content_card?: Json | null
           hashtags?: string | null
           id?: string
           scenes?: Json | null
@@ -234,6 +236,7 @@ export type Database = {
           created_at?: string
           cta_text?: string | null
           day?: number
+          enhanced_content_card?: Json | null
           hashtags?: string | null
           id?: string
           scenes?: Json | null
@@ -350,7 +353,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_enhanced_content_card: {
+        Args: { template_roteiro: number; user_archetype?: string }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never
