@@ -185,6 +185,10 @@ const Dashboard = () => {
     }
   ];
 
+  const handleActionPlanClick = () => {
+    navigate('/action-plan');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -290,6 +294,34 @@ const Dashboard = () => {
               );
             })}
           </div>
+        </div>
+
+        {/* Action Plan Button */}
+        <div className="mb-6 sm:mb-8">
+          <Card className="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-br-full opacity-20"></div>
+            <div className="absolute top-0 left-0 w-8 h-8 bg-green-500 rounded-br-full"></div>
+            <CardContent className="p-4 sm:p-6 relative">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold text-green-900 mb-2 flex items-center">
+                    <span className="mr-2">📋</span>
+                    Construa seu Plano de Ação
+                  </h3>
+                  <p className="text-xs sm:text-sm text-green-800 leading-relaxed">
+                    Responda 5 questões estratégicas e anexe documentos para personalizar sua jornada
+                  </p>
+                </div>
+                <Button 
+                  onClick={handleActionPlanClick}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md flex items-center space-x-2 text-sm font-medium shadow-sm"
+                >
+                  <span>Começar</span>
+                  <span>→</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Motivation Quote */}

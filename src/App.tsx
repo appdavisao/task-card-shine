@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import WeekView from "./pages/WeekView";
+import ActionPlan from "./pages/ActionPlan";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
@@ -67,6 +68,11 @@ const App = () => (
             <Route path="/week/:weekNumber" element={
               <ProtectedRoute>
                 <WeekView />
+              </ProtectedRoute>
+            } />
+            <Route path="/action-plan" element={
+              <ProtectedRoute>
+                <ActionPlan />
               </ProtectedRoute>
             } />
             <Route path="/admin" element={<Admin />} />
