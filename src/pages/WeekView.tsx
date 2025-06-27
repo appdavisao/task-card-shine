@@ -10,7 +10,6 @@ import WeekViewHeader from '@/components/WeekViewHeader';
 import WeekViewDayCard from '@/components/WeekViewDayCard';
 import WeekViewTaskDetails from '@/components/WeekViewTaskDetails';
 import WeekViewContentTip from '@/components/WeekViewContentTip';
-import ContentTipSheet from '@/components/ContentTipSheet';
 
 const WeekView = () => {
   const { weekNumber } = useParams();
@@ -21,24 +20,21 @@ const WeekView = () => {
   const [dailyContent, setDailyContent] = useState<DailyContent | null>(null);
   const [contentLoading, setContentLoading] = useState(false);
   const [expandedExamples, setExpandedExamples] = useState(false);
-  const [sheetDailyContent, setSheetDailyContent] = useState<DailyContent | null>(null);
-  const [sheetContentLoading, setSheetContentLoading] = useState(false);
 
   const { tasks, loading, fetchDailyContent } = useWeekViewData(weekNumber || '1');
 
   const handleDaySelect = async (day: number) => {
     setSelectedDay(day);
-    if (contentTipOpen) {
-      setContentLoading(true);
-      const content = await fetchDailyContent(day);
-      setDailyContent(content);
-      setContentLoading(false);
-    }
+    // Always fetch content when a day is selected
+    setContentLoading(true);
+    const content = await fetchDailyContent(day);
+    setDailyContent(content);
+    setContentLoading(false);
   };
 
   const handleContentTipToggle = async (open: boolean) => {
     setContentTipOpen(open);
-    if (open && selectedDay) {
+    if (open && selectedDay && !dailyContent) {
       setContentLoading(true);
       const content = await fetchDailyContent(selectedDay);
       setDailyContent(content);
@@ -47,10 +43,12 @@ const WeekView = () => {
   };
 
   const handleContentTip = async (day: number) => {
-    setSheetContentLoading(true);
+    // Select the day and show content inline
+    setSelectedDay(day);
+    setContentLoading(true);
     const content = await fetchDailyContent(day);
-    setSheetDailyContent(content);
-    setSheetContentLoading(false);
+    setDailyContent(content);
+    setContentLoading(false);
     setContentTipOpen(true);
   };
 
@@ -135,14 +133,6 @@ const WeekView = () => {
           </div>
         </div>
       </div>
-
-      <ContentTipSheet
-        isOpen={contentTipOpen}
-        onClose={() => setContentTipOpen(false)}
-        day={selectedDay || 1}
-        dailyContent={sheetDailyContent}
-        loading={sheetContentLoading}
-      />
     </div>
   );
 };

@@ -93,7 +93,7 @@ const WeekViewContentCard = ({
       )}
 
       {/* Intentions Section */}
-      {contentCard.intentions && contentCard.intentions.length > 0 && (
+      {contentCard.intentions && Array.isArray(contentCard.intentions) && contentCard.intentions.length > 0 && (
         <div>
           <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
             <Users className="h-5 w-5 mr-2 text-orange-600" />
@@ -110,7 +110,7 @@ const WeekViewContentCard = ({
       )}
 
       {/* Platforms Section */}
-      {contentCard.platforms && contentCard.platforms.length > 0 && (
+      {contentCard.platforms && Array.isArray(contentCard.platforms) && contentCard.platforms.length > 0 && (
         <div>
           <h4 className="text-lg font-semibold text-gray-900 mb-3">Plataformas Recomendadas</h4>
           <div className="space-y-2">
