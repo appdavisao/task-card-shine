@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -160,7 +159,7 @@ const WeekView = () => {
       case 'carousel':
         return 'Carrossel';
       case 'youtube':
-        return 'YouTube';
+        return 'Instagram';
       default:
         return type;
     }
@@ -173,7 +172,7 @@ const WeekView = () => {
       case 'carousel':
         return 'bg-blue-500';
       case 'youtube':
-        return 'bg-red-500';
+        return 'bg-pink-500';
       default:
         return 'bg-gray-500';
     }
@@ -182,6 +181,7 @@ const WeekView = () => {
   const getPlatformIcons = (contentType: string) => {
     const isReels = contentType.toLowerCase() === 'reels';
     const isCarousel = contentType.toLowerCase() === 'carousel';
+    const isYoutube = contentType.toLowerCase() === 'youtube';
 
     if (isReels) {
       return [
@@ -196,6 +196,10 @@ const WeekView = () => {
         { name: 'ig', color: 'bg-pink-500', textColor: 'text-white' },
         { name: 'tk', color: 'bg-black', textColor: 'text-white' },
         { name: 'fb', color: 'bg-blue-600', textColor: 'text-white' }
+      ];
+    } else if (isYoutube) {
+      return [
+        { name: 'ig', color: 'bg-pink-500', textColor: 'text-white' }
       ];
     }
     return [];
