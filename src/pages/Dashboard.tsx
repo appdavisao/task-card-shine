@@ -299,7 +299,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0 mr-4">
                   <h3 className="text-base sm:text-lg font-medium text-blue-900 mb-2 flex items-center">
-                    <span className="mr-3">📋</span>
+                    <span className="mr-3">📖</span>
                     Plano de Ação Escritor Best-Seller
                   </h3>
                   <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
