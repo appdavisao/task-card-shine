@@ -1,10 +1,9 @@
-
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Upload, FileText, Image, File } from 'lucide-react';
+import { Upload, FileText, Image, File, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 
@@ -217,27 +216,30 @@ const ActionPlan = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-slate-800 to-slate-700 text-white shadow-lg">
+      <div className="bg-gray-50 py-4">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-          <div className="flex justify-between items-center py-4 sm:py-5">
-            <div className="flex items-center space-x-4">
-              <Button 
-                onClick={() => navigate('/dashboard')} 
-                variant="outline" 
-                className="text-white border-white/20 hover:bg-white/10 hover:text-white text-sm backdrop-blur-sm"
-              >
-                ← Sair
-              </Button>
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold">Plano de Ação</h1>
-                <p className="text-sm text-gray-200">Escritor Best-Seller</p>
+          <div className="bg-slate-800 rounded-xl shadow-soft border border-slate-700/30">
+            <div className="flex justify-between items-center py-4 sm:py-5 px-4 sm:px-6">
+              <div className="flex items-center space-x-4">
+                <Button 
+                  onClick={() => navigate('/dashboard')} 
+                  variant="ghost" 
+                  className="text-slate-300 hover:bg-slate-600 hover:text-white text-sm backdrop-blur-sm flex items-center"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
+                  <span>Sair</span>
+                </Button>
+                <div>
+                  <h1 className="text-xl sm:text-2xl font-bold text-white">Plano de Ação</h1>
+                  <p className="text-sm text-slate-300">Escritor Best-Seller</p>
+                </div>
               </div>
-            </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-200">Progresso</p>
-              <p className="text-2xl font-bold">0%</p>
+              <div className="text-right">
+                <p className="text-sm text-slate-300">Progresso</p>
+                <p className="text-2xl font-bold text-white">0%</p>
+              </div>
             </div>
           </div>
         </div>
@@ -247,7 +249,7 @@ const ActionPlan = () => {
         {/* Questions */}
         <div className="space-y-6">
           {questions.map((question) => (
-            <Card key={question.id} className="bg-white/70 backdrop-blur-sm shadow-soft border-0 rounded-2xl overflow-hidden hover:shadow-medium transition-all duration-300">
+            <Card key={question.id} className="bg-white shadow-sm border border-slate-200/60 rounded-xl overflow-hidden hover:shadow-md transition-all duration-300">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-start gap-4 text-base">
                   <span className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full w-12 h-10 flex items-center justify-center text-sm font-bold flex-shrink-0 shadow-soft">
@@ -257,7 +259,7 @@ const ActionPlan = () => {
                     <div className="text-sm text-blue-600 font-semibold">
                       Dia {question.day}
                     </div>
-                    <div className="text-gray-800 leading-relaxed font-medium">
+                    <div className="text-slate-800 leading-relaxed font-medium">
                       {question.title}
                     </div>
                   </div>
@@ -265,7 +267,7 @@ const ActionPlan = () => {
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="pl-16 space-y-4">
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-slate-600 leading-relaxed">
                     {question.description}
                   </p>
                   
@@ -290,7 +292,7 @@ const ActionPlan = () => {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="flex items-center gap-2 text-sm bg-white/80 hover:bg-blue-50 border-blue-200 hover:border-blue-300 text-blue-700 hover:text-blue-800 shadow-soft hover:shadow-medium transition-all duration-200"
+                        className="flex items-center gap-2 text-sm bg-white hover:bg-blue-50 border-blue-200 hover:border-blue-300 text-blue-700 hover:text-blue-800 shadow-soft hover:shadow-medium transition-all duration-200"
                         disabled={uploading[question.id]}
                         asChild
                       >
@@ -313,7 +315,7 @@ const ActionPlan = () => {
 
         {/* Footer Note */}
         <div className="mt-12">
-          <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200/50 shadow-soft rounded-2xl overflow-hidden">
+          <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200/50 shadow-soft rounded-xl overflow-hidden">
             <CardContent className="p-8">
               <h3 className="text-xl font-bold text-blue-900 mb-4 flex items-center gap-2">
                 <span className="text-2xl">📚</span>
