@@ -85,17 +85,29 @@ Transforme insights técnicos em conselhos práticos e diretos.
 });
 
 async function getUserVariables(user_id: string) {
-  const { data: profile } = await supabase
+  console.log('Fetching user variables for:', user_id);
+  
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('*')
     .eq('user_id', user_id)
     .single();
 
-  const { data: dashboard } = await supabase
+  if (profileError) {
+    console.error('Profile fetch error:', profileError);
+  }
+
+  const { data: dashboard, error: dashboardError } = await supabase
     .from('user_dashboard')
     .select('*')
     .eq('user_id', user_id)
     .single();
+
+  if (dashboardError) {
+    console.error('Dashboard fetch error:', dashboardError);
+  }
+
+  console.log('Fetched user data:', { profile, dashboard });
 
   return {
     profile: profile || {},
@@ -107,6 +119,7 @@ function buildEnhancedContextMessage(userVariables: any, context: any) {
   const { profile, dashboard } = userVariables;
   
   const safeGet = (obj: any, path: string, defaultValue: any = 'Não informado') => {
+    if (!obj) return defaultValue;
     const keys = path.split('.');
     let current = obj;
     for (const key of keys) {
@@ -119,7 +132,11 @@ function buildEnhancedContextMessage(userVariables: any, context: any) {
     return current || defaultValue;
   };
 
-  let contextMessage = `Oi, eu sou o ${profile.display_name || 'usuário'}, preciso de ajuda com a criação desse conteúdo:
+  const userName = profile?.display_name || profile?.student_name || 'usuário';
+  const userTitle = profile?.title || 'profissional';
+  const userSegment = safeGet(dashboard, 'key_data.segment');
+
+  let contextMessage = `Oi, eu sou ${userName}, preciso de ajuda com a criação desse conteúdo:
 
 📊 ESTRATÉGIA DE CONTEÚDO - DIA ${context?.day || 'ATUAL'}`;
 
@@ -128,16 +145,16 @@ function buildEnhancedContextMessage(userVariables: any, context: any) {
     contextMessage += `
 
 🎯 CONTENT CARD ATUAL:
-${card.title}
-${card.format}
-${card.main_content || ''}
+${card.title || 'Título não definido'}
+${card.format || 'Formato não definido'}
+${card.main_content || 'Conteúdo principal não definido'}
 
 📋 ESTRUTURA DO CONTEÚDO:
 ${JSON.stringify(card.video_structure || card.content_variations || {}, null, 2)}
 
-🎯 OBJETIVOS: ${(card.intentions || []).join(', ')}
-📱 PLATAFORMAS: ${(card.platforms || []).join(', ')}
-🚀 DICAS VIRAIS: ${(card.viral_tips || []).join(' • ')}
+🎯 OBJETIVOS: ${(card.intentions || []).join(', ') || 'Não definidos'}
+📱 PLATAFORMAS: ${(card.platforms || []).join(', ') || 'Não definidas'}
+🚀 DICAS VIRAIS: ${(card.viral_tips || []).join(' • ') || 'Não definidas'}
 
 💡 EXEMPLOS POR NICHO:
 ${JSON.stringify(card.examples || {}, null, 2)}`;
@@ -148,12 +165,12 @@ ${JSON.stringify(card.examples || {}, null, 2)}`;
 🎯 PERFIL ESTRATÉGICO COMPLETO:
 
 👤 IDENTIDADE:
-- Nome: ${profile.display_name || 'Não informado'}
-- Título: ${profile.title || 'Não informado'}
-- Subtitle: ${profile.subtitle || 'Não informado'}
-- Arquétipo: ${profile.archetype || 'Não informado'}
-- Segmento: ${safeGet(dashboard, 'key_data.segment')}
-- Foco: ${profile.focus || 'Não informado'}
+- Nome: ${userName}
+- Título: ${userTitle}
+- Subtitle: ${profile?.subtitle || 'Não informado'}
+- Arquétipo: ${profile?.archetype || 'Não informado'}
+- Segmento: ${userSegment}
+- Foco: ${profile?.focus || 'Não informado'}
 
 💼 BACKGROUND PROFISSIONAL:
 - Experiência: ${safeGet(dashboard, 'key_data.experience')}
@@ -169,19 +186,19 @@ ${JSON.stringify(card.examples || {}, null, 2)}`;
 - YouTube: ${safeGet(dashboard, 'platform_strategy.youtube', 0)}%
 
 🎯 ESTRATÉGIA PERSONALIZADA:
-${dashboard.strategy_text || 'Não definida'}
+${dashboard?.strategy_text || 'Não definida'}
 
 📋 CONTEXTO ATUAL:
-${dashboard.context_text || 'Não definido'}`;
+${dashboard?.context_text || 'Não definido'}`;
 
-  if (dashboard.profile_highlights && Array.isArray(dashboard.profile_highlights)) {
+  if (dashboard?.profile_highlights && Array.isArray(dashboard.profile_highlights)) {
     contextMessage += `\n\n🏆 DESTAQUES DO PERFIL:`;
     dashboard.profile_highlights.forEach((highlight: any) => {
       contextMessage += `\n${highlight.icon || '•'} ${highlight.title || 'Item'}: ${highlight.content || 'Não especificado'}`;
     });
   }
 
-  if (dashboard.scores) {
+  if (dashboard?.scores) {
     contextMessage += `\n\n📈 SCORES DE AUTORIDADE:
 - Digital: ${dashboard.scores.digital || 0}/10
 - Speaking: ${dashboard.scores.speaking || 0}/10  
@@ -189,7 +206,7 @@ ${dashboard.context_text || 'Não definido'}`;
 - Book: ${dashboard.scores.book || 0}/10`;
   }
 
-  if (dashboard.motivation_quote) {
+  if (dashboard?.motivation_quote) {
     contextMessage += `\n\n💡 QUOTE MOTIVACIONAL:
 "${dashboard.motivation_quote}"`;
   }
@@ -202,13 +219,11 @@ CONTEXTO DA SESSÃO:
 - Dia do Conteúdo: ${context?.day || 'N/A'}
 - Template Ativo: ${context?.content_card?.roteiro_number ? `Roteiro #${context.content_card.roteiro_number}` : 'N/A'}
 
-🎯 MISSÃO: Use TODOS esses dados para dar conselhos ultra-específicos de copywriting para ${profile.display_name || 'o usuário'} no segmento ${safeGet(dashboard, 'key_data.segment')}.
-
-E tudo o que posso te dizer sobre mim é:
-"${JSON.stringify({ profile, dashboard }, null, 2)}"
+🎯 MISSÃO: Use TODOS esses dados para dar conselhos ultra-específicos de copywriting para ${userName} no segmento ${userSegment}.
 
 Como você consegue me ajudar?`;
 
+  console.log('Generated context message for user:', userName);
   return contextMessage;
 }
 
