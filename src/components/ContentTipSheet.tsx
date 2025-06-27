@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/hooks/useAuth';
+
+import { useState } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -17,6 +16,8 @@ interface ContentTipSheetProps {
   isOpen: boolean;
   onClose: () => void;
   day: number;
+  dailyContent: DailyContent | null;
+  loading: boolean;
 }
 
 interface ContentCard {
@@ -44,52 +45,8 @@ interface DailyContent {
   content_card?: ContentCard;
 }
 
-const ContentTipSheet = ({ isOpen, onClose, day }: ContentTipSheetProps) => {
-  const { user } = useAuth();
-  const [content, setContent] = useState<DailyContent | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const ContentTipSheet = ({ isOpen, onClose, day, dailyContent, loading }: ContentTipSheetProps) => {
   const [expandedExamples, setExpandedExamples] = useState(false);
-
-  useEffect(() => {
-    if (isOpen && user) {
-      fetchDailyContent();
-    }
-  }, [isOpen, user, day]);
-
-  const fetchDailyContent = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const { data, error: fetchError } = await supabase
-        .from('user_daily_content')
-        .select('*')
-        .eq('user_id', user!.id)
-        .eq('day', day)
-        .single();
-
-      if (fetchError) {
-        console.error('Error fetching daily content:', fetchError);
-        setError('Nenhum conteúdo detalhado encontrado para este dia.');
-      } else {
-        // Convert the data properly with type assertion for content_card
-        const dailyContent: DailyContent = {
-          id: data.id,
-          day: data.day,
-          content_type: data.content_type,
-          title: data.title,
-          content_card: data.content_card ? (data.content_card as unknown as ContentCard) : undefined
-        };
-        setContent(dailyContent);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      setError('Erro ao buscar conteúdo detalhado.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getContentTypeDisplay = (type: string) => {
     switch (type.toLowerCase()) {
@@ -337,66 +294,31 @@ const ContentTipSheet = ({ isOpen, onClose, day }: ContentTipSheetProps) => {
     );
   }
 
-  if (error) {
-    return (
-      <Sheet open={isOpen} onOpenChange={onClose}>
-        <SheetContent className="bg-gray-800 border-gray-700 text-white overflow-y-auto max-w-2xl">
-          <SheetHeader>
-            <SheetTitle className="text-white">Dica de Conteúdo - Dia {day}</SheetTitle>
-            <SheetDescription className="text-gray-300">
-              {error}
-            </SheetDescription>
-          </SheetHeader>
-          <div className="mt-6">
-            <Card className="bg-gray-700 border-gray-600">
-              <CardContent className="p-6 text-center">
-                <p className="text-gray-300">
-                  Nenhum conteúdo detalhado foi encontrado para este dia ainda.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </SheetContent>
-      </Sheet>
-    );
-  }
-
-  if (!content) {
-    return (
-      <Sheet open={isOpen} onOpenChange={onClose}>
-        <SheetContent className="bg-gray-800 border-gray-700 text-white overflow-y-auto max-w-2xl">
-          <SheetHeader>
-            <SheetTitle className="text-white">Dica de Conteúdo - Dia {day}</SheetTitle>
-            <SheetDescription className="text-gray-300">
-              Nenhum conteúdo detalhado encontrado para este dia.
-            </SheetDescription>
-          </SheetHeader>
-        </SheetContent>
-      </Sheet>
-    );
-  }
-
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="bg-gray-800 border-gray-700 text-white overflow-y-auto max-w-4xl">
         <SheetHeader>
           <div className="flex items-center gap-3 flex-wrap">
             <SheetTitle className="text-white">
-              {content.content_card?.title || content.title}
+              {dailyContent?.content_card?.title || dailyContent?.title || `Dia ${day}`}
             </SheetTitle>
-            <Badge className={`${getContentTypeColor(content.content_type)} text-white`}>
-              {getContentTypeDisplay(content.content_type)}
-            </Badge>
-            <div className="flex gap-1">
-              {getPlatformIcons(content.content_type).map((platform, index) => (
-                <Badge 
-                  key={index}
-                  className={`${platform.color} ${platform.textColor} text-xs px-1.5 py-0.5`}
-                >
-                  {platform.name}
+            {dailyContent && (
+              <>
+                <Badge className={`${getContentTypeColor(dailyContent.content_type)} text-white`}>
+                  {getContentTypeDisplay(dailyContent.content_type)}
                 </Badge>
-              ))}
-            </div>
+                <div className="flex gap-1">
+                  {getPlatformIcons(dailyContent.content_type).map((platform, index) => (
+                    <Badge 
+                      key={index}
+                      className={`${platform.color} ${platform.textColor} text-xs px-1.5 py-0.5`}
+                    >
+                      {platform.name}
+                    </Badge>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
           <SheetDescription className="text-gray-300">
             Dica de Conteúdo para o Dia {day}
@@ -404,11 +326,11 @@ const ContentTipSheet = ({ isOpen, onClose, day }: ContentTipSheetProps) => {
         </SheetHeader>
         
         <div className="mt-6">
-          {content.content_card ? renderContentCard(content.content_card) : (
+          {dailyContent?.content_card ? renderContentCard(dailyContent.content_card) : (
             <Card className="bg-gray-700 border-gray-600">
               <CardContent className="p-6 text-center">
                 <p className="text-gray-300">
-                  Nenhum conteúdo estruturado disponível para este dia.
+                  Nenhum conteúdo estruturado encontrado para este dia.
                 </p>
               </CardContent>
             </Card>

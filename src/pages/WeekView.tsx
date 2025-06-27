@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Lightbulb, ChevronDown, ChevronUp, Target, Play, Users } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import ContentTipSheet from '@/components/ContentTipSheet';
 
 interface Task {
   id: string;
@@ -99,6 +100,7 @@ const WeekView = () => {
   const fetchDailyContent = async (day: number) => {
     try {
       setContentLoading(true);
+      console.log('Fetching daily content for day:', day);
       
       const { data, error: fetchError } = await supabase
         .from('user_daily_content')
@@ -111,6 +113,9 @@ const WeekView = () => {
         console.error('Error fetching daily content:', fetchError);
         setDailyContent(null);
       } else {
+        console.log('Raw daily content data:', data);
+        console.log('Content card data:', data.content_card);
+        
         // Convert the data properly with type assertion for content_card
         const dailyContent: DailyContent = {
           id: data.id,
@@ -119,6 +124,8 @@ const WeekView = () => {
           title: data.title,
           content_card: data.content_card ? (data.content_card as unknown as ContentCard) : undefined
         };
+        
+        console.log('Processed daily content:', dailyContent);
         setDailyContent(dailyContent);
       }
     } catch (error) {
@@ -368,11 +375,6 @@ const WeekView = () => {
   };
 
   const handleContentTip = async (day: number) => {
-    if (contentTipOpen && dailyContent?.day === day) {
-      setContentTipOpen(false);
-      return;
-    }
-    
     await fetchDailyContent(day);
     setContentTipOpen(true);
   };
@@ -613,6 +615,15 @@ const WeekView = () => {
           </div>
         </div>
       </div>
+
+      {/* ContentTipSheet component */}
+      <ContentTipSheet
+        isOpen={contentTipOpen}
+        onClose={() => setContentTipOpen(false)}
+        day={selectedDay || 1}
+        dailyContent={dailyContent}
+        loading={contentLoading}
+      />
     </div>
   );
 };
