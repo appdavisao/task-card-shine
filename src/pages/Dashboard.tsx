@@ -187,6 +187,32 @@ const Dashboard = () => {
     }
   ];
 
+  const getPersonalizedStrategyText = () => {
+    // Priority 1: Use pre-built strategy_text
+    if (dashboardData?.strategy_text) {
+      return dashboardData.strategy_text;
+    }
+    
+    // Priority 2: Combine context_text with key_data
+    if (dashboardData?.context_text && dashboardData?.key_data) {
+      return `Este plano considera ${dashboardData.context_text}`;
+    }
+    
+    // Priority 3: Use context_text alone
+    if (dashboardData?.context_text) {
+      return `Este plano foi personalizado considerando ${dashboardData.context_text}`;
+    }
+    
+    // Priority 4: Build from key_data fields
+    const keyData = dashboardData?.key_data;
+    if (keyData?.current_work && keyData?.legacy) {
+      return `Este plano foi adaptado para sua evolução como ${keyData.current_work}, focando em ${keyData.legacy}`;
+    }
+    
+    // Final fallback
+    return "Este plano foi personalizado especificamente para seu crescimento digital e profissional.";
+  };
+
   const handleActionPlanClick = () => {
     navigate('/action-plan');
   };
@@ -245,7 +271,7 @@ const Dashboard = () => {
                     {profile?.display_name || 'Usuário'}
                   </h2>
                   <p className="text-sm sm:text-base text-slate-600 leading-relaxed mb-4">
-                    Este plano foi adaptado especificamente para sua evolução de advogado local para protagonista nacional do Direito, priorizando LinkedIn para networking jurídico, Instagram para humanização da advocacia e YouTube para educação jurídica.
+                    {getPersonalizedStrategyText()}
                   </p>
                   <div className="flex items-center justify-between">
                     <Button 
