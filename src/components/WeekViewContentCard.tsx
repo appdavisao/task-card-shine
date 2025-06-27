@@ -4,6 +4,7 @@ import { Play, Users } from 'lucide-react';
 import { ContentCard } from '@/types/weekView';
 import { getIntentionColor } from '@/utils/weekViewUtils';
 import { Roteiro181Section1, Roteiro181Section2, Roteiro181Section3, Roteiro181Section4 } from './WeekViewRoteiro181Sections';
+import { Roteiro32Section1, Roteiro32Section2, Roteiro32Section3, Roteiro32Section4 } from './WeekViewRoteiro32Sections';
 import { ContentFormat, MainContent, ArraySection, HowToStructure, VideoStructure, NarrativeStructure } from './WeekViewContentSections';
 import WeekViewCaseStudy from './WeekViewCaseStudy';
 import WeekViewExamples from './WeekViewExamples';
@@ -91,6 +92,9 @@ const WeekViewContentCard = ({
       {/* Day 1 (Roteiro 181) Specific Section 1: Tipos de situações negativas eficazes */}
       <Roteiro181Section1 contentCard={contentCard} />
 
+      {/* Day 2 (Roteiro 32) Specific Section 1: Fatores de Decisão Essenciais */}
+      <Roteiro32Section1 contentCard={contentCard} />
+
       {/* Video Structure Section */}
       <VideoStructure contentCard={contentCard} />
 
@@ -115,6 +119,9 @@ const WeekViewContentCard = ({
 
       {/* Day 1 (Roteiro 181) Specific Section 2: Elementos que tornam autêntico */}
       <Roteiro181Section2 contentCard={contentCard} />
+
+      {/* Day 2 (Roteiro 32) Specific Section 2: Framework de Análise */}
+      <Roteiro32Section2 contentCard={contentCard} />
 
       {/* Intentions Section */}
       {contentCard.intentions && Array.isArray(contentCard.intentions) && contentCard.intentions.length > 0 && (
@@ -227,8 +234,14 @@ const WeekViewContentCard = ({
       {/* Day 1 (Roteiro 181) Specific Section 3: Lições valiosas comuns */}
       <Roteiro181Section3 contentCard={contentCard} />
 
+      {/* Day 2 (Roteiro 32) Specific Section 3: Armadilhas Mentais Comuns */}
+      <Roteiro32Section3 contentCard={contentCard} />
+
       {/* Day 1 (Roteiro 181) Specific Section 4: Cuidados importantes */}
       <Roteiro181Section4 contentCard={contentCard} />
+
+      {/* Day 2 (Roteiro 32) Specific Section 4: Sinais de que É Hora de Decidir */}
+      <Roteiro32Section4 contentCard={contentCard} />
 
       {/* CTA Section */}
       {contentCard.cta_text && (
@@ -237,6 +250,8 @@ const WeekViewContentCard = ({
           <p className="text-orange-600 font-medium">
             {contentCard.roteiro_number === 181 
               ? "Já passaram por algo parecido? Comenta aí!" 
+              : contentCard.roteiro_number === 32
+              ? "Qual dessas decisões vocês mais têm dificuldade? Comenta aí!"
               : contentCard.cta_text
             }
           </p>
