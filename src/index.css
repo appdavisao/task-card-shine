@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -98,6 +99,67 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer utilities {
+  /* Enhanced Shadow System */
+  .shadow-interactive {
+    @apply shadow-soft transition-all duration-200 hover:shadow-medium hover:-translate-y-0.5;
+  }
+  
+  .shadow-card-primary {
+    @apply shadow-soft hover:shadow-medium transition-all duration-300;
+  }
+  
+  .shadow-card-elevated {
+    @apply shadow-medium hover:shadow-elevated transition-all duration-300;
+  }
+  
+  .shadow-dramatic-hover {
+    @apply shadow-elevated hover:shadow-dramatic transition-all duration-300;
+  }
+  
+  /* Hover states with transforms */
+  .hover-lift {
+    @apply transition-all duration-200 hover:-translate-y-1 hover:shadow-elevated;
+  }
+  
+  .hover-lift-subtle {
+    @apply transition-all duration-200 hover:-translate-y-0.5 hover:shadow-medium;
+  }
+  
+  /* Focus states */
+  .focus-shadow {
+    @apply focus:shadow-elevated focus:ring-2 focus:ring-amber-500/20 focus:ring-offset-2;
+  }
+}
+
+@layer components {
+  /* Design Tokens */
+  .card-primary { 
+    @apply bg-white rounded-xl lg:rounded-2xl shadow-card-primary lg:shadow-dramatic-hover border border-gray-50 p-4 lg:p-8;
+  }
+
+  .card-secondary { 
+    @apply bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-xl p-4 lg:p-6 shadow-card-primary border border-gray-100/50;
+  }
+
+  .section-spacing { 
+    @apply mb-6 lg:mb-8;
+  }
+
+  .container-padding { 
+    @apply px-4 lg:px-8 py-6 lg:py-8;
+  }
+
+  /* Interactive Elements */
+  .interactive-element {
+    @apply transition-all duration-200 hover:shadow-interactive focus:shadow-elevated;
+  }
+
+  .smooth-transition {
+    @apply transition-all duration-300 ease-out;
   }
 }
