@@ -212,7 +212,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-slate-700 border-b border-slate-600/20">
+      <div className="bg-slate-800 border-b border-slate-700/30">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
           <div className="flex justify-between items-center py-4 sm:py-5">
             <div className="flex items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
@@ -318,7 +318,48 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Motivation Quote */}
+        {/* Week Cards - Moved here */}
+        <div className="mb-8 sm:mb-10">
+          <h3 className="text-lg sm:text-xl font-medium text-slate-800 mb-6 sm:mb-8 text-center">
+            Idéias de Conteúdos
+          </h3>
+          <div className="grid grid-cols-7 gap-3 sm:gap-4">
+            {[1, 2, 3, 4, 5, 6, 7].map((week) => {
+              const activities = getWeekActivitiesCount(week);
+              const progress = getWeekProgress(week);
+              
+              return (
+                <div
+                  key={week}
+                  className="cursor-pointer bg-white border border-slate-200/60 rounded-xl p-3 sm:p-4 text-center shadow-sm
+                    transition-all duration-300 ease-out
+                    hover:shadow-md hover:scale-[1.02] hover:border-slate-300 hover:-translate-y-0.5
+                    hover:bg-gradient-to-br hover:from-white hover:to-slate-50/50
+                    active:scale-95"
+                  onClick={() => handleWeekClick(week)}
+                >
+                  <div className="text-xl sm:text-2xl font-semibold text-slate-700 mb-2 sm:mb-3">
+                    S{week}
+                  </div>
+                  <p className="text-xs text-slate-500 mb-2 sm:mb-3 font-medium">
+                    {activities} atividades
+                  </p>
+                  <div className="w-full h-1.5 sm:h-2 bg-slate-100 rounded-full overflow-hidden mb-2 sm:mb-3">
+                    <div 
+                      className="h-full bg-gradient-to-r from-slate-400 to-slate-500 rounded-full transition-all duration-500"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-slate-500 font-medium">
+                    {progress.toFixed(0)}% concluído
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Motivation Quote - Moved here */}
         <div className="mb-8 sm:mb-10">
           <Card className="bg-gradient-to-br from-slate-50 to-slate-100/70 border border-slate-200/60 rounded-xl overflow-hidden">
             <CardContent className="p-6 sm:p-7">
@@ -363,47 +404,6 @@ const Dashboard = () => {
               </div>
             </CardContent>
           </Card>
-        </div>
-
-        {/* Static Week Cards */}
-        <div>
-          <h3 className="text-lg sm:text-xl font-medium text-slate-800 mb-6 sm:mb-8 text-center">
-            Acesse seu Plano de Atividades
-          </h3>
-          <div className="grid grid-cols-7 gap-3 sm:gap-4">
-            {[1, 2, 3, 4, 5, 6, 7].map((week) => {
-              const activities = getWeekActivitiesCount(week);
-              const progress = getWeekProgress(week);
-              
-              return (
-                <div
-                  key={week}
-                  className="cursor-pointer bg-white border border-slate-200/60 rounded-xl p-3 sm:p-4 text-center shadow-sm
-                    transition-all duration-300 ease-out
-                    hover:shadow-md hover:scale-[1.02] hover:border-slate-300 hover:-translate-y-0.5
-                    hover:bg-gradient-to-br hover:from-white hover:to-slate-50/50
-                    active:scale-95"
-                  onClick={() => handleWeekClick(week)}
-                >
-                  <div className="text-xl sm:text-2xl font-semibold text-slate-700 mb-2 sm:mb-3">
-                    S{week}
-                  </div>
-                  <p className="text-xs text-slate-500 mb-2 sm:mb-3 font-medium">
-                    {activities} atividades
-                  </p>
-                  <div className="w-full h-1.5 sm:h-2 bg-slate-100 rounded-full overflow-hidden mb-2 sm:mb-3">
-                    <div 
-                      className="h-full bg-gradient-to-r from-slate-400 to-slate-500 rounded-full transition-all duration-500"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                  <p className="text-xs text-slate-500 font-medium">
-                    {progress.toFixed(0)}% concluído
-                  </p>
-                </div>
-              );
-            })}
-          </div>
         </div>
       </div>
     </div>
