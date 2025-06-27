@@ -54,7 +54,7 @@ export const Roteiro180Section2 = ({ contentCard }: Roteiro180SectionsProps) => 
         </div>
         <div className="bg-white p-3 rounded border-l-4 border-blue-400">
           <h4 className="font-semibold text-gray-800 mb-1">2️⃣ Analise o contexto</h4>
-          <pClassName="text-sm text-gray-600">Entenda as condições específicas do sucesso</p>
+          <p className="text-sm text-gray-600">Entenda as condições específicas do sucesso</p>
         </div>
         <div className="bg-white p-3 rounded border-l-4 border-purple-400">
           <h4 className="font-semibold text-gray-800 mb-1">3️⃣ Adapte para sua realidade</h4>
