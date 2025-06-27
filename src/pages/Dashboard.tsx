@@ -11,6 +11,7 @@ import { toast } from '@/components/ui/use-toast';
 import { Trophy, Home, FileText, Calendar, LogOut } from 'lucide-react';
 import { Case } from '@/components/ui/cases-with-infinite-scroll';
 import { NavBar } from '@/components/ui/tubelight-navbar';
+import ContentChatbot from '@/components/ContentChatbot';
 
 interface Profile {
   id: string;
@@ -196,6 +197,11 @@ const Dashboard = () => {
     { name: 'Ranking', url: '#', icon: Trophy, action: () => toast({ title: "Ranking", description: "Feature coming soon!" }) },
     { name: 'Sair', url: '#', icon: LogOut, action: handleSignOut },
   ];
+
+  const chatbotContext = {
+    page: 'dashboard',
+    content_card: null
+  };
 
   if (loading) {
     return (
@@ -433,6 +439,9 @@ const Dashboard = () => {
           </Card>
         </div>
       </div>
+
+      {/* Content Chatbot */}
+      <ContentChatbot context={chatbotContext} />
     </div>
   );
 };
