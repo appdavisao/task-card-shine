@@ -23,35 +23,34 @@ const WeekViewDayCard = ({
 }: WeekViewDayCardProps) => {
   return (
     <Card 
-      className={`cursor-pointer hover-lift-subtle smooth-transition border-2 relative group animate-fade-in ${
+      className={`cursor-pointer transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg border-2 relative group ${
         isSelected 
-          ? 'bg-blue-50/80 border-blue-400 shadow-elevated ring-2 ring-blue-200/50' 
-          : 'card-primary hover:border-blue-300/60'
+          ? 'bg-blue-50 border-blue-400 shadow-lg ring-2 ring-blue-200' 
+          : 'bg-white border-gray-200 hover:border-blue-300 shadow-sm'
       }`}
       onClick={() => onSelect(day)}
     >
-      <CardContent className="p-4 sm:p-5">
-        <div className="flex items-center justify-between mb-3">
-          <span className={`font-bold text-sm sm:text-base drop-shadow-sm smooth-transition ${
+      <CardContent className="p-3 sm:p-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className={`font-bold text-sm sm:text-base drop-shadow-sm ${
             isSelected ? 'text-blue-700' : 'text-gray-900'
           }`}>
             Dia {day}
           </span>
           {task?.platform && (
-            <Badge className={`text-xs text-white smooth-transition shadow-soft ${getPlatformColor(task.platform)}`}>
+            <Badge className={`text-xs text-white transition-colors ${getPlatformColor(task.platform)}`}>
               {task.platform}
             </Badge>
           )}
         </div>
-        
         {task ? (
-          <div className={`text-xs sm:text-sm mb-4 font-medium smooth-transition leading-relaxed ${
+          <div className={`text-xs sm:text-sm mb-3 font-medium ${
             isSelected ? 'text-blue-600' : 'text-gray-700'
           }`}>
             {task.title}
           </div>
         ) : (
-          <div className="text-xs sm:text-sm text-gray-500 mb-4 italic leading-relaxed">
+          <div className="text-xs sm:text-sm text-gray-500 mb-3 italic">
             Nenhuma atividade disponível
           </div>
         )}
@@ -64,9 +63,9 @@ const WeekViewDayCard = ({
               e.stopPropagation();
               onContentTip(day);
             }}
-            className="text-xs interactive-element focus-shadow bg-white/80 border-gray-200 text-gray-700 hover:bg-blue-50/80 hover:border-blue-300/60 hover:text-blue-700"
+            className="text-xs bg-gray-50 border-gray-300 text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-colors shadow-sm"
           >
-            <Lightbulb className="h-3 w-3 mr-1.5" />
+            <Lightbulb className="h-3 w-3 mr-1" />
             <span className="hidden sm:inline">Dica de Conteúdo</span>
             <span className="sm:hidden">Dica</span>
           </Button>
