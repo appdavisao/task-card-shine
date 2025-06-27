@@ -217,92 +217,94 @@ const ActionPlan = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
-      <div className="bg-slate-800 text-white">
+      <div className="bg-gradient-to-r from-slate-800 to-slate-700 text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-          <div className="flex justify-between items-center py-3 sm:py-4">
-            <div className="flex items-center space-x-3 sm:space-x-4">
+          <div className="flex justify-between items-center py-4 sm:py-5">
+            <div className="flex items-center space-x-4">
               <Button 
                 onClick={() => navigate('/dashboard')} 
                 variant="outline" 
-                className="text-white border-white hover:bg-white hover:text-slate-800 text-xs sm:text-sm"
+                className="text-white border-white/20 hover:bg-white/10 hover:text-white text-sm backdrop-blur-sm"
               >
                 ← Sair
               </Button>
               <div>
-                <h1 className="text-lg sm:text-xl font-semibold">Plano de Ação</h1>
-                <p className="text-sm text-gray-300">Escritor Best-Seller</p>
+                <h1 className="text-xl sm:text-2xl font-bold">Plano de Ação</h1>
+                <p className="text-sm text-gray-200">Escritor Best-Seller</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-sm text-gray-300">Progresso</p>
-              <p className="text-lg font-semibold">0%</p>
+              <p className="text-sm text-gray-200">Progresso</p>
+              <p className="text-2xl font-bold">0%</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 py-6 sm:py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Questions */}
         <div className="space-y-6">
           {questions.map((question) => (
-            <Card key={question.id} className="bg-white shadow-sm border border-gray-200">
-              <CardHeader>
-                <CardTitle className="flex items-start text-lg text-gray-900">
-                  <span className="bg-blue-500 text-white rounded-full w-10 h-8 flex items-center justify-center text-sm font-bold mr-3 mt-1 flex-shrink-0">
+            <Card key={question.id} className="bg-white/70 backdrop-blur-sm shadow-soft border-0 rounded-2xl overflow-hidden hover:shadow-medium transition-all duration-300">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-start gap-4 text-base">
+                  <span className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full w-12 h-10 flex items-center justify-center text-sm font-bold flex-shrink-0 shadow-soft">
                     {question.day}
                   </span>
-                  <div className="flex-1">
-                    <div className="text-sm text-blue-600 font-medium mb-1">
+                  <div className="flex-1 space-y-2">
+                    <div className="text-sm text-blue-600 font-semibold">
                       Dia {question.day}
                     </div>
-                    <div className="text-gray-900 leading-tight">
+                    <div className="text-gray-800 leading-relaxed font-medium">
                       {question.title}
                     </div>
                   </div>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 mb-4">
-                  {question.description}
-                </p>
-                
-                {/* Small Upload Button */}
-                <div className="flex justify-end">
-                  <input
-                    type="file"
-                    id={`file-${question.id}`}
-                    accept=".pdf,.txt,.png,.jpg,.jpeg"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        handleFileUpload(file, question.id);
-                      }
-                    }}
-                    className="hidden"
-                  />
-                  <label 
-                    htmlFor={`file-${question.id}`}
-                    className="cursor-pointer"
-                  >
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="flex items-center space-x-2 text-xs"
-                      disabled={uploading[question.id]}
-                      asChild
+              <CardContent className="pt-0">
+                <div className="pl-16 space-y-4">
+                  <p className="text-gray-600 leading-relaxed">
+                    {question.description}
+                  </p>
+                  
+                  {/* Small Upload Button */}
+                  <div className="flex justify-start">
+                    <input
+                      type="file"
+                      id={`file-${question.id}`}
+                      accept=".pdf,.txt,.png,.jpg,.jpeg"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          handleFileUpload(file, question.id);
+                        }
+                      }}
+                      className="hidden"
+                    />
+                    <label 
+                      htmlFor={`file-${question.id}`}
+                      className="cursor-pointer"
                     >
-                      <span>
-                        {uploading[question.id] ? (
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                        ) : (
-                          <Upload className="w-4 h-4" />
-                        )}
-                        <span>Enviar arquivo</span>
-                      </span>
-                    </Button>
-                  </label>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex items-center gap-2 text-sm bg-white/80 hover:bg-blue-50 border-blue-200 hover:border-blue-300 text-blue-700 hover:text-blue-800 shadow-soft hover:shadow-medium transition-all duration-200"
+                        disabled={uploading[question.id]}
+                        asChild
+                      >
+                        <span>
+                          {uploading[question.id] ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent"></div>
+                          ) : (
+                            <Upload className="w-4 h-4" />
+                          )}
+                          <span>Enviar arquivo</span>
+                        </span>
+                      </Button>
+                    </label>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -310,16 +312,26 @@ const ActionPlan = () => {
         </div>
 
         {/* Footer Note */}
-        <div className="mt-8">
-          <Card className="bg-blue-50 border border-blue-200">
-            <CardContent className="p-6">
-              <h3 className="text-lg font-bold text-blue-900 mb-3">
-                📚 Resultado Esperado:
+        <div className="mt-12">
+          <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200/50 shadow-soft rounded-2xl overflow-hidden">
+            <CardContent className="p-8">
+              <h3 className="text-xl font-bold text-blue-900 mb-4 flex items-center gap-2">
+                <span className="text-2xl">📚</span>
+                Resultado Esperado:
               </h3>
-              <ul className="text-blue-800 space-y-1">
-                <li>• Capítulo 1 e 2 escritos</li>
-                <li>• Estrutura validada e alinhada com público</li>
-                <li>• Clareza de identidade e propósito autoral</li>
+              <ul className="text-blue-800 space-y-2 text-sm leading-relaxed">
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-500 font-bold">•</span>
+                  Capítulo 1 e 2 escritos
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-500 font-bold">•</span>
+                  Estrutura validada e alinhada com público
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-500 font-bold">•</span>
+                  Clareza de identidade e propósito autoral
+                </li>
               </ul>
             </CardContent>
           </Card>
