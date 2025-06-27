@@ -193,8 +193,8 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 sm:h-32 sm:w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 text-sm sm:text-base">Loading your dashboard...</p>
+          <div className="animate-spin rounded-full h-16 w-16 sm:h-32 sm:w-32 border-b-2 border-slate-400 mx-auto"></div>
+          <p className="mt-4 text-slate-600 text-sm sm:text-base">Loading your dashboard...</p>
         </div>
       </div>
     );
@@ -212,33 +212,37 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-slate-800 text-white">
+      <div className="bg-slate-700 border-b border-slate-600/20">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-          <div className="flex justify-between items-center py-3 sm:py-4">
+          <div className="flex justify-between items-center py-4 sm:py-5">
             <div className="flex items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
-              <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
+              <Avatar className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0 ring-2 ring-white/10">
                 <AvatarImage src={profile?.avatar_url} />
-                <AvatarFallback className="text-xs sm:text-sm bg-white text-slate-800">
+                <AvatarFallback className="text-sm sm:text-base bg-slate-100 text-slate-700 font-medium">
                   {profile?.display_name?.charAt(0) || 'U'}
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
-                <h1 className="text-sm sm:text-lg font-semibold truncate">{profile?.display_name || 'User'}</h1>
-                <p className="text-xs sm:text-sm text-gray-300 truncate">
+                <h1 className="text-base sm:text-xl font-medium text-white truncate">{profile?.display_name || 'User'}</h1>
+                <p className="text-xs sm:text-sm text-slate-300 truncate mt-0.5">
                   {dashboardData?.strategy_text || "Adicionando dados do formulário..."}
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
+            <div className="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
               <Button 
-                className="bg-orange-500 hover:bg-orange-600 text-white px-2 sm:px-4 py-1.5 sm:py-2 rounded-md flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm"
+                className="bg-amber-600 hover:bg-amber-700 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-2 text-xs sm:text-sm font-medium shadow-sm border-0"
                 onClick={() => toast({ title: "Ranking", description: "Feature coming soon!" })}
               >
                 <Trophy size={14} className="sm:w-4 sm:h-4" />
                 <span className="hidden xs:inline">1808 pts</span>
                 <span className="xs:hidden">1808</span>
               </Button>
-              <Button onClick={handleSignOut} variant="outline" className="text-white border-white hover:bg-white hover:text-slate-800 text-xs sm:text-sm px-2 sm:px-4 py-1.5 sm:py-2">
+              <Button 
+                onClick={handleSignOut} 
+                variant="outline" 
+                className="text-slate-300 border-slate-500 hover:bg-slate-600 hover:text-white text-xs sm:text-sm px-3 sm:px-4 py-2 bg-transparent"
+              >
                 <span className="hidden sm:inline">Sign Out</span>
                 <span className="sm:hidden">Out</span>
               </Button>
@@ -247,22 +251,20 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-6 sm:py-8">
         {/* Profile Section */}
-        <div className="mb-4 sm:mb-6">
-          <Card className="bg-white shadow-sm border border-gray-200 rounded-xl relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-br-full opacity-10"></div>
-            <div className="absolute top-0 left-0 w-8 h-8 bg-blue-500 rounded-br-full"></div>
-            <CardContent className="p-4 sm:p-6 relative">
-              <div className="flex items-start space-x-3 sm:space-x-4">
-                <Avatar className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0">
+        <div className="mb-6 sm:mb-8">
+          <Card className="bg-white shadow-sm border border-slate-200/60 rounded-2xl overflow-hidden">
+            <CardContent className="p-6 sm:p-8">
+              <div className="flex items-start space-x-4 sm:space-x-5">
+                <Avatar className="h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 ring-1 ring-slate-200">
                   <AvatarImage src={profile?.avatar_url} />
-                  <AvatarFallback className="text-base sm:text-lg">
+                  <AvatarFallback className="text-lg sm:text-xl bg-slate-100 text-slate-600 font-medium">
                     {profile?.display_name?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-1 leading-tight">
+                  <h2 className="text-xl sm:text-2xl font-semibold text-slate-800 mb-2 leading-tight">
                     Seu Perfil Personalizado, {profile?.display_name?.split(' ')[0] || 'Usuário'}
                   </h2>
                 </div>
@@ -272,49 +274,41 @@ const Dashboard = () => {
         </div>
 
         {/* Profile Highlights Grid */}
-        <div className="mb-6 sm:mb-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            {profileHighlights.map((highlight, index) => {
-              const cornerColors = ['from-blue-500 to-blue-600', 'from-green-500 to-green-600', 'from-purple-500 to-purple-600', 'from-pink-500 to-pink-600'];
-              const solidCornerColors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500'];
-              return (
-                <Card key={index} className="bg-white shadow-sm border border-gray-200 rounded-xl relative overflow-hidden">
-                  <div className={`absolute top-0 left-0 w-16 h-16 bg-gradient-to-br ${cornerColors[index % cornerColors.length]} rounded-br-full opacity-10`}></div>
-                  <div className={`absolute top-0 left-0 w-8 h-8 ${solidCornerColors[index % solidCornerColors.length]} rounded-br-full`}></div>
-                  <CardContent className="p-3 sm:p-4 relative">
-                    <h3 className="font-semibold text-gray-900 mb-2 flex items-center text-sm sm:text-base">
-                      <span className="mr-2">{highlight.icon}</span>
-                      {highlight.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                      {highlight.content}
-                    </p>
-                  </CardContent>
-                </Card>
-              );
-            })}
+        <div className="mb-8 sm:mb-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+            {profileHighlights.map((highlight, index) => (
+              <Card key={index} className="bg-white shadow-sm border border-slate-200/60 rounded-xl overflow-hidden hover:shadow-md transition-all duration-200">
+                <CardContent className="p-5 sm:p-6">
+                  <h3 className="font-medium text-slate-800 mb-3 flex items-center text-sm sm:text-base">
+                    <span className="mr-3 text-lg">{highlight.icon}</span>
+                    {highlight.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    {highlight.content}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
 
         {/* Action Plan Button */}
-        <div className="mb-6 sm:mb-8">
-          <Card className="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-xl relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-br-full opacity-20"></div>
-            <div className="absolute top-0 left-0 w-8 h-8 bg-green-500 rounded-br-full"></div>
-            <CardContent className="p-4 sm:p-6 relative">
+        <div className="mb-8 sm:mb-10">
+          <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100/70 border border-emerald-200/60 rounded-xl overflow-hidden">
+            <CardContent className="p-6 sm:p-7">
               <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-green-900 mb-2 flex items-center">
-                    <span className="mr-2">📋</span>
+                <div className="flex-1 min-w-0 mr-4">
+                  <h3 className="text-base sm:text-lg font-medium text-emerald-900 mb-2 flex items-center">
+                    <span className="mr-3">📋</span>
                     Construa seu Plano de Ação
                   </h3>
-                  <p className="text-xs sm:text-sm text-green-800 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-emerald-800 leading-relaxed">
                     Responda 5 questões estratégicas e anexe documentos para personalizar sua jornada
                   </p>
                 </div>
                 <Button 
                   onClick={handleActionPlanClick}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md flex items-center space-x-2 text-sm font-medium shadow-sm"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg flex items-center space-x-2 text-sm font-medium shadow-sm border-0 flex-shrink-0"
                 >
                   <span>Começar</span>
                   <span>→</span>
@@ -325,12 +319,10 @@ const Dashboard = () => {
         </div>
 
         {/* Motivation Quote */}
-        <div className="mb-6 sm:mb-8">
-          <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-xl relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-br-full opacity-20"></div>
-            <div className="absolute top-0 left-0 w-8 h-8 bg-blue-500 rounded-br-full"></div>
-            <CardContent className="p-4 sm:p-6 relative">
-              <blockquote className="text-sm sm:text-base italic text-blue-800 font-medium leading-relaxed">
+        <div className="mb-8 sm:mb-10">
+          <Card className="bg-gradient-to-br from-slate-50 to-slate-100/70 border border-slate-200/60 rounded-xl overflow-hidden">
+            <CardContent className="p-6 sm:p-7">
+              <blockquote className="text-sm sm:text-base italic text-slate-700 font-medium leading-relaxed">
                 {dashboardData?.motivation_quote || `"${profile?.display_name?.split(' ')[0] || 'Usuário'}, sua jornada de transformação será a base para construir uma autoridade digital que impacta vidas." 💙`}
               </blockquote>
             </CardContent>
@@ -338,16 +330,14 @@ const Dashboard = () => {
         </div>
 
         {/* How to Use Guide */}
-        <div className="mb-6 sm:mb-8">
-          <Card className="bg-white shadow-sm border border-gray-200 rounded-xl relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-br-full opacity-10"></div>
-            <div className="absolute top-0 left-0 w-8 h-8 bg-blue-500 rounded-br-full"></div>
-            <CardContent className="p-4 sm:p-6 relative">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                <span className="mr-2">💡</span>
+        <div className="mb-8 sm:mb-10">
+          <Card className="bg-white shadow-sm border border-slate-200/60 rounded-xl overflow-hidden">
+            <CardContent className="p-6 sm:p-7">
+              <h3 className="text-base sm:text-lg font-medium text-slate-800 mb-4 flex items-center">
+                <span className="mr-3">💡</span>
                 Como Usar Este Guia Personalizado
               </h3>
-              <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 {dashboardData?.instructions_text || "Adicionando dados do formulário..."}
               </p>
             </CardContent>
@@ -355,21 +345,19 @@ const Dashboard = () => {
         </div>
 
         {/* Progress Overview */}
-        <div className="mb-6 sm:mb-8">
-          <Card className="bg-white shadow-sm border border-gray-200 rounded-xl relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-br-full opacity-10"></div>
-            <div className="absolute top-0 left-0 w-8 h-8 bg-blue-500 rounded-br-full"></div>
-            <CardHeader className="pb-2 sm:pb-3 relative">
-              <CardTitle className="text-base sm:text-lg">Progress Overview</CardTitle>
+        <div className="mb-8 sm:mb-10">
+          <Card className="bg-white shadow-sm border border-slate-200/60 rounded-xl overflow-hidden">
+            <CardHeader className="pb-3 sm:pb-4">
+              <CardTitle className="text-base sm:text-lg font-medium text-slate-800">Progress Overview</CardTitle>
             </CardHeader>
-            <CardContent className="relative">
-              <div className="space-y-2 sm:space-y-3">
-                <div className="flex justify-between text-xs sm:text-sm">
+            <CardContent>
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex justify-between text-xs sm:text-sm text-slate-600">
                   <span>Tasks Completed</span>
-                  <span>{completedTasks} of {totalTasks}</span>
+                  <span className="font-medium text-slate-800">{completedTasks} of {totalTasks}</span>
                 </div>
-                <Progress value={progressPercentage} className="h-1.5 sm:h-2" />
-                <p className="text-xs sm:text-sm text-gray-600">
+                <Progress value={progressPercentage} className="h-2 sm:h-2.5 bg-slate-100" />
+                <p className="text-xs sm:text-sm text-slate-600">
                   {progressPercentage.toFixed(0)}% complete
                 </p>
               </div>
@@ -379,10 +367,10 @@ const Dashboard = () => {
 
         {/* Static Week Cards */}
         <div>
-          <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6 text-center">
+          <h3 className="text-lg sm:text-xl font-medium text-slate-800 mb-6 sm:mb-8 text-center">
             Acesse seu Plano de Atividades
           </h3>
-          <div className="grid grid-cols-7 gap-2 sm:gap-3">
+          <div className="grid grid-cols-7 gap-3 sm:gap-4">
             {[1, 2, 3, 4, 5, 6, 7].map((week) => {
               const activities = getWeekActivitiesCount(week);
               const progress = getWeekProgress(week);
@@ -390,26 +378,26 @@ const Dashboard = () => {
               return (
                 <div
                   key={week}
-                  className="cursor-pointer bg-white border-2 border-blue-200 rounded-lg p-2 sm:p-3 text-center shadow-sm
+                  className="cursor-pointer bg-white border border-slate-200/60 rounded-xl p-3 sm:p-4 text-center shadow-sm
                     transition-all duration-300 ease-out
-                    hover:shadow-lg hover:scale-105 hover:border-blue-400 hover:-translate-y-1
-                    hover:bg-gradient-to-br hover:from-white hover:to-blue-50/30
+                    hover:shadow-md hover:scale-[1.02] hover:border-slate-300 hover:-translate-y-0.5
+                    hover:bg-gradient-to-br hover:from-white hover:to-slate-50/50
                     active:scale-95"
                   onClick={() => handleWeekClick(week)}
                 >
-                  <div className="text-lg sm:text-2xl font-bold text-blue-600 mb-1 sm:mb-2">
+                  <div className="text-xl sm:text-2xl font-semibold text-slate-700 mb-2 sm:mb-3">
                     S{week}
                   </div>
-                  <p className="text-xs text-gray-600 mb-1 sm:mb-2 font-medium">
+                  <p className="text-xs text-slate-500 mb-2 sm:mb-3 font-medium">
                     {activities} atividades
                   </p>
-                  <div className="w-full h-1 sm:h-1.5 bg-gray-200 rounded-full overflow-hidden mb-1 sm:mb-2">
+                  <div className="w-full h-1.5 sm:h-2 bg-slate-100 rounded-full overflow-hidden mb-2 sm:mb-3">
                     <div 
-                      className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
+                      className="h-full bg-gradient-to-r from-slate-400 to-slate-500 rounded-full transition-all duration-500"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
-                  <p className="text-xs text-gray-600 font-medium">
+                  <p className="text-xs text-slate-500 font-medium">
                     {progress.toFixed(0)}% concluído
                   </p>
                 </div>
