@@ -11,9 +11,18 @@ export interface Task {
   completed: boolean;
 }
 
+export interface CaseDetails {
+  client_request: string;
+  solution_process: string;
+  practical_result: string;
+  key_insight: string;
+}
+
 export interface ContentCard {
   title: string;
   format: string;
+  content_type?: string; // New field to identify content type
+  case_details?: CaseDetails; // New field for case study specific content
   cta_text?: string;
   examples?: {
     [key: string]: {

@@ -2,7 +2,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown, ChevronUp, Target, Lightbulb, Play, Users } from 'lucide-react';
+import { ChevronDown, ChevronUp, Target, Lightbulb, Play, Users, Briefcase, CheckCircle, TrendingUp, Eye } from 'lucide-react';
 import { ContentCard } from '@/types/weekView';
 import { getIntentionColor } from '@/utils/weekViewUtils';
 
@@ -20,10 +20,14 @@ const WeekViewContentCard = ({
   
   // Debug logging to see what data we're receiving
   console.log('WeekViewContentCard received contentCard:', contentCard);
-  console.log('contentCard.how_to_structure:', (contentCard as any).how_to_structure);
-  console.log('contentCard.video_structure:', (contentCard as any).video_structure);
-  console.log('contentCard.viral_tips:', (contentCard as any).viral_tips);
-  console.log('contentCard.engagement_benefits:', (contentCard as any).engagement_benefits);
+  console.log('Content type detected:', (contentCard as any).content_type);
+  
+  // Check if this is a case study content type
+  const isCaseStudy = (contentCard as any).content_type === 'case_study';
+  const caseDetails = isCaseStudy ? (contentCard as any).case_details : null;
+  
+  console.log('Is case study:', isCaseStudy);
+  console.log('Case details:', caseDetails);
   
   return (
     <div className="space-y-6">
@@ -36,10 +40,72 @@ const WeekViewContentCard = ({
         <Badge className="bg-blue-600 text-white text-sm px-3 py-1">
           {contentCard.format}
         </Badge>
+        {isCaseStudy && (
+          <Badge className="bg-purple-600 text-white text-sm px-3 py-1 ml-2">
+            Estudo de Caso
+          </Badge>
+        )}
       </div>
 
-      {/* Main Content Section */}
-      {contentCard.main_content && (
+      {/* Case Study Specific Content */}
+      {isCaseStudy && caseDetails && (
+        <div className="case-study-container space-y-6">
+          {/* Client Request Section */}
+          {caseDetails.client_request && (
+            <div className="section-container">
+              <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                <Briefcase className="h-5 w-5 mr-2 text-orange-600" />
+                Desafio do Cliente
+              </h4>
+              <div className="client-request-card bg-orange-50 border border-orange-200 rounded-lg p-4 border-l-4 border-l-orange-500">
+                <p className="text-orange-800 leading-relaxed">{caseDetails.client_request}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Solution Process Section */}
+          {caseDetails.solution_process && (
+            <div className="section-container">
+              <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                <span className="text-lg mr-2">⚡</span>
+                Processo de Solução
+              </h4>
+              <div className="solution-process-card bg-blue-50 border border-blue-200 rounded-lg p-4 border-l-4 border-l-blue-500">
+                <p className="text-blue-800 leading-relaxed">{caseDetails.solution_process}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Practical Result Section */}
+          {caseDetails.practical_result && (
+            <div className="section-container">
+              <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                <CheckCircle className="h-5 w-5 mr-2 text-green-600" />
+                Resultado Prático
+              </h4>
+              <div className="practical-result-card bg-green-50 border border-green-200 rounded-lg p-4 border-l-4 border-l-green-500">
+                <p className="text-green-800 leading-relaxed font-medium">{caseDetails.practical_result}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Key Insight Section */}
+          {caseDetails.key_insight && (
+            <div className="section-container">
+              <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                <Eye className="h-5 w-5 mr-2 text-purple-600" />
+                Lição Aplicável
+              </h4>
+              <div className="key-insight-card bg-purple-50 border border-purple-200 rounded-lg p-4 border-l-4 border-l-purple-500">
+                <p className="text-purple-800 leading-relaxed font-medium">{caseDetails.key_insight}</p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Standard Content Sections - Only show if NOT case study OR if case study has these fields */}
+      {(!isCaseStudy || contentCard.main_content) && contentCard.main_content && (
         <div>
           <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
             <Lightbulb className="h-5 w-5 mr-2 text-yellow-600" />
@@ -73,7 +139,7 @@ const WeekViewContentCard = ({
         </div>
       )}
 
-      {/* Video Structure Section - Updated for 5 elements */}
+      {/* Video Structure Section */}
       {(contentCard as any).video_structure && (
         <div className="section-container">
           <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
@@ -159,7 +225,7 @@ const WeekViewContentCard = ({
         </Collapsible>
       )}
 
-      {/* Psychological Triggers Section - NEW */}
+      {/* Psychological Triggers Section */}
       {(contentCard as any).psychological_triggers && Array.isArray((contentCard as any).psychological_triggers) && (contentCard as any).psychological_triggers.length > 0 && (
         <div className="section-container">
           <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
