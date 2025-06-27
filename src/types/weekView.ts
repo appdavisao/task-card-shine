@@ -9,6 +9,9 @@ export interface Task {
   platform?: string;
   type?: string;
   completed: boolean;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CaseDetails {
@@ -67,4 +70,6 @@ export interface DailyContent {
   content_type: string;
   title: string;
   content_card?: ContentCard;
+  created_at?: string;
+  updated_at?: string;
 }
