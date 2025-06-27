@@ -1,4 +1,3 @@
-
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -47,60 +46,36 @@ const WeekViewContentCard = ({
         )}
       </div>
 
-      {/* Case Study Specific Content */}
+      {/* Enhanced Case Study Specific Content */}
       {isCaseStudy && caseDetails && (
-        <div className="case-study-container space-y-6">
-          {/* Client Request Section */}
-          {caseDetails.client_request && (
-            <div className="section-container">
-              <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                <Briefcase className="h-5 w-5 mr-2 text-orange-600" />
-                Desafio do Cliente
-              </h4>
-              <div className="client-request-card bg-orange-50 border border-orange-200 rounded-lg p-4 border-l-4 border-l-orange-500">
-                <p className="text-orange-800 leading-relaxed">{caseDetails.client_request}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Solution Process Section */}
-          {caseDetails.solution_process && (
-            <div className="section-container">
-              <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                <span className="text-lg mr-2">⚡</span>
-                Processo de Solução
-              </h4>
-              <div className="solution-process-card bg-blue-50 border border-blue-200 rounded-lg p-4 border-l-4 border-l-blue-500">
-                <p className="text-blue-800 leading-relaxed">{caseDetails.solution_process}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Practical Result Section */}
-          {caseDetails.practical_result && (
-            <div className="section-container">
-              <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                <CheckCircle className="h-5 w-5 mr-2 text-green-600" />
-                Resultado Prático
-              </h4>
-              <div className="practical-result-card bg-green-50 border border-green-200 rounded-lg p-4 border-l-4 border-l-green-500">
-                <p className="text-green-800 leading-relaxed font-medium">{caseDetails.practical_result}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Key Insight Section */}
-          {caseDetails.key_insight && (
-            <div className="section-container">
-              <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                <Eye className="h-5 w-5 mr-2 text-purple-600" />
-                Lição Aplicável
-              </h4>
-              <div className="key-insight-card bg-purple-50 border border-purple-200 rounded-lg p-4 border-l-4 border-l-purple-500">
-                <p className="text-purple-800 leading-relaxed font-medium">{caseDetails.key_insight}</p>
-              </div>
-            </div>
-          )}
+        <div className="case-study-container space-y-4">
+          <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-l-blue-500">
+            <h4 className="text-blue-700 font-semibold text-lg mb-2 flex items-center">
+              🎯 Desafio do Cliente
+            </h4>
+            <p className="text-blue-800 leading-relaxed">{caseDetails.client_request}</p>
+          </div>
+          
+          <div className="bg-green-50 p-4 rounded-lg border-l-4 border-l-green-500">
+            <h4 className="text-green-700 font-semibold text-lg mb-2 flex items-center">
+              ⚙️ Processo de Solução
+            </h4>
+            <p className="text-green-800 leading-relaxed">{caseDetails.solution_process}</p>
+          </div>
+          
+          <div className="bg-yellow-50 p-4 rounded-lg border-l-4 border-l-yellow-500">
+            <h4 className="text-yellow-700 font-semibold text-lg mb-2 flex items-center">
+              📈 Resultado Prático
+            </h4>
+            <p className="text-yellow-800 leading-relaxed font-medium">{caseDetails.practical_result}</p>
+          </div>
+          
+          <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-l-purple-500">
+            <h4 className="text-purple-700 font-semibold text-lg mb-2 flex items-center">
+              💡 Insight Chave
+            </h4>
+            <p className="text-purple-800 leading-relaxed font-medium">{caseDetails.key_insight}</p>
+          </div>
         </div>
       )}
 
@@ -292,15 +267,34 @@ const WeekViewContentCard = ({
         </div>
       )}
 
-      {/* Practical Steps Section */}
+      {/* NEW: Practical Steps Section */}
       {contentCard.practical_steps && Array.isArray(contentCard.practical_steps) && contentCard.practical_steps.length > 0 && (
-        <div>
-          <h4 className="text-lg font-semibold text-gray-900 mb-3">Passos Práticos</h4>
+        <div className="bg-green-50 p-4 rounded-lg border-l-4 border-l-green-500">
+          <h4 className="text-green-700 font-semibold text-lg mb-3 flex items-center">
+            📋 Passos Práticos
+          </h4>
           <ol className="list-decimal list-inside space-y-2">
             {contentCard.practical_steps.map((step, index) => (
-              <li key={index} className="text-gray-700 text-sm">{step}</li>
+              <li key={index} className="text-green-800 text-sm leading-relaxed">{step}</li>
             ))}
           </ol>
+        </div>
+      )}
+
+      {/* NEW: Content Variations Section */}
+      {(contentCard as any).content_variations && Array.isArray((contentCard as any).content_variations) && (contentCard as any).content_variations.length > 0 && (
+        <div className="space-y-2">
+          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+            🎭 Variações do Formato
+          </h4>
+          <div className="space-y-3">
+            {(contentCard as any).content_variations.map((variation: string, index: number) => (
+              <div key={index} className="flex items-start space-x-3 p-3 bg-indigo-50 rounded-lg border-l-4 border-l-indigo-500">
+                <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></span>
+                <span className="text-indigo-800 text-sm leading-relaxed">{variation}</span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
