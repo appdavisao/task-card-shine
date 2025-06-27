@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -118,7 +117,7 @@ const WeekView = () => {
           day: data.day,
           content_type: data.content_type,
           title: data.title,
-          content_card: data.content_card as ContentCard
+          content_card: data.content_card ? (data.content_card as unknown as ContentCard) : undefined
         };
         setDailyContent(dailyContent);
       }

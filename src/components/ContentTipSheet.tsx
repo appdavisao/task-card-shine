@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -80,7 +79,7 @@ const ContentTipSheet = ({ isOpen, onClose, day }: ContentTipSheetProps) => {
           day: data.day,
           content_type: data.content_type,
           title: data.title,
-          content_card: data.content_card as ContentCard
+          content_card: data.content_card ? (data.content_card as unknown as ContentCard) : undefined
         };
         setContent(dailyContent);
       }
