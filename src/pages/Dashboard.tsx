@@ -161,14 +161,6 @@ const Dashboard = () => {
     navigate(`/week/${week}`);
   };
 
-  // Prepare week data for the carousel
-  const weekCards = [1, 2, 3, 4, 5, 6, 7].map((week) => ({
-    week,
-    activities: getWeekActivitiesCount(week),
-    progress: getWeekProgress(week),
-    onWeekClick: handleWeekClick,
-  }));
-
   // Default profile highlights when no data exists
   const defaultProfileHighlights = [
     {
@@ -353,9 +345,45 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Weeks Section with Infinite Scroll Carousel */}
+        {/* Static Week Cards */}
         <div>
-          <Case weeks={weekCards} />
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6 text-center">
+            Acesse seu Plano de Atividades
+          </h3>
+          <div className="grid grid-cols-7 gap-2 sm:gap-3">
+            {[1, 2, 3, 4, 5, 6, 7].map((week) => {
+              const activities = getWeekActivitiesCount(week);
+              const progress = getWeekProgress(week);
+              
+              return (
+                <div
+                  key={week}
+                  className="cursor-pointer bg-white border-2 border-blue-200 rounded-lg p-2 sm:p-3 text-center shadow-sm
+                    transition-all duration-300 ease-out
+                    hover:shadow-lg hover:scale-105 hover:border-blue-400 hover:-translate-y-1
+                    hover:bg-gradient-to-br hover:from-white hover:to-blue-50/30
+                    active:scale-95"
+                  onClick={() => handleWeekClick(week)}
+                >
+                  <div className="text-lg sm:text-2xl font-bold text-blue-600 mb-1 sm:mb-2">
+                    S{week}
+                  </div>
+                  <p className="text-xs text-gray-600 mb-1 sm:mb-2 font-medium">
+                    {activities} atividades
+                  </p>
+                  <div className="w-full h-1 sm:h-1.5 bg-gray-200 rounded-full overflow-hidden mb-1 sm:mb-2">
+                    <div 
+                      className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-600 font-medium">
+                    {progress.toFixed(0)}% concluído
+                  </p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
