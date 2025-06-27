@@ -23,8 +23,36 @@ const WeekView = () => {
   const [dailyContent, setDailyContent] = useState<DailyContent | null>(null);
   const [contentLoading, setContentLoading] = useState(false);
   const [expandedExamples, setExpandedExamples] = useState(false);
+  const [dailyContentList, setDailyContentList] = useState<DailyContent[]>([]);
 
   const { tasks, loading, fetchDailyContent } = useWeekViewData(weekNumber || '1');
+
+  // Fetch all daily content for the week
+  useEffect(() => {
+    const fetchAllDailyContent = async () => {
+      if (!user) return;
+      
+      const week = parseInt(weekNumber || '1');
+      const weekDays = Array.from({ length: 7 }, (_, i) => (week - 1) * 7 + i + 1);
+      
+      const contentPromises = weekDays.map(async (day) => {
+        try {
+          const content = await fetchDailyContent(day);
+          return content;
+        } catch (error) {
+          console.error(`Error fetching content for day ${day}:`, error);
+          return null;
+        }
+      });
+
+      const contents = await Promise.all(contentPromises);
+      setDailyContentList(contents.filter(content => content !== null) as DailyContent[]);
+    };
+
+    if (user) {
+      fetchAllDailyContent();
+    }
+  }, [user, weekNumber, fetchDailyContent]);
 
   const handleDaySelect = async (day: number) => {
     // Don't allow selection of locked days
@@ -103,10 +131,10 @@ const WeekView = () => {
           <Card className="bg-white/80 backdrop-blur-sm shadow-sm border border-slate-200/60 rounded-xl overflow-hidden">
             <CardContent className="p-6 sm:p-8">
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
-                Semana {weekNumber} - Escrita de Livro
+                Semana {weekNumber} - Modelos de Conteúdo
               </h1>
               <p className="text-gray-600 text-sm sm:text-base font-medium">
-                Clique em um dia para ver os detalhes da atividade de escrita.
+                Clique em um dia para ver os detalhes do modelo de conteúdo.
               </p>
             </CardContent>
           </Card>
@@ -117,14 +145,27 @@ const WeekView = () => {
           <div className="w-full lg:w-80 order-2 lg:order-1">
             <div className="space-y-3">
               {weekDays.map((day) => {
-                const task = tasks.find(t => t.day === day);
+                // Use daily content instead of tasks for the card display
+                const dayContent = dailyContentList.find(content => content.day === day);
                 const isSelected = selectedDay === day;
+                
+                // Create a fake task object using daily content data
+                const displayTask = dayContent ? {
+                  id: dayContent.id,
+                  day: dayContent.day,
+                  title: dayContent.title,
+                  description: dayContent.content_card?.format || 'Modelo de Conteúdo',
+                  completed: false,
+                  user_id: user.id,
+                  created_at: dayContent.created_at || new Date().toISOString(),
+                  updated_at: dayContent.updated_at || new Date().toISOString()
+                } : undefined;
                 
                 return (
                   <WeekViewDayCard
                     key={day}
                     day={day}
-                    task={task}
+                    task={displayTask}
                     isSelected={isSelected}
                     onSelect={handleDaySelect}
                   />
@@ -135,9 +176,19 @@ const WeekView = () => {
 
           {/* Right Content - Task Details */}
           <div className="flex-1 order-1 lg:order-2 space-y-4">
-            {selectedTask ? (
+            {selectedDay && dailyContent ? (
               <>
-                <WeekViewTaskDetails task={selectedTask} />
+                {/* Create a task object from daily content for display */}
+                <WeekViewTaskDetails task={{
+                  id: dailyContent.id,
+                  day: dailyContent.day,
+                  title: dailyContent.title,
+                  description: dailyContent.content_card?.format || 'Modelo de Conteúdo',
+                  completed: false,
+                  user_id: user.id,
+                  created_at: dailyContent.created_at || new Date().toISOString(),
+                  updated_at: dailyContent.updated_at || new Date().toISOString()
+                }} />
                 
                 {/* Social Media Content Tip - Only show for days 1-7 */}
                 {selectedDay && selectedDay <= 7 && (
@@ -159,7 +210,7 @@ const WeekView = () => {
                     <Lightbulb className="h-12 w-12 sm:h-16 sm:w-16 mx-auto opacity-50" />
                   </div>
                   <p className="text-gray-600 text-base sm:text-lg font-medium">
-                    Selecione um dia para ver os detalhes da atividade de escrita
+                    Selecione um dia para ver os detalhes do modelo de conteúdo
                   </p>
                 </CardContent>
               </Card>
