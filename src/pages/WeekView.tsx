@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -111,7 +112,15 @@ const WeekView = () => {
         console.error('Error fetching daily content:', fetchError);
         setDailyContent(null);
       } else {
-        setDailyContent(data as DailyContent);
+        // Convert the data properly with type assertion for content_card
+        const dailyContent: DailyContent = {
+          id: data.id,
+          day: data.day,
+          content_type: data.content_type,
+          title: data.title,
+          content_card: data.content_card as ContentCard
+        };
+        setDailyContent(dailyContent);
       }
     } catch (error) {
       console.error('Error:', error);

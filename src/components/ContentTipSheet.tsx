@@ -74,7 +74,15 @@ const ContentTipSheet = ({ isOpen, onClose, day }: ContentTipSheetProps) => {
         console.error('Error fetching daily content:', fetchError);
         setError('Nenhum conteúdo detalhado encontrado para este dia.');
       } else {
-        setContent(data as DailyContent);
+        // Convert the data properly with type assertion for content_card
+        const dailyContent: DailyContent = {
+          id: data.id,
+          day: data.day,
+          content_type: data.content_type,
+          title: data.title,
+          content_card: data.content_card as ContentCard
+        };
+        setContent(dailyContent);
       }
     } catch (error) {
       console.error('Error:', error);
