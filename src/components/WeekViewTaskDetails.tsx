@@ -2,7 +2,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Task } from '@/types/weekView';
-import { getPlatformColor, getDifficultyColor } from '@/utils/weekViewUtils';
 
 interface WeekViewTaskDetailsProps {
   task: Task;
@@ -17,20 +16,14 @@ const WeekViewTaskDetails = ({ task }: WeekViewTaskDetailsProps) => {
             {task.title} - Dia {task.day}
           </CardTitle>
           <div className="flex gap-2 flex-wrap">
-            {task.platform && (
-              <Badge 
-                className={`text-white transition-colors shadow-sm ${getPlatformColor(task.platform)}`}
-              >
-                {task.platform}
+            {task.completed && (
+              <Badge className="bg-green-500 text-white transition-colors shadow-sm">
+                Concluído
               </Badge>
             )}
-            {task.difficulty && (
-              <Badge 
-                className={`text-white transition-colors shadow-sm ${getDifficultyColor(task.difficulty)}`}
-              >
-                {task.difficulty}
-              </Badge>
-            )}
+            <Badge className="bg-blue-500 text-white transition-colors shadow-sm">
+              Escrita de Livro
+            </Badge>
           </div>
         </div>
       </CardHeader>
@@ -38,18 +31,13 @@ const WeekViewTaskDetails = ({ task }: WeekViewTaskDetailsProps) => {
         <p className="mb-4 text-sm sm:text-lg leading-relaxed font-medium">
           {task.description}
         </p>
-        <div className="flex items-center gap-4 text-xs sm:text-sm">
-          {task.time && (
-            <span className="flex items-center bg-gray-100 px-2 py-1 rounded-md">
-              ⏱️ {task.time}
-            </span>
-          )}
-          {task.completed && (
+        {task.completed && (
+          <div className="flex items-center gap-4 text-xs sm:text-sm">
             <span className="text-green-600 bg-green-100 px-2 py-1 rounded-md font-medium">
               ✅ Concluído
             </span>
-          )}
-        </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

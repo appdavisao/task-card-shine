@@ -1,26 +1,42 @@
 
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Lightbulb } from 'lucide-react';
 import { Task } from '@/types/weekView';
-import { getPlatformColor } from '@/utils/weekViewUtils';
 
 interface WeekViewDayCardProps {
   day: number;
   task: Task | undefined;
   isSelected: boolean;
   onSelect: (day: number) => void;
-  onContentTip: (day: number) => void;
 }
 
 const WeekViewDayCard = ({ 
   day, 
   task, 
   isSelected, 
-  onSelect, 
-  onContentTip 
+  onSelect
 }: WeekViewDayCardProps) => {
+  // Show locked message for days beyond 20
+  if (day > 20) {
+    return (
+      <Card className="cursor-not-allowed opacity-60 bg-gray-100 border-gray-300">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-bold text-sm sm:text-base text-gray-600">
+              Dia {day}
+            </span>
+            <Badge className="bg-gray-400 text-white text-xs">
+              Bloqueado
+            </Badge>
+          </div>
+          <div className="text-xs sm:text-sm text-gray-500 italic">
+            Desbloqueie ao chegar no dia 20
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card 
       className={`cursor-pointer transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg border-2 relative group ${
@@ -37,14 +53,14 @@ const WeekViewDayCard = ({
           }`}>
             Dia {day}
           </span>
-          {task?.platform && (
-            <Badge className={`text-xs text-white transition-colors ${getPlatformColor(task.platform)}`}>
-              {task.platform}
+          {task?.completed && (
+            <Badge className="bg-green-500 text-white text-xs">
+              Concluído
             </Badge>
           )}
         </div>
         {task ? (
-          <div className={`text-xs sm:text-sm mb-3 font-medium ${
+          <div className={`text-xs sm:text-sm mb-3 font-medium line-clamp-3 ${
             isSelected ? 'text-blue-600' : 'text-gray-700'
           }`}>
             {task.title}
@@ -54,22 +70,6 @@ const WeekViewDayCard = ({
             Nenhuma atividade disponível
           </div>
         )}
-        
-        <div className="flex justify-end">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={(e) => {
-              e.stopPropagation();
-              onContentTip(day);
-            }}
-            className="text-xs bg-gray-50 border-gray-300 text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-colors shadow-sm"
-          >
-            <Lightbulb className="h-3 w-3 mr-1" />
-            <span className="hidden sm:inline">Dica de Conteúdo</span>
-            <span className="sm:hidden">Dica</span>
-          </Button>
-        </div>
       </CardContent>
     </Card>
   );

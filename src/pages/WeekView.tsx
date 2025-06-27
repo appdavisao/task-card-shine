@@ -1,13 +1,13 @@
+
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Lightbulb, Calendar, FileText, Trophy, LogOut } from 'lucide-react';
-import { Task, DailyContent } from '@/types/weekView';
+import { Task } from '@/types/weekView';
 import { useWeekViewData } from '@/hooks/useWeekViewData';
 import WeekViewDayCard from '@/components/WeekViewDayCard';
 import WeekViewTaskDetails from '@/components/WeekViewTaskDetails';
-import WeekViewContentTip from '@/components/WeekViewContentTip';
 import { NavBar } from '@/components/ui/tubelight-navbar';
 import { toast } from '@/components/ui/use-toast';
 import { AnimatedGridPattern } from '@/components/ui/animated-grid-pattern';
@@ -18,40 +18,13 @@ const WeekView = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  const [contentTipOpen, setContentTipOpen] = useState(false);
-  const [dailyContent, setDailyContent] = useState<DailyContent | null>(null);
-  const [contentLoading, setContentLoading] = useState(false);
-  const [expandedExamples, setExpandedExamples] = useState(false);
 
-  const { tasks, loading, fetchDailyContent } = useWeekViewData(weekNumber || '1');
+  const { tasks, loading } = useWeekViewData(weekNumber || '1');
 
   const handleDaySelect = async (day: number) => {
+    // Don't allow selection of locked days
+    if (day > 20) return;
     setSelectedDay(day);
-    // Always fetch content when a day is selected
-    setContentLoading(true);
-    const content = await fetchDailyContent(day);
-    setDailyContent(content);
-    setContentLoading(false);
-  };
-
-  const handleContentTipToggle = async (open: boolean) => {
-    setContentTipOpen(open);
-    if (open && selectedDay && !dailyContent) {
-      setContentLoading(true);
-      const content = await fetchDailyContent(selectedDay);
-      setDailyContent(content);
-      setContentLoading(false);
-    }
-  };
-
-  const handleContentTip = async (day: number) => {
-    // Select the day and show content inline
-    setSelectedDay(day);
-    setContentLoading(true);
-    const content = await fetchDailyContent(day);
-    setDailyContent(content);
-    setContentLoading(false);
-    setContentTipOpen(true);
   };
 
   const handleSignOut = async () => {
@@ -107,10 +80,10 @@ const WeekView = () => {
           <Card className="bg-white/80 backdrop-blur-sm shadow-sm border border-slate-200/60 rounded-xl overflow-hidden">
             <CardContent className="p-6 sm:p-8">
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
-                Semana {weekNumber}
+                Semana {weekNumber} - Escrita de Livro
               </h1>
               <p className="text-gray-600 text-sm sm:text-base font-medium">
-                Passe o mouse sobre uma carta para ver o resumo. Clique para ver a atividade completa.
+                Clique em um dia para ver os detalhes da atividade de escrita.
               </p>
             </CardContent>
           </Card>
@@ -131,7 +104,6 @@ const WeekView = () => {
                     task={task}
                     isSelected={isSelected}
                     onSelect={handleDaySelect}
-                    onContentTip={handleContentTip}
                   />
                 );
               })}
@@ -141,18 +113,7 @@ const WeekView = () => {
           {/* Right Content - Task Details */}
           <div className="flex-1 order-1 lg:order-2 space-y-4">
             {selectedTask ? (
-              <>
-                <WeekViewTaskDetails task={selectedTask} />
-                <WeekViewContentTip
-                  contentTipOpen={contentTipOpen}
-                  onContentTipToggle={handleContentTipToggle}
-                  selectedDay={selectedTask.day}
-                  dailyContent={dailyContent}
-                  contentLoading={contentLoading}
-                  expandedExamples={expandedExamples}
-                  onExpandExamples={setExpandedExamples}
-                />
-              </>
+              <WeekViewTaskDetails task={selectedTask} />
             ) : (
               <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-sm border border-slate-200/60 rounded-xl overflow-hidden">
                 <CardContent className="p-8 sm:p-12 text-center">
@@ -160,7 +121,7 @@ const WeekView = () => {
                     <Lightbulb className="h-12 w-12 sm:h-16 sm:w-16 mx-auto opacity-50" />
                   </div>
                   <p className="text-gray-600 text-base sm:text-lg font-medium">
-                    Selecione um dia para ver os detalhes da atividade
+                    Selecione um dia para ver os detalhes da atividade de escrita
                   </p>
                 </CardContent>
               </Card>
