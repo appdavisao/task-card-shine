@@ -1,4 +1,3 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.1'
@@ -25,6 +24,7 @@ interface ChatRequest {
     day?: number;
     content_card?: any;
   };
+  is_initial_message?: boolean;
 }
 
 serve(async (req) => {
@@ -34,9 +34,9 @@ serve(async (req) => {
   }
 
   try {
-    const { user_id, message, thread_id, context }: ChatRequest = await req.json();
+    const { user_id, message, thread_id, context, is_initial_message }: ChatRequest = await req.json();
     
-    console.log('Chatbot request:', { user_id, message, thread_id, context });
+    console.log('Chatbot request:', { user_id, message, thread_id, context, is_initial_message });
 
     // Get user variables
     const userVariables = await getUserVariables(user_id);
@@ -44,22 +44,27 @@ serve(async (req) => {
     // Create or use existing thread
     const currentThreadId = thread_id || await createThread();
     
-    // Build context message with user data and current content
-    const contextMessage = buildContextMessage(userVariables, context);
+    // Build comprehensive context message
+    const contextMessage = buildEnhancedContextMessage(userVariables, context);
     
-    // Add context message to thread (only if it's a new thread or context changed)
-    if (!thread_id) {
+    // For initial message, send the comprehensive context first
+    if (is_initial_message) {
+      await addMessageToThread(currentThreadId, contextMessage, 'user');
+    } else if (!thread_id) {
+      // For new threads (not initial), still add context
       await addMessageToThread(currentThreadId, contextMessage, 'user');
     }
     
-    // Add user message to thread
-    await addMessageToThread(currentThreadId, message, 'user');
+    // Add user message to thread (if not initial context setup)
+    if (!is_initial_message) {
+      await addMessageToThread(currentThreadId, message, 'user');
+    }
     
     // Run assistant
     const response = await runAssistant(currentThreadId);
     
     // Save conversation to database
-    await saveConversation(user_id, message, response, currentThreadId, context);
+    await saveConversation(user_id, is_initial_message ? 'Contexto inicial' : message, response, currentThreadId, context);
     
     return new Response(JSON.stringify({
       message: response,
@@ -97,34 +102,104 @@ async function getUserVariables(user_id: string) {
   };
 }
 
-function buildContextMessage(userVariables: any, context: any) {
+function buildEnhancedContextMessage(userVariables: any, context: any) {
   const { profile, dashboard } = userVariables;
   
-  let contextMessage = `INFORMAÇÕES DO USUÁRIO:
+  // Helper function to safely access nested properties
+  const safeGet = (obj: any, path: string, defaultValue: any = 'Não informado') => {
+    const keys = path.split('.');
+    let current = obj;
+    for (const key of keys) {
+      if (current && typeof current === 'object' && key in current) {
+        current = current[key];
+      } else {
+        return defaultValue;
+      }
+    }
+    return current || defaultValue;
+  };
+
+  let contextMessage = `Oi, eu sou o ${profile.display_name || 'usuário'}, preciso de ajuda com a criação desse conteúdo:
+
+📊 ESTRATÉGIA DE CONTEÚDO - DIA ${context?.day || 'ATUAL'}`;
+
+  // Add content card information if available
+  if (context?.content_card) {
+    const card = context.content_card;
+    contextMessage += `
+
+🎯 CONTENT CARD ATUAL:
+${JSON.stringify(card, null, 2)}`;
+  }
+
+  contextMessage += `
+
+🎯 PERFIL ESTRATÉGICO COMPLETO:
+
+👤 IDENTIDADE:
 - Nome: ${profile.display_name || 'Não informado'}
 - Título: ${profile.title || 'Não informado'}
-- Nicho: ${profile.archetype || 'Não informado'}
-- Foco: ${profile.focus || 'Não informado'}`;
+- Subtitle: ${profile.subtitle || 'Não informado'}
+- Arquétipo: ${profile.archetype || 'Não informado'}
+- Segmento: ${safeGet(dashboard, 'key_data.segment')}
+- Foco: ${profile.focus || 'Não informado'}
 
-  if (dashboard.profile_highlights && dashboard.profile_highlights.length > 0) {
-    contextMessage += `\n- Objetivos: ${dashboard.profile_highlights[0]?.content || 'Não definido'}`;
+💼 BACKGROUND PROFISSIONAL:
+- Experiência: ${safeGet(dashboard, 'key_data.experience')}
+- Trabalho Atual: ${safeGet(dashboard, 'key_data.current_work')}
+- Conquistas: ${safeGet(dashboard, 'key_data.major_achievements')}
+- Ponto de Virada: ${safeGet(dashboard, 'key_data.turning_point')}
+- Legado Desejado: ${safeGet(dashboard, 'key_data.legacy')}
+
+📊 ESTRATÉGIA DE PLATAFORMAS:
+- Prioritária: ${safeGet(dashboard, 'platform_strategy.priority')}
+- Instagram: ${safeGet(dashboard, 'platform_strategy.instagram', 0)}%
+- LinkedIn: ${safeGet(dashboard, 'platform_strategy.linkedin', 0)}%
+- YouTube: ${safeGet(dashboard, 'platform_strategy.youtube', 0)}%
+
+🎯 ESTRATÉGIA PERSONALIZADA:
+${dashboard.strategy_text || 'Não definida'}
+
+📋 CONTEXTO ATUAL:
+${dashboard.context_text || 'Não definido'}`;
+
+  // Add profile highlights if available
+  if (dashboard.profile_highlights && Array.isArray(dashboard.profile_highlights)) {
+    contextMessage += `\n\n🏆 DESTAQUES DO PERFIL:`;
+    dashboard.profile_highlights.forEach((highlight: any) => {
+      contextMessage += `\n${highlight.icon || '•'} ${highlight.title || 'Item'}: ${highlight.content || 'Não especificado'}`;
+    });
   }
 
-  if (context?.day && context?.content_card) {
-    contextMessage += `\n\nCONTEÚDO ATUAL EM ANÁLISE (Dia ${context.day}):
-- Título: ${context.content_card.title || 'Não informado'}
-- Formato: ${context.content_card.format || 'Não informado'}`;
-    
-    if (context.content_card.examples) {
-      contextMessage += `\n- Exemplos disponíveis: ${Object.keys(context.content_card.examples).join(', ')}`;
-    }
-    
-    if (context.content_card.viral_tips) {
-      contextMessage += `\n- Dicas virais: ${context.content_card.viral_tips.length} disponíveis`;
-    }
+  // Add authority scores
+  if (dashboard.scores) {
+    contextMessage += `\n\n📈 SCORES DE AUTORIDADE:
+- Digital: ${dashboard.scores.digital || 0}/10
+- Speaking: ${dashboard.scores.speaking || 0}/10  
+- Mentoring: ${dashboard.scores.mentoring || 0}/10
+- Book: ${dashboard.scores.book || 0}/10`;
   }
 
-  contextMessage += `\n\nVocê é um assistente especializado em criação de conteúdo. Responda sempre em português brasileiro, de forma clara e prática, focando em sugestões específicas baseadas no perfil do usuário.`;
+  // Add motivational quote
+  if (dashboard.motivation_quote) {
+    contextMessage += `\n\n💡 QUOTE MOTIVACIONAL:
+"${dashboard.motivation_quote}"`;
+  }
+
+  contextMessage += `
+
+---
+CONTEXTO DA SESSÃO:
+- Página Atual: ${context?.page || 'Não especificada'}
+- Dia do Conteúdo: ${context?.day || 'N/A'}
+- Template Ativo: ${context?.content_card?.roteiro_number ? `Roteiro #${context.content_card.roteiro_number}` : 'N/A'}
+
+🎯 MISSÃO: Use TODOS esses dados para dar conselhos ultra-específicos de copywriting para ${profile.display_name || 'o usuário'} no segmento ${safeGet(dashboard, 'key_data.segment')}.
+
+E tudo o que posso te dizer sobre mim é:
+"${JSON.stringify({ profile, dashboard }, null, 2)}"
+
+Como você consegue me ajudar?`;
 
   return contextMessage;
 }

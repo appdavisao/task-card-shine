@@ -33,6 +33,7 @@ const ContentChatbot = ({ context }: ContentChatbotProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [threadId, setThreadId] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [initialMessageSent, setInitialMessageSent] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -44,16 +45,63 @@ const ContentChatbot = ({ context }: ContentChatbotProps) => {
   }, [messages]);
 
   useEffect(() => {
-    if (isOpen && messages.length === 0) {
-      // Add welcome message
+    if (isOpen && !initialMessageSent && user) {
+      // Send initial comprehensive context message
+      handleInitialMessage();
+    }
+  }, [isOpen, initialMessageSent, user]);
+
+  const handleInitialMessage = async () => {
+    if (!user) return;
+
+    setIsLoading(true);
+    setInitialMessageSent(true);
+
+    // Add a loading message to show the user something is happening
+    const loadingMessage: Message = {
+      id: 'loading',
+      content: 'Carregando seu perfil estratégico completo...',
+      role: 'assistant',
+      timestamp: new Date()
+    };
+    setMessages([loadingMessage]);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('content-chatbot', {
+        body: {
+          user_id: user.id,
+          message: 'Contexto inicial',
+          context,
+          is_initial_message: true
+        }
+      });
+
+      if (error) throw error;
+
+      // Remove loading message and add the actual response
+      const assistantMessage: Message = {
+        id: Date.now().toString(),
+        content: data.message,
+        role: 'assistant',
+        timestamp: new Date()
+      };
+
+      setMessages([assistantMessage]);
+      setThreadId(data.thread_id);
+      setSuggestions(data.suggestions || []);
+
+    } catch (error) {
+      console.error('Initial chat error:', error);
       setMessages([{
-        id: '1',
-        content: 'Olá! Sou seu assistente de conteúdo personalizado. Como posso ajudar você hoje?',
+        id: 'error',
+        content: 'Erro ao carregar o assistente. Tente novamente mais tarde.',
         role: 'assistant',
         timestamp: new Date()
       }]);
+    } finally {
+      setIsLoading(false);
     }
-  }, [isOpen]);
+  };
 
   const sendMessage = async (messageText?: string) => {
     const message = messageText || inputMessage.trim();
@@ -76,7 +124,8 @@ const ContentChatbot = ({ context }: ContentChatbotProps) => {
           user_id: user.id,
           message,
           thread_id: threadId,
-          context
+          context,
+          is_initial_message: false
         }
       });
 
@@ -183,7 +232,7 @@ const ContentChatbot = ({ context }: ContentChatbotProps) => {
                   <div className={`flex-1 max-w-xs ${
                     message.role === 'user' ? 'text-right' : 'text-left'
                   }`}>
-                    <div className={`inline-block p-3 rounded-2xl text-sm ${
+                    <div className={`inline-block p-3 rounded-2xl text-sm whitespace-pre-wrap ${
                       message.role === 'user'
                         ? 'bg-blue-600 text-white rounded-br-md'
                         : 'bg-gray-100 text-gray-800 rounded-bl-md'
