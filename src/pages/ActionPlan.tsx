@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -182,10 +183,27 @@ const ActionPlan = () => {
     setUploading(prev => ({ ...prev, [questionNumber]: true }));
 
     try {
-      // Generate unique filename
+      // Fetch user profile to get the username
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('student_name, display_name')
+        .eq('user_id', user.id)
+        .single();
+
+      if (profileError) {
+        console.log('Profile not found, using email as fallback');
+      }
+
+      // Determine username to use (priority: student_name > display_name > email)
+      const username = profile?.student_name || profile?.display_name || user.email?.split('@')[0] || 'user';
+      
+      // Clean username for filename (remove special characters)
+      const cleanUsername = username.replace(/[^a-zA-Z0-9]/g, '_');
+
+      // Generate unique filename with username
       const timestamp = Date.now();
-      const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const fileName = `${user.id}/${questionNumber}/${timestamp}_${sanitizedName}`;
+      const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const fileName = `${user.id}/${questionNumber}/${cleanUsername}_Q${questionNumber}_${timestamp}_${sanitizedFileName}`;
 
       // Upload to Supabase storage
       const { data: uploadData, error: uploadError } = await supabase.storage
