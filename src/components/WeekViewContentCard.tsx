@@ -91,93 +91,6 @@ const WeekViewContentCard = ({
         </div>
       )}
 
-      {/* NEW: Tipos de Pedidos Interessantes Section */}
-      {(contentCard as any).tipos_pedidos_interessantes && Array.isArray((contentCard as any).tipos_pedidos_interessantes) && (contentCard as any).tipos_pedidos_interessantes.length > 0 && (
-        <div className="section-container">
-          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <span className="text-lg mr-2">🎯</span>
-            Tipos de Pedidos Interessantes
-          </h4>
-          <div className="pedidos-container bg-blue-50 border border-blue-200 rounded-lg p-4">
-            {(contentCard as any).tipos_pedidos_interessantes.map((pedido: string, index: number) => (
-              <div key={index} className="pedido-item flex items-start mb-3 last:mb-0 p-3 bg-white rounded-lg border-l-4 border-l-blue-500">
-                <span className="pedido-icon text-lg mr-3 flex-shrink-0">💼</span>
-                <span className="pedido-text text-blue-800 text-sm leading-relaxed font-medium">{pedido}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* NEW: Elementos que Tornam Crível Section */}
-      {(contentCard as any).elementos_que_tornam_crivel && Array.isArray((contentCard as any).elementos_que_tornam_crivel) && (contentCard as any).elementos_que_tornam_crivel.length > 0 && (
-        <div className="section-container">
-          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <span className="text-lg mr-2">✅</span>
-            Elementos que Tornam Crível
-          </h4>
-          <div className="credibilidade-container bg-green-50 border border-green-200 rounded-lg p-4">
-            {(contentCard as any).elementos_que_tornam_crivel.map((elemento: string, index: number) => (
-              <div key={index} className="credibilidade-item flex items-start mb-3 last:mb-0 p-3 bg-white rounded-lg border-l-4 border-l-green-500">
-                <span className="credibilidade-icon text-lg mr-3 flex-shrink-0">🔍</span>
-                <span className="credibilidade-text text-green-800 text-sm leading-relaxed font-medium">{elemento}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* NEW: Estrutura Narrativa Detalhada Section */}
-      {(contentCard as any).estrutura_narrativa_detalhada && (
-        <div className="section-container">
-          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <span className="text-lg mr-2">📖</span>
-            Estrutura Narrativa Detalhada
-          </h4>
-          <div className="narrativa-container bg-purple-50 border border-purple-200 rounded-lg p-4">
-            <div className="narrativa-content bg-white p-4 rounded-lg border-l-4 border-l-purple-500">
-              <span className="narrativa-text text-purple-800 leading-relaxed whitespace-pre-line">{(contentCard as any).estrutura_narrativa_detalhada}</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* NEW: Dicas para Execução Section */}
-      {(contentCard as any).dicas_para_execucao && Array.isArray((contentCard as any).dicas_para_execucao) && (contentCard as any).dicas_para_execucao.length > 0 && (
-        <div className="section-container">
-          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <span className="text-lg mr-2">⚡</span>
-            Dicas para Execução
-          </h4>
-          <div className="dicas-container bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            {(contentCard as any).dicas_para_execucao.map((dica: string, index: number) => (
-              <div key={index} className="dica-item flex items-start mb-3 last:mb-0 p-3 bg-white rounded-lg border-l-4 border-l-yellow-500">
-                <span className="dica-icon text-lg mr-3 flex-shrink-0">💡</span>
-                <span className="dica-text text-yellow-800 text-sm leading-relaxed font-medium">{dica}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* NEW: Call to Actions Eficazes Section */}
-      {(contentCard as any).call_to_actions_eficazes && Array.isArray((contentCard as any).call_to_actions_eficazes) && (contentCard as any).call_to_actions_eficazes.length > 0 && (
-        <div className="section-container">
-          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <span className="text-lg mr-2">📢</span>
-            Call to Actions Eficazes
-          </h4>
-          <div className="cta-container bg-red-50 border border-red-200 rounded-lg p-4">
-            {(contentCard as any).call_to_actions_eficazes.map((cta: string, index: number) => (
-              <div key={index} className="cta-item flex items-start mb-3 last:mb-0 p-3 bg-white rounded-lg border-l-4 border-l-red-500">
-                <span className="cta-icon text-lg mr-3 flex-shrink-0">🎯</span>
-                <span className="cta-text text-red-800 text-sm leading-relaxed font-medium">{cta}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* How to Structure Section */}
       {(contentCard as any).how_to_structure && (
         <div className="section-container">
@@ -355,7 +268,7 @@ const WeekViewContentCard = ({
         </div>
       )}
 
-      {/* NEW: Practical Steps Section */}
+      {/* Practical Steps Section */}
       {contentCard.practical_steps && Array.isArray(contentCard.practical_steps) && contentCard.practical_steps.length > 0 && (
         <div className="bg-green-50 p-4 rounded-lg border-l-4 border-l-green-500">
           <h4 className="text-green-700 font-semibold text-lg mb-3 flex items-center">
@@ -369,7 +282,7 @@ const WeekViewContentCard = ({
         </div>
       )}
 
-      {/* NEW: Content Variations Section */}
+      {/* Content Variations Section */}
       {(contentCard as any).content_variations && Array.isArray((contentCard as any).content_variations) && (contentCard as any).content_variations.length > 0 && (
         <div className="space-y-2">
           <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
