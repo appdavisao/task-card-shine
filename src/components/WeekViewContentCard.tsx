@@ -1,9 +1,12 @@
+
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown, ChevronUp, Target, Lightbulb, Play, Users, Briefcase, CheckCircle, TrendingUp, Eye } from 'lucide-react';
+import { Play, Users } from 'lucide-react';
 import { ContentCard } from '@/types/weekView';
 import { getIntentionColor } from '@/utils/weekViewUtils';
+import { Roteiro181Section1, Roteiro181Section2, Roteiro181Section3, Roteiro181Section4 } from './WeekViewRoteiro181Sections';
+import { ContentFormat, MainContent, ArraySection, HowToStructure, VideoStructure, NarrativeStructure } from './WeekViewContentSections';
+import WeekViewCaseStudy from './WeekViewCaseStudy';
+import WeekViewExamples from './WeekViewExamples';
 
 interface WeekViewContentCardProps {
   contentCard: ContentCard;
@@ -17,377 +20,101 @@ const WeekViewContentCard = ({
   onExpandExamples 
 }: WeekViewContentCardProps) => {
   
-  // Debug logging to see what data we're receiving
   console.log('WeekViewContentCard received contentCard:', contentCard);
   console.log('Content type detected:', (contentCard as any).content_type);
-  
-  // Check if this is a case study content type
-  const isCaseStudy = (contentCard as any).content_type === 'case_study';
-  const caseDetails = isCaseStudy ? (contentCard as any).case_details : null;
-  
-  console.log('Is case study:', isCaseStudy);
-  console.log('Case details:', caseDetails);
   
   return (
     <div className="space-y-6">
       {/* Format Section */}
-      <div>
-        <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-          <Play className="h-5 w-5 mr-2 text-blue-600" />
-          Formato de Conteúdo
-        </h4>
-        <Badge className="bg-blue-600 text-white text-sm px-3 py-1">
-          {contentCard.format}
-        </Badge>
-        {isCaseStudy && (
-          <Badge className="bg-purple-600 text-white text-sm px-3 py-1 ml-2">
-            Estudo de Caso
-          </Badge>
-        )}
-      </div>
+      <ContentFormat contentCard={contentCard} />
 
       {/* Enhanced Case Study Specific Content */}
-      {isCaseStudy && caseDetails && (
-        <div className="case-study-container space-y-4">
-          <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-l-blue-500">
-            <h4 className="text-blue-700 font-semibold text-lg mb-2 flex items-center">
-              🎯 Desafio do Cliente
-            </h4>
-            <p className="text-blue-800 leading-relaxed">{caseDetails.client_request}</p>
-          </div>
-          
-          <div className="bg-green-50 p-4 rounded-lg border-l-4 border-l-green-500">
-            <h4 className="text-green-700 font-semibold text-lg mb-2 flex items-center">
-              ⚙️ Processo de Solução
-            </h4>
-            <p className="text-green-800 leading-relaxed">{caseDetails.solution_process}</p>
-          </div>
-          
-          <div className="bg-yellow-50 p-4 rounded-lg border-l-4 border-l-yellow-500">
-            <h4 className="text-yellow-700 font-semibold text-lg mb-2 flex items-center">
-              📈 Resultado Prático
-            </h4>
-            <p className="text-yellow-800 leading-relaxed font-medium">{caseDetails.practical_result}</p>
-          </div>
-          
-          <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-l-purple-500">
-            <h4 className="text-purple-700 font-semibold text-lg mb-2 flex items-center">
-              💡 Insight Chave
-            </h4>
-            <p className="text-purple-800 leading-relaxed font-medium">{caseDetails.key_insight}</p>
-          </div>
-        </div>
-      )}
+      <WeekViewCaseStudy contentCard={contentCard} />
 
-      {/* Standard Content Sections - Only show if NOT case study OR if case study has these fields */}
-      {(!isCaseStudy || contentCard.main_content) && contentCard.main_content && (
-        <div>
-          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <Lightbulb className="h-5 w-5 mr-2 text-yellow-600" />
-            Conteúdo Principal
-          </h4>
-          <p className="text-gray-700 leading-relaxed">{contentCard.main_content}</p>
-        </div>
-      )}
+      {/* Standard Content Sections */}
+      <MainContent contentCard={contentCard} />
 
       {/* Tipos de Pedidos Interessantes Section */}
-      {(contentCard as any).tipos_pedidos_interessantes && Array.isArray((contentCard as any).tipos_pedidos_interessantes) && (contentCard as any).tipos_pedidos_interessantes.length > 0 && (
-        <div className="section-container">
-          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <span className="text-lg mr-2">💬</span>
-            Tipos de Pedidos Interessantes
-          </h4>
-          <div className="pedidos-container bg-cyan-50 border border-cyan-200 rounded-lg p-4">
-            {(contentCard as any).tipos_pedidos_interessantes.map((pedido: string, index: number) => (
-              <div key={index} className="pedido-item flex items-start mb-3 last:mb-0 p-3 bg-white rounded-lg border-l-4 border-l-cyan-500">
-                <span className="pedido-icon text-lg mr-3 flex-shrink-0">🗣️</span>
-                <span className="pedido-text text-cyan-800 text-sm leading-relaxed font-medium">{pedido}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <ArraySection 
+        contentCard={contentCard}
+        fieldName="tipos_pedidos_interessantes"
+        title="Tipos de Pedidos Interessantes"
+        icon="💬"
+        bgColor="bg-cyan-50"
+        borderColor="border-cyan-200"
+        textColor="text-cyan-800"
+        itemIcon="🗣️"
+      />
 
       {/* Elementos que Tornam Crível Section */}
-      {(contentCard as any).elementos_que_tornam_crivel && Array.isArray((contentCard as any).elementos_que_tornam_crivel) && (contentCard as any).elementos_que_tornam_crivel.length > 0 && (
-        <div className="section-container">
-          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <span className="text-lg mr-2">🏆</span>
-            Elementos que Tornam Crível
-          </h4>
-          <div className="credibilidade-container bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-            {(contentCard as any).elementos_que_tornam_crivel.map((elemento: string, index: number) => (
-              <div key={index} className="credibilidade-item flex items-start mb-3 last:mb-0 p-3 bg-white rounded-lg border-l-4 border-l-emerald-500">
-                <span className="credibilidade-icon text-lg mr-3 flex-shrink-0">✅</span>
-                <span className="credibilidade-text text-emerald-800 text-sm leading-relaxed font-medium">{elemento}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <ArraySection 
+        contentCard={contentCard}
+        fieldName="elementos_que_tornam_crivel"
+        title="Elementos que Tornam Crível"
+        icon="🏆"
+        bgColor="bg-emerald-50"
+        borderColor="border-emerald-200"
+        textColor="text-emerald-800"
+        itemIcon="✅"
+      />
 
       {/* Estrutura Narrativa Detalhada Section */}
-      {(contentCard as any).estrutura_narrativa_detalhada && (
-        <div className="section-container">
-          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <span className="text-lg mr-2">📖</span>
-            Estrutura Narrativa Detalhada
-          </h4>
-          <div className="narrativa-container bg-gradient-to-br from-rose-400 to-pink-600 rounded-lg p-5 text-white">
-            {(contentCard as any).estrutura_narrativa_detalhada.abertura && (
-              <div className="narrativa-step bg-white bg-opacity-15 p-3 rounded-lg mb-3 border-l-4 border-yellow-400">
-                <strong className="block text-yellow-200 text-sm uppercase tracking-wide mb-1">1. Abertura</strong>
-                <span className="text-white">{(contentCard as any).estrutura_narrativa_detalhada.abertura}</span>
-              </div>
-            )}
-            
-            {(contentCard as any).estrutura_narrativa_detalhada.desenvolvimento && (
-              <div className="narrativa-step bg-white bg-opacity-15 p-3 rounded-lg mb-3 border-l-4 border-green-400">
-                <strong className="block text-green-200 text-sm uppercase tracking-wide mb-1">2. Desenvolvimento</strong>
-                <span className="text-white">{(contentCard as any).estrutura_narrativa_detalhada.desenvolvimento}</span>
-              </div>
-            )}
-            
-            {(contentCard as any).estrutura_narrativa_detalhada.climax && (
-              <div className="narrativa-step bg-white bg-opacity-15 p-3 rounded-lg mb-3 border-l-4 border-blue-400">
-                <strong className="block text-blue-200 text-sm uppercase tracking-wide mb-1">3. Clímax</strong>
-                <span className="text-white">{(contentCard as any).estrutura_narrativa_detalhada.climax}</span>
-              </div>
-            )}
-            
-            {(contentCard as any).estrutura_narrativa_detalhada.resolucao && (
-              <div className="narrativa-step bg-white bg-opacity-15 p-3 rounded-lg border-l-4 border-purple-400">
-                <strong className="block text-purple-200 text-sm uppercase tracking-wide mb-1">4. Resolução</strong>
-                <span className="text-white">{(contentCard as any).estrutura_narrativa_detalhada.resolucao}</span>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      <NarrativeStructure contentCard={contentCard} />
 
       {/* Dicas para Execução Section */}
-      {(contentCard as any).dicas_para_execucao && Array.isArray((contentCard as any).dicas_para_execucao) && (contentCard as any).dicas_para_execucao.length > 0 && (
-        <div className="section-container">
-          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <span className="text-lg mr-2">🎯</span>
-            Dicas para Execução
-          </h4>
-          <div className="execucao-container bg-indigo-50 border border-indigo-200 rounded-lg p-4">
-            {(contentCard as any).dicas_para_execucao.map((dica: string, index: number) => (
-              <div key={index} className="execucao-item flex items-start mb-3 last:mb-0 p-3 bg-white rounded-lg border-l-4 border-l-indigo-500">
-                <span className="execucao-icon text-lg mr-3 flex-shrink-0">💡</span>
-                <span className="execucao-text text-indigo-800 text-sm leading-relaxed font-medium">{dica}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <ArraySection 
+        contentCard={contentCard}
+        fieldName="dicas_para_execucao"
+        title="Dicas para Execução"
+        icon="🎯"
+        bgColor="bg-indigo-50"
+        borderColor="border-indigo-200"
+        textColor="text-indigo-800"
+        itemIcon="💡"
+      />
 
       {/* Call to Actions Eficazes Section */}
-      {(contentCard as any).call_to_actions_eficazes && Array.isArray((contentCard as any).call_to_actions_eficazes) && (contentCard as any).call_to_actions_eficazes.length > 0 && (
-        <div className="section-container">
-          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <span className="text-lg mr-2">📢</span>
-            Call to Actions Eficazes
-          </h4>
-          <div className="cta-container bg-red-50 border border-red-200 rounded-lg p-4">
-            {(contentCard as any).call_to_actions_eficazes.map((cta: string, index: number) => (
-              <div key={index} className="cta-item flex items-start mb-3 last:mb-0 p-3 bg-white rounded-lg border-l-4 border-l-red-500">
-                <span className="cta-icon text-lg mr-3 flex-shrink-0">📣</span>
-                <span className="cta-text text-red-800 text-sm leading-relaxed font-medium">{cta}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <ArraySection 
+        contentCard={contentCard}
+        fieldName="call_to_actions_eficazes"
+        title="Call to Actions Eficazes"
+        icon="📢"
+        bgColor="bg-red-50"
+        borderColor="border-red-200"
+        textColor="text-red-800"
+        itemIcon="📣"
+      />
 
       {/* How to Structure Section */}
-      {(contentCard as any).how_to_structure && (
-        <div className="section-container">
-          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <span className="text-lg mr-2">📋</span>
-            Como Criar o Conteúdo
-          </h4>
-          <div className="steps-container bg-gray-50 border border-gray-200 rounded-lg p-4">
-            <div className="step-item flex mb-3 items-start">
-              <span className="step-number bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-semibold mr-3 flex-shrink-0 mt-0.5">1</span>
-              <span className="step-text text-gray-700 leading-relaxed">{(contentCard as any).how_to_structure.step_1}</span>
-            </div>
-            <div className="step-item flex mb-3 items-start">
-              <span className="step-number bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-semibold mr-3 flex-shrink-0 mt-0.5">2</span>
-              <span className="step-text text-gray-700 leading-relaxed">{(contentCard as any).how_to_structure.step_2}</span>
-            </div>
-            <div className="step-item flex mb-0 items-start">
-              <span className="step-number bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-semibold mr-3 flex-shrink-0 mt-0.5">3</span>
-              <span className="step-text text-gray-700 leading-relaxed">{(contentCard as any).how_to_structure.step_3}</span>
-            </div>
-          </div>
-        </div>
-      )}
+      <HowToStructure contentCard={contentCard} />
 
       {/* Day 1 (Roteiro 181) Specific Section 1: Tipos de situações negativas eficazes */}
-      {contentCard.roteiro_number === 181 && (
-        <div className="bg-orange-50 p-4 rounded-lg mb-4">
-          <h3 className="text-orange-800 font-bold mb-3 flex items-center">
-            <span className="mr-2">💭</span>
-            Tipos de situações negativas eficazes:
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="bg-white p-3 rounded border-l-4 border-red-400">
-              <h4 className="font-semibold text-red-600 mb-1">💼 Profissionais</h4>
-              <p className="text-sm text-gray-600">Perder cliente importante, falhar em projeto, ser rejeitado</p>
-            </div>
-            <div className="bg-white p-3 rounded border-l-4 border-green-400">
-              <h4 className="font-semibold text-green-600 mb-1">💰 Financeiras</h4>
-              <p className="text-sm text-gray-600">Perder dinheiro em investimento, ter prejuízo no negócio</p>
-            </div>
-            <div className="bg-white p-3 rounded border-l-4 border-blue-400">
-              <h4 className="font-semibold text-blue-600 mb-1">👤 Pessoais</h4>
-              <p className="text-sm text-gray-600">Quebrar hábito, falhar em compromisso, tomar decisão errada</p>
-            </div>
-            <div className="bg-white p-3 rounded border-l-4 border-purple-400">
-              <h4 className="font-semibold text-purple-600 mb-1">🤝 Relacionais</h4>
-              <p className="text-sm text-gray-600">Conflito com equipe, mal-entendido, decepcionar alguém</p>
-            </div>
-          </div>
-        </div>
-      )}
+      <Roteiro181Section1 contentCard={contentCard} />
 
       {/* Video Structure Section */}
-      {(contentCard as any).video_structure && (
-        <div className="section-container">
-          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <span className="text-lg mr-2">🎬</span>
-            Estrutura do Vídeo
-          </h4>
-          <div className="video-structure-container bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg p-5 text-white">
-            <div className="video-step bg-white bg-opacity-15 p-3 rounded-lg mb-3 border-l-4 border-yellow-400">
-              <strong className="block text-yellow-200 text-sm uppercase tracking-wide mb-1">1. Hook</strong>
-              <span className="text-white">{(contentCard as any).video_structure.hook}</span>
-            </div>
-            
-            <div className="video-step bg-white bg-opacity-15 p-3 rounded-lg mb-3 border-l-4 border-green-400">
-              <strong className="block text-green-200 text-sm uppercase tracking-wide mb-1">2. Apresentação</strong>
-              <span className="text-white">{(contentCard as any).video_structure.apresentacao}</span>
-            </div>
-            
-            <div className="video-step bg-white bg-opacity-15 p-3 rounded-lg mb-3 border-l-4 border-blue-400">
-              <strong className="block text-blue-200 text-sm uppercase tracking-wide mb-1">3. Desafio</strong>
-              <span className="text-white">{(contentCard as any).video_structure.desafio}</span>
-            </div>
-            
-            <div className="video-step bg-white bg-opacity-15 p-3 rounded-lg mb-3 border-l-4 border-purple-400">
-              <strong className="block text-purple-200 text-sm uppercase tracking-wide mb-1">4. Revelação</strong>
-              <span className="text-white">{(contentCard as any).video_structure.revelacao}</span>
-            </div>
-            
-            <div className="video-step bg-white bg-opacity-15 p-3 rounded-lg border-l-4 border-red-400">
-              <strong className="block text-red-200 text-sm uppercase tracking-wide mb-1">5. Educação</strong>
-              <span className="text-white">{(contentCard as any).video_structure.educacao}</span>
-            </div>
-          </div>
-        </div>
-      )}
+      <VideoStructure contentCard={contentCard} />
 
       {/* Enhanced Examples Section */}
-      {contentCard.examples && Object.keys(contentCard.examples).length > 0 && (
-        <Collapsible open={expandedExamples} onOpenChange={onExpandExamples}>
-          <Card className="bg-white border-gray-200">
-            <CollapsibleTrigger asChild>
-              <CardHeader className="pb-3 cursor-pointer hover:bg-gray-50 transition-colors">
-                <CardTitle className="text-gray-900 text-lg flex items-center justify-between">
-                  <div className="flex items-center">
-                    <span className="text-lg mr-2">💡</span>
-                    Exemplos por Nicho
-                  </div>
-                  {expandedExamples ? (
-                    <ChevronUp className="h-5 w-5 text-gray-500" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-gray-500" />
-                  )}
-                </CardTitle>
-              </CardHeader>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <CardContent>
-                <div className="examples-grid grid gap-4 md:grid-cols-2 lg:grid-cols-2">
-                  {Object.entries(contentCard.examples).map(([niche, types]: [string, any]) => (
-                    <div key={niche} className="example-niche-card bg-green-50 border border-green-200 rounded-lg p-4 border-l-4 border-l-green-500">
-                      <h4 className="niche-title text-green-700 font-semibold text-sm uppercase tracking-wide mb-3 text-center">
-                        {niche}
-                      </h4>
-                      <div className="types-list space-y-2">
-                        <div className="type-item flex items-start p-2 bg-white rounded border-b border-green-100">
-                          <span className="type-number bg-green-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold mr-2 flex-shrink-0 mt-0.5">1</span>
-                          <span className="type-description text-green-800 text-sm leading-tight">{types.tipo_1}</span>
-                        </div>
-                        <div className="type-item flex items-start p-2 bg-white rounded border-b border-green-100">
-                          <span className="type-number bg-green-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold mr-2 flex-shrink-0 mt-0.5">2</span>
-                          <span className="type-description text-green-800 text-sm leading-tight">{types.tipo_2}</span>
-                        </div>
-                        <div className="type-item flex items-start p-2 bg-white rounded">
-                          <span className="type-number bg-green-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold mr-2 flex-shrink-0 mt-0.5">3</span>
-                          <span className="type-description text-green-800 text-sm leading-tight">{types.tipo_3}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </CollapsibleContent>
-          </Card>
-        </Collapsible>
-      )}
+      <WeekViewExamples 
+        contentCard={contentCard}
+        expandedExamples={expandedExamples}
+        onExpandExamples={onExpandExamples}
+      />
 
       {/* Psychological Triggers Section */}
-      {(contentCard as any).psychological_triggers && Array.isArray((contentCard as any).psychological_triggers) && (contentCard as any).psychological_triggers.length > 0 && (
-        <div className="section-container">
-          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <span className="text-lg mr-2">🧠</span>
-            Gatilhos Psicológicos
-          </h4>
-          <div className="psychological-triggers-container bg-purple-50 border border-purple-200 rounded-lg p-4">
-            {(contentCard as any).psychological_triggers.map((trigger: string, index: number) => (
-              <div key={index} className="trigger-item flex items-start mb-3 last:mb-0 p-3 bg-white rounded-lg border-l-4 border-l-purple-500">
-                <span className="trigger-icon text-lg mr-3 flex-shrink-0">🎯</span>
-                <span className="trigger-text text-purple-800 text-sm leading-relaxed font-medium">{trigger}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <ArraySection 
+        contentCard={contentCard}
+        fieldName="psychological_triggers"
+        title="Gatilhos Psicológicos"
+        icon="🧠"
+        bgColor="bg-purple-50"
+        borderColor="border-purple-200"
+        textColor="text-purple-800"
+        itemIcon="🎯"
+      />
 
       {/* Day 1 (Roteiro 181) Specific Section 2: Elementos que tornam autêntico */}
-      {contentCard.roteiro_number === 181 && (
-        <div className="bg-blue-50 p-4 rounded-lg mb-4">
-          <h3 className="text-blue-800 font-bold mb-3 flex items-center">
-            <span className="mr-2">✨</span>
-            Elementos que tornam autêntico:
-          </h3>
-          <div className="space-y-3">
-            <div className="bg-white p-3 rounded border-l-4 border-blue-400">
-              <h4 className="font-semibold text-gray-800 mb-1">🎯 Especificidade</h4>
-              <p className="text-sm text-gray-600">Detalhes concretos, não generalizações</p>
-            </div>
-            <div className="bg-white p-3 rounded border-l-4 border-green-400">
-              <h4 className="font-semibold text-gray-800 mb-1">💪 Responsabilidade</h4>
-              <p className="text-sm text-gray-600">Assuma sua parte sem buscar culpados</p>
-            </div>
-            <div className="bg-white p-3 rounded border-l-4 border-orange-400">
-              <h4 className="font-semibold text-gray-800 mb-1">⏰ Timing</h4>
-              <p className="text-sm text-gray-600">Conte quando ainda está "fresco" emocionalmente</p>
-            </div>
-            <div className="bg-white p-3 rounded border-l-4 border-purple-400">
-              <h4 className="font-semibold text-gray-800 mb-1">💝 Vulnerabilidade</h4>
-              <p className="text-sm text-gray-600">Mostre impacto real na sua vida</p>
-            </div>
-            <div className="bg-white p-3 rounded border-l-4 border-red-400">
-              <h4 className="font-semibold text-gray-800 mb-1">📈 Crescimento</h4>
-              <p className="text-sm text-gray-600">Foque no que aprendeu, não na autopiedade</p>
-            </div>
-          </div>
-        </div>
-      )}
+      <Roteiro181Section2 contentCard={contentCard} />
 
       {/* Intentions Section */}
       {contentCard.intentions && Array.isArray(contentCard.intentions) && contentCard.intentions.length > 0 && (
@@ -421,22 +148,16 @@ const WeekViewContentCard = ({
       )}
 
       {/* Viral Tips Section */}
-      {(contentCard as any).viral_tips && Array.isArray((contentCard as any).viral_tips) && (contentCard as any).viral_tips.length > 0 && (
-        <div className="section-container">
-          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <span className="text-lg mr-2">🚀</span>
-            Elementos Virais
-          </h4>
-          <div className="viral-tips-container bg-orange-50 border border-orange-200 rounded-lg p-4">
-            {(contentCard as any).viral_tips.map((tip: string, index: number) => (
-              <div key={index} className="viral-tip-item flex items-start mb-3 last:mb-0 p-3 bg-white rounded-lg border-l-4 border-l-orange-500">
-                <span className="tip-icon text-lg mr-2 flex-shrink-0">💥</span>
-                <span className="tip-text text-orange-800 text-sm leading-relaxed font-medium">{tip}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <ArraySection 
+        contentCard={contentCard}
+        fieldName="viral_tips"
+        title="Elementos Virais"
+        icon="🚀"
+        bgColor="bg-orange-50"
+        borderColor="border-orange-200"
+        textColor="text-orange-800"
+        itemIcon="💥"
+      />
 
       {/* Practical Steps Section */}
       {contentCard.practical_steps && Array.isArray(contentCard.practical_steps) && contentCard.practical_steps.length > 0 && (
@@ -504,88 +225,10 @@ const WeekViewContentCard = ({
       )}
 
       {/* Day 1 (Roteiro 181) Specific Section 3: Lições valiosas comuns */}
-      {contentCard.roteiro_number === 181 && (
-        <div className="bg-green-50 p-4 rounded-lg mb-4">
-          <h3 className="text-green-800 font-bold mb-3 flex items-center">
-            <span className="mr-2">📚</span>
-            Lições valiosas comuns:
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="bg-white p-3 rounded border-l-4 border-green-400">
-              <h4 className="font-semibold text-green-600 mb-2">🔧 Sobre preparação</h4>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• "Pressa é inimiga da perfeição"</li>
-                <li>• "Due diligence nunca é demais"</li>
-                <li>• "Backup plans salvam vidas"</li>
-              </ul>
-            </div>
-            <div className="bg-white p-3 rounded border-l-4 border-blue-400">
-              <h4 className="font-semibold text-blue-600 mb-2">🤝 Sobre relacionamentos</h4>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• "Comunicação clara evita problemas"</li>
-                <li>• "Expectativas alinhadas são essenciais"</li>
-                <li>• "Feedback regular previne surpresas"</li>
-              </ul>
-            </div>
-            <div className="bg-white p-3 rounded border-l-4 border-purple-400">
-              <h4 className="font-semibold text-purple-600 mb-2">🧠 Sobre emoções</h4>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• "Decisões emocionais custam caro"</li>
-                <li>• "Pausa antes de reagir salva relacionamentos"</li>
-                <li>• "Ego é o maior inimigo do crescimento"</li>
-              </ul>
-            </div>
-            <div className="bg-white p-3 rounded border-l-4 border-orange-400">
-              <h4 className="font-semibold text-orange-600 mb-2">⚙️ Sobre sistemas</h4>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• "Processos existem por uma razão"</li>
-                <li>• "Atalhos geralmente custam mais caro"</li>
-                <li>• "Consistência vence talento"</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
+      <Roteiro181Section3 contentCard={contentCard} />
 
       {/* Day 1 (Roteiro 181) Specific Section 4: Cuidados importantes */}
-      {contentCard.roteiro_number === 181 && (
-        <div className="bg-gray-50 p-4 rounded-lg mb-4">
-          <h3 className="text-gray-800 font-bold mb-3 flex items-center">
-            <span className="mr-2">⚠️</span>
-            Cuidados importantes:
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="flex items-start space-x-2">
-              <span className="text-blue-600 font-bold text-lg">🔒</span>
-              <div>
-                <strong className="text-gray-800">Privacidade:</strong>
-                <span className="text-gray-600 text-sm"> Proteja outras pessoas envolvidas</span>
-              </div>
-            </div>
-            <div className="flex items-start space-x-2">
-              <span className="text-green-600 font-bold text-lg">💼</span>
-              <div>
-                <strong className="text-gray-800">Profissionalismo:</strong>
-                <span className="text-gray-600 text-sm"> Mantenha detalhes confidenciais privados</span>
-              </div>
-            </div>
-            <div className="flex items-start space-x-2">
-              <span className="text-purple-600 font-bold text-lg">💝</span>
-              <div>
-                <strong className="text-gray-800">Autocompaixão:</strong>
-                <span className="text-gray-600 text-sm"> Evite autocrítica excessiva</span>
-              </div>
-            </div>
-            <div className="flex items-start space-x-2">
-              <span className="text-orange-600 font-bold text-lg">📖</span>
-              <div>
-                <strong className="text-gray-800">Contexto:</strong>
-                <span className="text-gray-600 text-sm"> Dê informação suficiente para entenderem</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <Roteiro181Section4 contentCard={contentCard} />
 
       {/* CTA Section */}
       {contentCard.cta_text && (
