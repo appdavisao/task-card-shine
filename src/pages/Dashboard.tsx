@@ -294,21 +294,21 @@ const Dashboard = () => {
 
         {/* Action Plan Button */}
         <div className="mb-8 sm:mb-10">
-          <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100/70 border border-emerald-200/60 rounded-xl overflow-hidden">
+          <Card className="bg-gradient-to-br from-blue-50 to-blue-100/70 border border-blue-200/60 rounded-xl overflow-hidden">
             <CardContent className="p-6 sm:p-7">
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0 mr-4">
-                  <h3 className="text-base sm:text-lg font-medium text-emerald-900 mb-2 flex items-center">
+                  <h3 className="text-base sm:text-lg font-medium text-blue-900 mb-2 flex items-center">
                     <span className="mr-3">📋</span>
-                    Construa seu Plano de Ação
+                    Plano de Ação Escritor Best-Seller
                   </h3>
-                  <p className="text-xs sm:text-sm text-emerald-800 leading-relaxed">
-                    Responda 5 questões estratégicas e anexe documentos para personalizar sua jornada
+                  <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
+                    Responda 20 questões estratégicas e anexe documentos para pegar sua estrutura de livro Best-Seller validada.
                   </p>
                 </div>
                 <Button 
                   onClick={handleActionPlanClick}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg flex items-center space-x-2 text-sm font-medium shadow-sm border-0 flex-shrink-0"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg flex items-center space-x-2 text-sm font-medium shadow-sm border-0 flex-shrink-0"
                 >
                   <span>Começar</span>
                   <span>→</span>
@@ -318,45 +318,49 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Week Cards - Moved here */}
+        {/* Week Cards - Moved here with soft blue container */}
         <div className="mb-8 sm:mb-10">
-          <h3 className="text-lg sm:text-xl font-medium text-slate-800 mb-6 sm:mb-8 text-center">
-            Idéias de Conteúdos
-          </h3>
-          <div className="grid grid-cols-7 gap-3 sm:gap-4">
-            {[1, 2, 3, 4, 5, 6, 7].map((week) => {
-              const activities = getWeekActivitiesCount(week);
-              const progress = getWeekProgress(week);
-              
-              return (
-                <div
-                  key={week}
-                  className="cursor-pointer bg-white border border-slate-200/60 rounded-xl p-3 sm:p-4 text-center shadow-sm
-                    transition-all duration-300 ease-out
-                    hover:shadow-md hover:scale-[1.02] hover:border-slate-300 hover:-translate-y-0.5
-                    hover:bg-gradient-to-br hover:from-white hover:to-slate-50/50
-                    active:scale-95"
-                  onClick={() => handleWeekClick(week)}
-                >
-                  <div className="text-xl sm:text-2xl font-semibold text-slate-700 mb-2 sm:mb-3">
-                    S{week}
-                  </div>
-                  <p className="text-xs text-slate-500 mb-2 sm:mb-3 font-medium">
-                    {activities} atividades
-                  </p>
-                  <div className="w-full h-1.5 sm:h-2 bg-slate-100 rounded-full overflow-hidden mb-2 sm:mb-3">
-                    <div 
-                      className="h-full bg-gradient-to-r from-slate-400 to-slate-500 rounded-full transition-all duration-500"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                  <p className="text-xs text-slate-500 font-medium">
-                    {progress.toFixed(0)}% concluído
-                  </p>
-                </div>
-              );
-            })}
-          </div>
+          <Card className="bg-gradient-to-br from-blue-50/30 to-blue-100/40 border border-blue-200/40 rounded-xl overflow-hidden">
+            <CardContent className="p-6 sm:p-7">
+              <h3 className="text-lg sm:text-xl font-medium text-slate-800 mb-6 sm:mb-8 text-left">
+                Idéias de Conteúdos
+              </h3>
+              <div className="grid grid-cols-7 gap-3 sm:gap-4">
+                {[1, 2, 3, 4, 5, 6, 7].map((week) => {
+                  const activities = getWeekActivitiesCount(week);
+                  const progress = getWeekProgress(week);
+                  
+                  return (
+                    <div
+                      key={week}
+                      className="cursor-pointer bg-white border border-slate-200/60 rounded-xl p-3 sm:p-4 text-center shadow-sm
+                        transition-all duration-300 ease-out
+                        hover:shadow-md hover:scale-[1.02] hover:border-slate-300 hover:-translate-y-0.5
+                        hover:bg-gradient-to-br hover:from-white hover:to-slate-50/50
+                        active:scale-95"
+                      onClick={() => handleWeekClick(week)}
+                    >
+                      <div className="text-xl sm:text-2xl font-semibold text-slate-700 mb-2 sm:mb-3">
+                        S{week}
+                      </div>
+                      <p className="text-xs text-slate-500 mb-2 sm:mb-3 font-medium">
+                        {activities} atividades
+                      </p>
+                      <div className="w-full h-1.5 sm:h-2 bg-slate-100 rounded-full overflow-hidden mb-2 sm:mb-3">
+                        <div 
+                          className="h-full bg-gradient-to-r from-slate-400 to-slate-500 rounded-full transition-all duration-500"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-slate-500 font-medium">
+                        {progress.toFixed(0)}% concluído
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Motivation Quote - Moved here */}
