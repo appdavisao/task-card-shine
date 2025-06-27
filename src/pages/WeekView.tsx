@@ -57,6 +57,8 @@ const WeekView = () => {
   const [dailyContent, setDailyContent] = useState<DailyContent | null>(null);
   const [contentLoading, setContentLoading] = useState(false);
   const [expandedExamples, setExpandedExamples] = useState(false);
+  const [sheetDailyContent, setSheetDailyContent] = useState<DailyContent | null>(null);
+  const [sheetContentLoading, setSheetContentLoading] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -133,6 +135,45 @@ const WeekView = () => {
       setDailyContent(null);
     } finally {
       setContentLoading(false);
+    }
+  };
+
+  const fetchDailyContentForSheet = async (day: number) => {
+    try {
+      setSheetContentLoading(true);
+      console.log('Fetching daily content for sheet, day:', day);
+      
+      const { data, error: fetchError } = await supabase
+        .from('user_daily_content')
+        .select('*')
+        .eq('user_id', user!.id)
+        .eq('day', day)
+        .single();
+
+      if (fetchError) {
+        console.error('Error fetching daily content for sheet:', fetchError);
+        setSheetDailyContent(null);
+      } else {
+        console.log('Raw daily content data for sheet:', data);
+        console.log('Content card data for sheet:', data.content_card);
+        
+        // Convert the data properly with type assertion for content_card
+        const dailyContent: DailyContent = {
+          id: data.id,
+          day: data.day,
+          content_type: data.content_type,
+          title: data.title,
+          content_card: data.content_card ? (data.content_card as unknown as ContentCard) : undefined
+        };
+        
+        console.log('Processed daily content for sheet:', dailyContent);
+        setSheetDailyContent(dailyContent);
+      }
+    } catch (error) {
+      console.error('Error fetching sheet content:', error);
+      setSheetDailyContent(null);
+    } finally {
+      setSheetContentLoading(false);
     }
   };
 
@@ -375,7 +416,7 @@ const WeekView = () => {
   };
 
   const handleContentTip = async (day: number) => {
-    await fetchDailyContent(day);
+    await fetchDailyContentForSheet(day);
     setContentTipOpen(true);
   };
 
@@ -621,8 +662,8 @@ const WeekView = () => {
         isOpen={contentTipOpen}
         onClose={() => setContentTipOpen(false)}
         day={selectedDay || 1}
-        dailyContent={dailyContent}
-        loading={contentLoading}
+        dailyContent={sheetDailyContent}
+        loading={sheetContentLoading}
       />
     </div>
   );
