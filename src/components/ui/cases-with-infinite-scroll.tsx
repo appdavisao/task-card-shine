@@ -84,6 +84,13 @@ function Case({ weeks }: CaseProps) {
     }
   }, [isHovered, scheduleNextAnimation, api]);
 
+  const handleWeekClick = (weekData: WeekData) => {
+    // Only allow week 1 to be clicked
+    if (weekData.week === 1) {
+      weekData.onWeekClick(weekData.week);
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="container mx-auto">
@@ -106,65 +113,66 @@ function Case({ weeks }: CaseProps) {
               }}
             >
               <CarouselContent className="-ml-2 md:-ml-4">
-                {weeks.map((weekData, index) => (
-                  <CarouselItem 
-                    className="pl-2 md:pl-4 basis-1/2 sm:basis-1/3 lg:basis-1/4 xl:basis-1/7" 
-                    key={weekData.week}
-                  >
-                    <div 
-                      className="group cursor-pointer bg-white border-2 border-blue-200 rounded-lg p-3 sm:p-4 text-center shadow-sm
-                        will-change-transform
-                        transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-                        hover:shadow-2xl hover:shadow-blue-100/50
-                        hover:scale-[1.05] hover:border-blue-400 hover:-translate-y-1
-                        hover:bg-gradient-to-br hover:from-white hover:to-blue-50/30
-                        active:scale-[0.98] active:transition-transform active:duration-150
-                        animate-fade-in"
-                      style={{
-                        animationDelay: `${index * 100}ms`,
-                        animationFillMode: 'both'
-                      }}
-                      onClick={() => weekData.onWeekClick(weekData.week)}
+                {weeks.map((weekData, index) => {
+                  const isDisabled = weekData.week >= 2 && weekData.week <= 5;
+                  
+                  return (
+                    <CarouselItem 
+                      className="pl-2 md:pl-4 basis-1/2 sm:basis-1/3 lg:basis-1/4 xl:basis-1/7" 
+                      key={weekData.week}
                     >
-                      <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-2 drop-shadow-sm
-                        transition-all duration-300 ease-out
-                        group-hover:text-blue-700 group-hover:scale-110 group-hover:drop-shadow-md">
-                        S{weekData.week}
+                      <div 
+                        className={`group text-center shadow-sm will-change-transform rounded-lg p-3 sm:p-4 
+                          ${isDisabled 
+                            ? 'cursor-not-allowed bg-gray-100 border-2 border-gray-300 opacity-60' 
+                            : 'cursor-pointer bg-white border-2 border-blue-200 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-2xl hover:shadow-blue-100/50 hover:scale-[1.05] hover:border-blue-400 hover:-translate-y-1 hover:bg-gradient-to-br hover:from-white hover:to-blue-50/30 active:scale-[0.98] active:transition-transform active:duration-150'
+                          } animate-fade-in`}
+                        style={{
+                          animationDelay: `${index * 100}ms`,
+                          animationFillMode: 'both'
+                        }}
+                        onClick={() => handleWeekClick(weekData)}
+                      >
+                        <div className={`text-2xl sm:text-3xl font-bold mb-2 drop-shadow-sm transition-all duration-300 ease-out 
+                          ${isDisabled 
+                            ? 'text-gray-400' 
+                            : 'text-blue-600 group-hover:text-blue-700 group-hover:scale-110 group-hover:drop-shadow-md'
+                          }`}>
+                          S{weekData.week}
+                        </div>
+                        
+                        {isDisabled ? (
+                          <div className="text-xs text-gray-500 mb-2 font-medium">
+                            Disponível em Breve
+                          </div>
+                        ) : (
+                          <>
+                            <p className="text-xs text-gray-600 mb-2 font-medium transition-colors duration-300 group-hover:text-gray-700">
+                              {weekData.activities} atividades
+                            </p>
+                            <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mb-2 transition-all duration-300 group-hover:h-2 group-hover:shadow-inner">
+                              <div 
+                                className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:from-blue-600 group-hover:to-blue-700 group-hover:shadow-lg group-hover:shadow-blue-500/30"
+                                style={{ 
+                                  width: `${weekData.progress}%`,
+                                  transform: isHovered ? 'scaleY(1.1)' : 'scaleY(1)',
+                                }}
+                              />
+                            </div>
+                            <p className="text-xs text-gray-600 font-medium transition-all duration-300 group-hover:text-gray-700 group-hover:font-semibold">
+                              {weekData.progress.toFixed(0)}% concluído
+                            </p>
+                          </>
+                        )}
+                        
+                        {/* Subtle glow effect on hover - only for enabled weeks */}
+                        {!isDisabled && (
+                          <div className="absolute inset-0 rounded-lg opacity-0 transition-opacity duration-500 group-hover:opacity-100 bg-gradient-to-br from-blue-400/10 via-transparent to-blue-600/10 pointer-events-none" />
+                        )}
                       </div>
-                      <p className="text-xs text-gray-600 mb-2 font-medium
-                        transition-colors duration-300
-                        group-hover:text-gray-700">
-                        {weekData.activities} atividades
-                      </p>
-                      <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mb-2
-                        transition-all duration-300
-                        group-hover:h-2 group-hover:shadow-inner">
-                        <div 
-                          className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full
-                            transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-                            group-hover:from-blue-600 group-hover:to-blue-700
-                            group-hover:shadow-lg group-hover:shadow-blue-500/30"
-                          style={{ 
-                            width: `${weekData.progress}%`,
-                            transform: isHovered ? 'scaleY(1.1)' : 'scaleY(1)',
-                          }}
-                        />
-                      </div>
-                      <p className="text-xs text-gray-600 font-medium
-                        transition-all duration-300
-                        group-hover:text-gray-700 group-hover:font-semibold">
-                        {weekData.progress.toFixed(0)}% concluído
-                      </p>
-                      
-                      {/* Subtle glow effect on hover */}
-                      <div className="absolute inset-0 rounded-lg opacity-0 
-                        transition-opacity duration-500
-                        group-hover:opacity-100
-                        bg-gradient-to-br from-blue-400/10 via-transparent to-blue-600/10
-                        pointer-events-none" />
-                    </div>
-                  </CarouselItem>
-                ))}
+                    </CarouselItem>
+                  );
+                })}
               </CarouselContent>
             </Carousel>
           </div>
