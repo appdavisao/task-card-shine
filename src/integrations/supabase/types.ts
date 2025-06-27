@@ -193,6 +193,7 @@ export type Database = {
         Row: {
           audio_suggestion: string | null
           caption_description: string | null
+          content_card: Json | null
           content_type: string
           created_at: string
           cta_text: string | null
@@ -210,6 +211,7 @@ export type Database = {
         Insert: {
           audio_suggestion?: string | null
           caption_description?: string | null
+          content_card?: Json | null
           content_type: string
           created_at?: string
           cta_text?: string | null
@@ -227,6 +229,7 @@ export type Database = {
         Update: {
           audio_suggestion?: string | null
           caption_description?: string | null
+          content_card?: Json | null
           content_type?: string
           created_at?: string
           cta_text?: string | null

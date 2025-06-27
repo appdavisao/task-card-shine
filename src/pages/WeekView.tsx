@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Lightbulb, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Lightbulb, ChevronDown, ChevronUp, Target, Play, Users } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface Task {
@@ -20,19 +20,29 @@ interface Task {
   completed: boolean;
 }
 
+interface ContentCard {
+  title: string;
+  format: string;
+  cta_text?: string;
+  examples?: {
+    saude?: string;
+    financas?: string;
+    marketing?: string;
+    relacionamentos?: string;
+  };
+  platforms?: string[];
+  intentions?: string[];
+  main_content?: string;
+  observations?: string;
+  practical_steps?: string[];
+}
+
 interface DailyContent {
   id: string;
   day: number;
   content_type: string;
   title: string;
-  strategic_analysis?: string;
-  scenes?: any[];
-  slides?: any[];
-  video_structure?: any;
-  audio_suggestion?: string;
-  caption_description?: string;
-  cta_text?: string;
-  hashtags?: string;
+  content_card?: ContentCard;
 }
 
 const WeekView = () => {
@@ -45,6 +55,7 @@ const WeekView = () => {
   const [contentTipOpen, setContentTipOpen] = useState(false);
   const [dailyContent, setDailyContent] = useState<DailyContent | null>(null);
   const [contentLoading, setContentLoading] = useState(false);
+  const [expandedExamples, setExpandedExamples] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -142,14 +153,19 @@ const WeekView = () => {
     }
   };
 
-  const handleContentTip = async (day: number) => {
-    if (contentTipOpen && dailyContent?.day === day) {
-      setContentTipOpen(false);
-      return;
+  const getIntentionColor = (intention: string) => {
+    switch (intention.toLowerCase()) {
+      case 'viralizar':
+        return 'bg-red-500 text-white';
+      case 'ensinar algum conhecimento':
+        return 'bg-blue-500 text-white';
+      case 'entreter a audiência':
+        return 'bg-purple-500 text-white';
+      case 'ganhar seguidor':
+        return 'bg-green-500 text-white';
+      default:
+        return 'bg-gray-500 text-white';
     }
-    
-    await fetchDailyContent(day);
-    setContentTipOpen(true);
   };
 
   const getContentTypeDisplay = (type: string) => {
@@ -205,133 +221,152 @@ const WeekView = () => {
     return [];
   };
 
-  const renderScenes = (scenes: any[]) => {
-    if (!scenes || scenes.length === 0) {
-      return (
-        <div className="space-y-4">
-          <h4 className="text-lg font-semibold text-gray-900">Roteiro de Cenas</h4>
-          <Card className="bg-gray-50 border-gray-200">
-            <CardContent className="p-4 text-center">
-              <p className="text-gray-500 italic">Nenhuma cena configurada ainda</p>
-            </CardContent>
-          </Card>
-        </div>
-      );
-    }
-
+  const renderContentCard = (contentCard: ContentCard) => {
     return (
-      <div className="space-y-4">
-        <h4 className="text-lg font-semibold text-gray-900">Roteiro de Cenas</h4>
-        {scenes.map((scene, index) => (
-          <Card key={index} className="bg-white border-gray-200">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-gray-900 text-sm">
-                Cena {scene.scene || index + 1} ({scene.duration || 'Duração não definida'})
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div>
-                <span className="text-blue-600 font-medium">Ação/Visual:</span>
-                <p className="text-gray-700 text-sm mt-1">{scene.action || 'Não definido'}</p>
-              </div>
-              <div>
-                <span className="text-green-600 font-medium">Narração:</span>
-                <p className="text-gray-700 text-sm mt-1">{scene.audio || 'Não definido'}</p>
-              </div>
-              <div>
-                <span className="text-yellow-600 font-medium">Texto na Tela:</span>
-                <p className="text-gray-700 text-sm mt-1">{scene.text_overlay || 'Não definido'}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="space-y-6">
+        {/* Format Section */}
+        <div>
+          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+            <Play className="h-5 w-5 mr-2 text-blue-600" />
+            Formato de Conteúdo
+          </h4>
+          <Badge className="bg-blue-600 text-white text-sm px-3 py-1">
+            {contentCard.format}
+          </Badge>
+        </div>
+
+        {/* Main Content Section */}
+        {contentCard.main_content && (
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+              <Lightbulb className="h-5 w-5 mr-2 text-yellow-600" />
+              Conteúdo Principal
+            </h4>
+            <p className="text-gray-700 leading-relaxed">{contentCard.main_content}</p>
+          </div>
+        )}
+
+        {/* Examples Section */}
+        {contentCard.examples && Object.keys(contentCard.examples).length > 0 && (
+          <Collapsible open={expandedExamples} onOpenChange={setExpandedExamples}>
+            <Card className="bg-white border-gray-200">
+              <CollapsibleTrigger asChild>
+                <CardHeader className="pb-3 cursor-pointer hover:bg-gray-50 transition-colors">
+                  <CardTitle className="text-gray-900 text-lg flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Target className="h-5 w-5 mr-2 text-green-600" />
+                      Exemplos por Categoria
+                    </div>
+                    {expandedExamples ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </CardTitle>
+                </CardHeader>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <CardContent className="space-y-4">
+                  {contentCard.examples.saude && (
+                    <div>
+                      <Badge className="bg-green-600 text-white mb-2">Saúde</Badge>
+                      <p className="text-gray-700 text-sm">{contentCard.examples.saude}</p>
+                    </div>
+                  )}
+                  {contentCard.examples.financas && (
+                    <div>
+                      <Badge className="bg-yellow-600 text-white mb-2">Finanças</Badge>
+                      <p className="text-gray-700 text-sm">{contentCard.examples.financas}</p>
+                    </div>
+                  )}
+                  {contentCard.examples.marketing && (
+                    <div>
+                      <Badge className="bg-purple-600 text-white mb-2">Marketing</Badge>
+                      <p className="text-gray-700 text-sm">{contentCard.examples.marketing}</p>
+                    </div>
+                  )}
+                  {contentCard.examples.relacionamentos && (
+                    <div>
+                      <Badge className="bg-pink-600 text-white mb-2">Relacionamentos</Badge>
+                      <p className="text-gray-700 text-sm">{contentCard.examples.relacionamentos}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </CollapsibleContent>
+            </Card>
+          </Collapsible>
+        )}
+
+        {/* Intentions Section */}
+        {contentCard.intentions && contentCard.intentions.length > 0 && (
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+              <Users className="h-5 w-5 mr-2 text-orange-600" />
+              Objetivos do Conteúdo
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {contentCard.intentions.map((intention, index) => (
+                <Badge key={index} className={`${getIntentionColor(intention)} text-sm px-3 py-1`}>
+                  {intention}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Platforms Section */}
+        {contentCard.platforms && contentCard.platforms.length > 0 && (
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-3">Plataformas Recomendadas</h4>
+            <div className="space-y-2">
+              {contentCard.platforms.map((platform, index) => (
+                <Badge key={index} className="bg-indigo-600 text-white text-sm px-3 py-1 mr-2">
+                  {platform}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Practical Steps Section */}
+        {contentCard.practical_steps && contentCard.practical_steps.length > 0 && (
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-3">Passos Práticos</h4>
+            <ol className="list-decimal list-inside space-y-2">
+              {contentCard.practical_steps.map((step, index) => (
+                <li key={index} className="text-gray-700 text-sm">{step}</li>
+              ))}
+            </ol>
+          </div>
+        )}
+
+        {/* Observations Section */}
+        {contentCard.observations && (
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-3">Observações Importantes</h4>
+            <p className="text-gray-700 leading-relaxed">{contentCard.observations}</p>
+          </div>
+        )}
+
+        {/* CTA Section */}
+        {contentCard.cta_text && (
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-3">Call to Action</h4>
+            <p className="text-orange-600 font-medium">{contentCard.cta_text}</p>
+          </div>
+        )}
       </div>
     );
   };
 
-  const renderSlides = (slides: any[]) => {
-    if (!slides || slides.length === 0) {
-      return (
-        <div className="space-y-4">
-          <h4 className="text-lg font-semibold text-gray-900">Lâminas do Carrossel</h4>
-          <Card className="bg-gray-50 border-gray-200">
-            <CardContent className="p-4 text-center">
-              <p className="text-gray-500 italic">Nenhuma lâmina configurada ainda</p>
-            </CardContent>
-          </Card>
-        </div>
-      );
+  const handleContentTip = async (day: number) => {
+    if (contentTipOpen && dailyContent?.day === day) {
+      setContentTipOpen(false);
+      return;
     }
-
-    return (
-      <div className="space-y-4">
-        <h4 className="text-lg font-semibold text-gray-900">Lâminas do Carrossel</h4>
-        {slides.map((slide, index) => (
-          <Card key={index} className="bg-white border-gray-200">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-gray-900 text-sm">
-                Lâmina {slide.slide || index + 1} - {slide.type || 'Tipo não definido'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div>
-                <span className="text-blue-600 font-medium">Visual:</span>
-                <p className="text-gray-700 text-sm mt-1">{slide.visual || 'Não definido'}</p>
-              </div>
-              {slide.title && (
-                <div>
-                  <span className="text-green-600 font-medium">Título:</span>
-                  <p className="text-gray-700 text-sm mt-1">{slide.title}</p>
-                </div>
-              )}
-              {slide.subtitle && (
-                <div>
-                  <span className="text-yellow-600 font-medium">Subtítulo:</span>
-                  <p className="text-gray-700 text-sm mt-1">{slide.subtitle}</p>
-                </div>
-              )}
-              {slide.content && (
-                <div>
-                  <span className="text-purple-600 font-medium">Conteúdo:</span>
-                  <p className="text-gray-700 text-sm mt-1 whitespace-pre-line">{slide.content}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  };
-
-  const renderVideoStructure = (videoStructure: any) => {
-    if (!videoStructure || !videoStructure.sections) return null;
-
-    return (
-      <div className="space-y-4">
-        <h4 className="text-lg font-semibold text-gray-900">
-          Estrutura do Vídeo ({videoStructure.duration})
-        </h4>
-        {videoStructure.sections.map((section: any, index: number) => (
-          <Card key={index} className="bg-white border-gray-200">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-gray-900 text-sm">
-                {section.title} ({section.duration})
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div>
-                <span className="text-blue-600 font-medium">Visual:</span>
-                <p className="text-gray-700 text-sm mt-1">{section.visual}</p>
-              </div>
-              <div>
-                <span className="text-green-600 font-medium">Narração:</span>
-                <p className="text-gray-700 text-sm mt-1">{section.narration}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
+    
+    await fetchDailyContent(day);
+    setContentTipOpen(true);
   };
 
   const selectedTask = selectedDay ? tasks.find(task => task.day === selectedDay) : null;
@@ -500,7 +535,7 @@ const WeekView = () => {
                             <h3 className="text-lg font-semibold text-gray-900">
                               Dica de Conteúdo - Dia {selectedTask.day}
                             </h3>
-                            {dailyContent && (
+                            {dailyContent && dailyContent.content_card && (
                               <div className="flex items-center gap-2">
                                 <Badge className={`${getContentTypeColor(dailyContent.content_type)} text-white`}>
                                   {getContentTypeDisplay(dailyContent.content_type)}
@@ -541,59 +576,12 @@ const WeekView = () => {
                             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                             <span className="ml-2 text-gray-600">Carregando conteúdo...</span>
                           </div>
-                        ) : dailyContent ? (
-                          <div className="space-y-6">
-                            {/* Strategic Analysis */}
-                            {dailyContent.strategic_analysis && (
-                              <div>
-                                <h4 className="text-lg font-semibold text-gray-900 mb-3">Análise Estratégica</h4>
-                                <p className="text-gray-700 leading-relaxed">{dailyContent.strategic_analysis}</p>
-                              </div>
-                            )}
-
-                            {/* Content Structure */}
-                            {dailyContent.content_type.toLowerCase() === 'reels' && renderScenes(dailyContent.scenes)}
-                            {dailyContent.content_type.toLowerCase() === 'carousel' && renderSlides(dailyContent.slides)}
-                            {dailyContent.video_structure && renderVideoStructure(dailyContent.video_structure)}
-
-                            {/* Audio Suggestion */}
-                            {dailyContent.audio_suggestion && (
-                              <div>
-                                <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                                  🎵 Áudio Sugerido
-                                </h4>
-                                <p className="text-gray-700 leading-relaxed">{dailyContent.audio_suggestion}</p>
-                              </div>
-                            )}
-
-                            {/* Caption Description */}
-                            {dailyContent.caption_description && (
-                              <div>
-                                <h4 className="text-lg font-semibold text-gray-900 mb-3">Descrição para Legenda</h4>
-                                <p className="text-gray-700 leading-relaxed">{dailyContent.caption_description}</p>
-                              </div>
-                            )}
-
-                            {/* CTA */}
-                            {dailyContent.cta_text && (
-                              <div>
-                                <h4 className="text-lg font-semibold text-gray-900 mb-3">Call to Action</h4>
-                                <p className="text-gray-700 leading-relaxed">{dailyContent.cta_text}</p>
-                              </div>
-                            )}
-
-                            {/* Hashtags */}
-                            {dailyContent.hashtags && (
-                              <div>
-                                <h4 className="text-lg font-semibold text-gray-900 mb-3">Hashtags</h4>
-                                <p className="text-blue-600 leading-relaxed">{dailyContent.hashtags}</p>
-                              </div>
-                            )}
-                          </div>
+                        ) : dailyContent && dailyContent.content_card ? (
+                          renderContentCard(dailyContent.content_card)
                         ) : (
                           <div className="text-center py-8">
                             <p className="text-gray-600">
-                              Nenhum conteúdo detalhado foi encontrado para este dia ainda.
+                              Nenhum conteúdo estruturado foi encontrado para este dia ainda.
                             </p>
                           </div>
                         )}
