@@ -1,20 +1,20 @@
-
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from '@/components/ui/card';
-import { Lightbulb } from 'lucide-react';
+import { Lightbulb, Calendar, FileText, Trophy, LogOut } from 'lucide-react';
 import { Task, DailyContent } from '@/types/weekView';
 import { useWeekViewData } from '@/hooks/useWeekViewData';
-import WeekViewHeader from '@/components/WeekViewHeader';
 import WeekViewDayCard from '@/components/WeekViewDayCard';
 import WeekViewTaskDetails from '@/components/WeekViewTaskDetails';
 import WeekViewContentTip from '@/components/WeekViewContentTip';
+import { NavBar } from '@/components/ui/tubelight-navbar';
+import { toast } from '@/components/ui/use-toast';
 
 const WeekView = () => {
   const { weekNumber } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [contentTipOpen, setContentTipOpen] = useState(false);
   const [dailyContent, setDailyContent] = useState<DailyContent | null>(null);
@@ -52,6 +52,18 @@ const WeekView = () => {
     setContentTipOpen(true);
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth');
+  };
+
+  const navItems = [
+    { name: 'Dashboard', url: '/dashboard', icon: Calendar, action: () => navigate('/dashboard') },
+    { name: 'Plano', url: '/action-plan', icon: FileText, action: () => navigate('/action-plan') },
+    { name: 'Ranking', url: '#', icon: Trophy, action: () => toast({ title: "Ranking", description: "Feature coming soon!" }) },
+    { name: 'Sair', url: '#', icon: LogOut, action: handleSignOut },
+  ];
+
   if (!user) {
     navigate('/auth');
     return null;
@@ -74,12 +86,17 @@ const WeekView = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <WeekViewHeader weekNumber={weekNumber || '1'} />
+      <NavBar items={navItems} />
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
-        <p className="text-gray-600 mb-4 sm:mb-8 text-sm sm:text-base font-medium text-center sm:text-left">
-          Passe o mouse sobre uma carta para ver o resumo. Clique para ver a atividade completa.
-        </p>
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8 pt-24">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
+            Semana {weekNumber}
+          </h1>
+          <p className="text-gray-600 text-sm sm:text-base font-medium">
+            Passe o mouse sobre uma carta para ver o resumo. Clique para ver a atividade completa.
+          </p>
+        </div>
 
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
           {/* Left Sidebar - Days */}

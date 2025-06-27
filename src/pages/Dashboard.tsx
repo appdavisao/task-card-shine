@@ -8,8 +8,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
-import { Trophy } from 'lucide-react';
+import { Trophy, Home, FileText, Calendar, LogOut } from 'lucide-react';
 import { Case } from '@/components/ui/cases-with-infinite-scroll';
+import { NavBar } from '@/components/ui/tubelight-navbar';
 
 interface Profile {
   id: string;
@@ -189,6 +190,13 @@ const Dashboard = () => {
     navigate('/action-plan');
   };
 
+  const navItems = [
+    { name: 'Semanas', url: '/week/1', icon: Calendar, action: () => navigate('/week/1') },
+    { name: 'Plano', url: '/action-plan', icon: FileText, action: () => navigate('/action-plan') },
+    { name: 'Ranking', url: '#', icon: Trophy, action: () => toast({ title: "Ranking", description: "Feature coming soon!" }) },
+    { name: 'Sair', url: '#', icon: LogOut, action: handleSignOut },
+  ];
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -211,48 +219,11 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-slate-800 border-b border-slate-700/30">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-          <div className="flex justify-between items-center py-4 sm:py-5">
-            <div className="flex items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
-              <Avatar className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0 ring-2 ring-white/10">
-                <AvatarImage src={profile?.avatar_url} />
-                <AvatarFallback className="text-sm sm:text-base bg-slate-100 text-slate-700 font-medium">
-                  {profile?.display_name?.charAt(0) || 'U'}
-                </AvatarFallback>
-              </Avatar>
-              <div className="min-w-0 flex-1">
-                <h1 className="text-base sm:text-xl font-medium text-white truncate">{profile?.display_name || 'User'}</h1>
-                <p className="text-xs sm:text-sm text-slate-300 truncate mt-0.5">
-                  {dashboardData?.strategy_text || "Adicionando dados do formulário..."}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
-              <Button 
-                className="bg-amber-600 hover:bg-amber-700 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-2 text-xs sm:text-sm font-medium shadow-sm border-0"
-                onClick={() => toast({ title: "Ranking", description: "Feature coming soon!" })}
-              >
-                <Trophy size={14} className="sm:w-4 sm:h-4" />
-                <span className="hidden xs:inline">1808 pts</span>
-                <span className="xs:hidden">1808</span>
-              </Button>
-              <Button 
-                onClick={handleSignOut} 
-                variant="outline" 
-                className="text-slate-300 border-slate-500 hover:bg-slate-600 hover:text-white text-xs sm:text-sm px-3 sm:px-4 py-2 bg-transparent"
-              >
-                <span className="hidden sm:inline">Sign Out</span>
-                <span className="sm:hidden">Out</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* New Tubelight Navbar */}
+      <NavBar items={navItems} />
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-6 sm:py-8">
-        {/* Profile Section */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-6 sm:py-8 pt-24">
+        {/* Profile Section with Enhanced Content */}
         <div className="mb-6 sm:mb-8">
           <Card className="bg-white shadow-sm border border-slate-200/60 rounded-2xl overflow-hidden">
             <CardContent className="p-6 sm:p-8">
@@ -265,8 +236,20 @@ const Dashboard = () => {
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <h2 className="text-xl sm:text-2xl font-semibold text-slate-800 mb-2 leading-tight">
-                    Seu Perfil Personalizado, {profile?.display_name?.split(' ')[0] || 'Usuário'}
+                    {profile?.display_name || 'Usuário'}
                   </h2>
+                  <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+                    Este plano foi adaptado especificamente para sua evolução de advogado local para protagonista nacional do Direito, priorizando LinkedIn para networking jurídico, Instagram para humanização da advocacia e YouTube para educação jurídica.
+                  </p>
+                  <div className="mt-4 flex items-center space-x-4">
+                    <Button 
+                      className="bg-amber-600 hover:bg-amber-700 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-2 text-xs sm:text-sm font-medium shadow-sm border-0"
+                      onClick={() => toast({ title: "Ranking", description: "Feature coming soon!" })}
+                    >
+                      <Trophy size={14} className="sm:w-4 sm:h-4" />
+                      <span>1808 pts</span>
+                    </Button>
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -318,7 +301,7 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Week Cards - Moved here with soft blue container */}
+        {/* Week Cards */}
         <div className="mb-8 sm:mb-10">
           <Card className="bg-gradient-to-br from-blue-50/30 to-blue-100/40 border border-blue-200/40 rounded-xl overflow-hidden">
             <CardContent className="p-6 sm:p-7">
@@ -363,7 +346,7 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Motivation Quote - Moved here */}
+        {/* Motivation Quote */}
         <div className="mb-8 sm:mb-10">
           <Card className="bg-gradient-to-br from-slate-50 to-slate-100/70 border border-slate-200/60 rounded-xl overflow-hidden">
             <CardContent className="p-6 sm:p-7">

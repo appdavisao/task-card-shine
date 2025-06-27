@@ -3,12 +3,13 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Upload, FileText, Image, File, ArrowLeft } from 'lucide-react';
+import { Upload, FileText, Image, File, Calendar, Trophy, LogOut } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
+import { NavBar } from '@/components/ui/tubelight-navbar';
 
 const ActionPlan = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [uploading, setUploading] = useState<Record<number, boolean>>({});
 
@@ -16,6 +17,18 @@ const ActionPlan = () => {
     navigate('/auth');
     return null;
   }
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth');
+  };
+
+  const navItems = [
+    { name: 'Dashboard', url: '/dashboard', icon: Calendar, action: () => navigate('/dashboard') },
+    { name: 'Semanas', url: '/week/1', icon: Calendar, action: () => navigate('/week/1') },
+    { name: 'Ranking', url: '#', icon: Trophy, action: () => toast({ title: "Ranking", description: "Feature coming soon!" }) },
+    { name: 'Sair', url: '#', icon: LogOut, action: handleSignOut },
+  ];
 
   const questions = [
     {
@@ -217,35 +230,19 @@ const ActionPlan = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-gray-50 py-4">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-          <div className="bg-slate-800 rounded-xl shadow-soft border border-slate-700/30">
-            <div className="flex justify-between items-center py-4 sm:py-5 px-4 sm:px-6">
-              <div className="flex items-center space-x-4">
-                <Button 
-                  onClick={() => navigate('/dashboard')} 
-                  variant="ghost" 
-                  className="text-slate-300 hover:bg-slate-600 hover:text-white text-sm backdrop-blur-sm flex items-center"
-                >
-                  <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
-                  <span>Sair</span>
-                </Button>
-                <div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-white">Plano de Ação</h1>
-                  <p className="text-sm text-slate-300">Escritor Best-Seller</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-slate-300">Progresso</p>
-                <p className="text-2xl font-bold text-white">0%</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <NavBar items={navItems} />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
+            Plano de Ação
+          </h1>
+          <p className="text-slate-600 text-sm sm:text-base">
+            Escritor Best-Seller
+          </p>
+        </div>
+
         {/* Questions */}
         <div className="space-y-6">
           {questions.map((question) => (
