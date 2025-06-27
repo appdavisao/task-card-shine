@@ -88,14 +88,18 @@ const WeekView = () => {
     <div className="min-h-screen bg-gray-50">
       <NavBar items={navItems} />
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8 pt-24">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8 pt-24 pb-20 sm:pb-8">
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
-            Semana {weekNumber}
-          </h1>
-          <p className="text-gray-600 text-sm sm:text-base font-medium">
-            Passe o mouse sobre uma carta para ver o resumo. Clique para ver a atividade completa.
-          </p>
+          <Card className="bg-white shadow-sm border border-slate-200/60 rounded-xl overflow-hidden">
+            <CardContent className="p-6 sm:p-8">
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
+                Semana {weekNumber}
+              </h1>
+              <p className="text-gray-600 text-sm sm:text-base font-medium">
+                Passe o mouse sobre uma carta para ver o resumo. Clique para ver a atividade completa.
+              </p>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
@@ -136,7 +140,7 @@ const WeekView = () => {
                 />
               </>
             ) : (
-              <Card className="bg-white border-gray-200 shadow-lg">
+              <Card className="bg-white border-gray-200 shadow-sm border border-slate-200/60 rounded-xl overflow-hidden">
                 <CardContent className="p-8 sm:p-12 text-center">
                   <div className="text-gray-400 mb-4">
                     <Lightbulb className="h-12 w-12 sm:h-16 sm:w-16 mx-auto opacity-50" />

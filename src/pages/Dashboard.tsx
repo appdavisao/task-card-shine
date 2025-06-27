@@ -222,7 +222,7 @@ const Dashboard = () => {
       {/* New Tubelight Navbar */}
       <NavBar items={navItems} />
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-6 sm:py-8 pt-24">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-6 sm:py-8 pt-24 pb-20 sm:pb-8">
         {/* Profile Section with Enhanced Content */}
         <div className="mb-6 sm:mb-8">
           <Card className="bg-white shadow-sm border border-slate-200/60 rounded-2xl overflow-hidden">
@@ -238,10 +238,10 @@ const Dashboard = () => {
                   <h2 className="text-xl sm:text-2xl font-semibold text-slate-800 mb-2 leading-tight">
                     {profile?.display_name || 'Usuário'}
                   </h2>
-                  <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+                  <p className="text-sm sm:text-base text-slate-600 leading-relaxed mb-4">
                     Este plano foi adaptado especificamente para sua evolução de advogado local para protagonista nacional do Direito, priorizando LinkedIn para networking jurídico, Instagram para humanização da advocacia e YouTube para educação jurídica.
                   </p>
-                  <div className="mt-4 flex items-center space-x-4">
+                  <div className="flex items-center justify-between">
                     <Button 
                       className="bg-amber-600 hover:bg-amber-700 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-2 text-xs sm:text-sm font-medium shadow-sm border-0"
                       onClick={() => toast({ title: "Ranking", description: "Feature coming soon!" })}
@@ -301,14 +301,54 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Week Cards */}
+        {/* Week Cards - Fixed Mobile Layout */}
         <div className="mb-8 sm:mb-10">
           <Card className="bg-gradient-to-br from-blue-50/30 to-blue-100/40 border border-blue-200/40 rounded-xl overflow-hidden">
-            <CardContent className="p-6 sm:p-7">
-              <h3 className="text-lg sm:text-xl font-medium text-slate-800 mb-6 sm:mb-8 text-left">
+            <CardContent className="p-4 sm:p-6 lg:p-7">
+              <h3 className="text-lg sm:text-xl font-medium text-slate-800 mb-4 sm:mb-6 text-center sm:text-left">
                 Idéias de Conteúdos
               </h3>
-              <div className="grid grid-cols-7 gap-3 sm:gap-4">
+              
+              {/* Mobile: Vertical Stack */}
+              <div className="block sm:hidden space-y-3">
+                {[1, 2, 3, 4, 5, 6, 7].map((week) => {
+                  const activities = getWeekActivitiesCount(week);
+                  const progress = getWeekProgress(week);
+                  
+                  return (
+                    <div
+                      key={week}
+                      className="cursor-pointer bg-white border border-slate-200/60 rounded-xl p-4 shadow-sm
+                        transition-all duration-300 ease-out
+                        hover:shadow-md hover:scale-[1.02] hover:border-slate-300
+                        hover:bg-gradient-to-br hover:from-white hover:to-slate-50/50
+                        active:scale-95"
+                      onClick={() => handleWeekClick(week)}
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="text-xl font-semibold text-slate-700">
+                          S{week}
+                        </div>
+                        <div className="text-xs text-slate-500 font-medium">
+                          {progress.toFixed(0)}% concluído
+                        </div>
+                      </div>
+                      <p className="text-sm text-slate-600 mb-3 font-medium">
+                        {activities} atividades
+                      </p>
+                      <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-slate-400 to-slate-500 rounded-full transition-all duration-500"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Desktop: Grid Layout */}
+              <div className="hidden sm:grid grid-cols-7 gap-3 sm:gap-4">
                 {[1, 2, 3, 4, 5, 6, 7].map((week) => {
                   const activities = getWeekActivitiesCount(week);
                   const progress = getWeekProgress(week);
