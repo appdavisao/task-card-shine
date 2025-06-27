@@ -3,10 +3,12 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Upload, FileText, Image, File, Calendar, Trophy, LogOut } from 'lucide-react';
+import { Upload, FileText, Image, File, Calendar, Trophy, LogOut, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import { NavBar } from '@/components/ui/tubelight-navbar';
+import { AnimatedGridPattern } from '@/components/ui/animated-grid-pattern';
+import { cn } from '@/lib/utils';
 
 const ActionPlan = () => {
   const { user, signOut } = useAuth();
@@ -229,13 +231,37 @@ const ActionPlan = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative overflow-hidden">
+      {/* Animated Grid Background */}
+      <AnimatedGridPattern
+        numSquares={15}
+        maxOpacity={0.04}
+        duration={8}
+        repeatDelay={1}
+        className={cn(
+          "[mask-image:radial-gradient(1000px_circle_at_center,white,transparent)]",
+          "inset-x-0 inset-y-[-30%] h-[200%] fill-slate-200/30 stroke-slate-200/30",
+        )}
+      />
+      
       <NavBar items={navItems} />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24 pb-20 sm:pb-8">
-        {/* Header */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24 pb-20 sm:pb-8 relative z-10">
+        {/* Header with Back Button */}
         <div className="mb-8">
-          <Card className="bg-white shadow-sm border border-slate-200/60 rounded-xl overflow-hidden">
+          <div className="flex items-center gap-4 mb-6">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/dashboard')}
+              className="flex items-center gap-2 bg-white/80 backdrop-blur-sm border-slate-200 hover:bg-white hover:border-slate-300 shadow-sm"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Voltar
+            </Button>
+          </div>
+          
+          <Card className="bg-white/80 backdrop-blur-sm shadow-xl border border-slate-200/60 rounded-2xl overflow-hidden">
             <CardContent className="p-6 sm:p-8">
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
                 Plano de Ação
@@ -250,7 +276,7 @@ const ActionPlan = () => {
         {/* Questions */}
         <div className="space-y-6">
           {questions.map((question) => (
-            <Card key={question.id} className="bg-white shadow-sm border border-slate-200/60 rounded-xl overflow-hidden hover:shadow-md transition-all duration-300">
+            <Card key={question.id} className="bg-white/80 backdrop-blur-sm shadow-sm border border-slate-200/60 rounded-xl overflow-hidden hover:shadow-md transition-all duration-300">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-start gap-4 text-base">
                   <span className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full w-12 h-10 flex items-center justify-center text-sm font-bold flex-shrink-0 shadow-sm">
@@ -293,7 +319,7 @@ const ActionPlan = () => {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="flex items-center gap-2 text-sm bg-white hover:bg-blue-50 border-blue-200 hover:border-blue-300 text-blue-700 hover:text-blue-800 shadow-sm hover:shadow-md transition-all duration-200"
+                        className="flex items-center gap-2 text-sm bg-white/80 backdrop-blur-sm hover:bg-blue-50 border-blue-200/60 hover:border-blue-300 text-blue-700 hover:text-blue-800 shadow-sm hover:shadow-md transition-all duration-200"
                         disabled={uploading[question.id]}
                         asChild
                       >
@@ -316,7 +342,7 @@ const ActionPlan = () => {
 
         {/* Footer Note */}
         <div className="mt-12">
-          <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200/50 shadow-sm rounded-xl overflow-hidden">
+          <Card className="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 backdrop-blur-sm border-blue-200/50 shadow-sm rounded-xl overflow-hidden">
             <CardContent className="p-8">
               <h3 className="text-xl font-bold text-blue-900 mb-4 flex items-center gap-2">
                 <span className="text-2xl">📚</span>

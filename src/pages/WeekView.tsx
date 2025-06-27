@@ -10,6 +10,8 @@ import WeekViewTaskDetails from '@/components/WeekViewTaskDetails';
 import WeekViewContentTip from '@/components/WeekViewContentTip';
 import { NavBar } from '@/components/ui/tubelight-navbar';
 import { toast } from '@/components/ui/use-toast';
+import { AnimatedGridPattern } from '@/components/ui/animated-grid-pattern';
+import { cn } from '@/lib/utils';
 
 const WeekView = () => {
   const { weekNumber } = useParams();
@@ -85,12 +87,24 @@ const WeekView = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative overflow-hidden">
+      {/* Animated Grid Background */}
+      <AnimatedGridPattern
+        numSquares={15}
+        maxOpacity={0.04}
+        duration={8}
+        repeatDelay={1}
+        className={cn(
+          "[mask-image:radial-gradient(1000px_circle_at_center,white,transparent)]",
+          "inset-x-0 inset-y-[-30%] h-[200%] fill-slate-200/30 stroke-slate-200/30",
+        )}
+      />
+      
       <NavBar items={navItems} />
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8 pt-24 pb-20 sm:pb-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8 pt-24 pb-20 sm:pb-8 relative z-10">
         <div className="mb-6 sm:mb-8">
-          <Card className="bg-white shadow-sm border border-slate-200/60 rounded-xl overflow-hidden">
+          <Card className="bg-white/80 backdrop-blur-sm shadow-sm border border-slate-200/60 rounded-xl overflow-hidden">
             <CardContent className="p-6 sm:p-8">
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
                 Semana {weekNumber}
@@ -140,7 +154,7 @@ const WeekView = () => {
                 />
               </>
             ) : (
-              <Card className="bg-white border-gray-200 shadow-sm border border-slate-200/60 rounded-xl overflow-hidden">
+              <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-sm border border-slate-200/60 rounded-xl overflow-hidden">
                 <CardContent className="p-8 sm:p-12 text-center">
                   <div className="text-gray-400 mb-4">
                     <Lightbulb className="h-12 w-12 sm:h-16 sm:w-16 mx-auto opacity-50" />
