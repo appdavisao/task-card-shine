@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -9,6 +10,7 @@ import { useWeekViewData } from '@/hooks/useWeekViewData';
 import WeekViewDayCard from '@/components/WeekViewDayCard';
 import WeekViewTaskDetails from '@/components/WeekViewTaskDetails';
 import WeekViewContentTip from '@/components/WeekViewContentTip';
+import ContentChatbot from '@/components/ContentChatbot';
 import { NavBar } from '@/components/ui/tubelight-navbar';
 import { toast } from '@/components/ui/use-toast';
 import { AnimatedGridPattern } from '@/components/ui/animated-grid-pattern';
@@ -123,6 +125,13 @@ const WeekView = () => {
     );
   }
 
+  // Build chatbot context
+  const chatbotContext = {
+    page: 'week-view',
+    day: selectedDay || undefined,
+    content_card: dailyContent?.content_card || undefined
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 relative overflow-hidden">
       {/* Animated Grid Background */}
@@ -186,7 +195,7 @@ const WeekView = () => {
                 
                 // Create a fake task object using daily content data
                 const displayTask = dayContent ? {
-                  id: dayContent.id,
+                  id: dayContent.id,  
                   day: dayContent.day,
                   title: dayContent.title,
                   description: dayContent.content_card?.format || 'Modelo de Conteúdo',
@@ -253,6 +262,9 @@ const WeekView = () => {
           </div>
         </div>
       </div>
+
+      {/* Content Chatbot */}
+      <ContentChatbot context={chatbotContext} />
     </div>
   );
 };
