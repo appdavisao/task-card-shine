@@ -42,6 +42,36 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_conversations: {
+        Row: {
+          assistant_response: string
+          context: Json | null
+          conversation_id: string
+          created_at: string
+          id: string
+          user_id: string
+          user_message: string
+        }
+        Insert: {
+          assistant_response: string
+          context?: Json | null
+          conversation_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+          user_message: string
+        }
+        Update: {
+          assistant_response?: string
+          context?: Json | null
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+          user_message?: string
+        }
+        Relationships: []
+      }
       content_templates: {
         Row: {
           content_structure: Json
