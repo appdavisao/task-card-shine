@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.1'
 
@@ -116,12 +115,7 @@ async function generatePersonalizedContent(originalContent: any, profile: any, d
   // Get base content card
   let contentCard = { ...originalContent.content_card }
 
-  // Personalize based on generation level
-  if (generationLevel >= 1) {
-    // Basic personalization - Strategic Analysis
-    contentCard.strategic_analysis = generateStrategicAnalysis(archetype, currentWork, segment, generationLevel)
-  }
-
+  // Only personalize video structure (not strategic analysis)
   if (generationLevel >= 2) {
     // Enhanced personalization - Video Structure
     contentCard.video_structure = personalizeVideoStructure(contentCard.video_structure, profile, keyData, generationLevel)
@@ -132,9 +126,12 @@ async function generatePersonalizedContent(originalContent: any, profile: any, d
     contentCard.examples = personalizeExamples(contentCard.examples, archetype, currentWork, segment)
   }
 
+  // Generate strategic analysis for storage but don't apply it to the content card
+  const strategicAnalysis = generateStrategicAnalysis(archetype, currentWork, segment, generationLevel)
+
   return {
     content_card: contentCard,
-    strategic_analysis: contentCard.strategic_analysis
+    strategic_analysis: strategicAnalysis
   }
 }
 

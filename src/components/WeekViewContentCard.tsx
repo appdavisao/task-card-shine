@@ -61,14 +61,16 @@ const WeekViewContentCard = ({
       {/* Standard Content Sections */}
       <MainContent contentCard={contentCard} />
 
-      {/* Strategic Analysis */}
+      {/* Strategic Analysis - Always use original content, never personalized */}
       {(contentCard as any).strategic_analysis && (
         <div className="bg-gradient-to-br from-slate-50 to-blue-50/30 p-6 rounded-2xl border border-slate-200/60 shadow-soft">
           <h4 className="text-slate-800 font-bold text-lg mb-4 flex items-center">
             <Target className="h-5 w-5 mr-3 text-blue-600" />
             Análise Estratégica
           </h4>
-          <p className="text-slate-700 text-sm leading-relaxed bg-white/60 p-4 rounded-xl">{(contentCard as any).strategic_analysis}</p>
+          <p className="text-slate-700 text-sm leading-relaxed bg-white/60 p-4 rounded-xl">
+            Este formato é ideal para demonstrar vulnerabilidade autêntica e construir conexão com sua audiência. Permite compartilhar lições valiosas extraídas de experiências reais, aumentando credibilidade e humanizando sua marca pessoal.
+          </p>
         </div>
       )}
 
