@@ -1,11 +1,10 @@
-
 import React from 'react';
 
 interface Roteiro180SectionsProps {
   contentCard: any;
 }
 
-// Seção 1: Por que as cópias falham (após "Como Criar o Conteúdo")
+// Seção 1: Por que as copias falham (após "Como Criar o Conteúdo")
 export const Roteiro180Section1 = ({ contentCard }: Roteiro180SectionsProps) => {
   if ((contentCard as any).roteiro_number !== 180) return null;
 
@@ -13,7 +12,7 @@ export const Roteiro180Section1 = ({ contentCard }: Roteiro180SectionsProps) => 
     <div className="bg-red-50 p-4 rounded-lg border-l-4 border-l-red-500">
       <h4 className="text-red-700 font-semibold text-lg mb-3 flex items-center">
         <span className="text-lg mr-2">❌</span>
-        Por que as cópias falham
+        Por que as copias falham
       </h4>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="bg-white p-3 rounded border-l-4 border-red-400">
@@ -37,7 +36,6 @@ export const Roteiro180Section1 = ({ contentCard }: Roteiro180SectionsProps) => 
   );
 };
 
-// Seção 2: Como adaptar corretamente (após "Gatilhos Psicológicos")
 export const Roteiro180Section2 = ({ contentCard }: Roteiro180SectionsProps) => {
   if ((contentCard as any).roteiro_number !== 180) return null;
 
@@ -69,7 +67,6 @@ export const Roteiro180Section2 = ({ contentCard }: Roteiro180SectionsProps) => 
   );
 };
 
-// Seção 3: Elementos fundamentais para o sucesso (antes do "Call to Action")
 export const Roteiro180Section3 = ({ contentCard }: Roteiro180SectionsProps) => {
   if ((contentCard as any).roteiro_number !== 180) return null;
 
