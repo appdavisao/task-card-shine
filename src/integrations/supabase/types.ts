@@ -252,6 +252,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_content_generations: {
+        Row: {
+          content_card: Json
+          created_at: string
+          day: number
+          generation_level: number
+          id: string
+          is_active: boolean | null
+          strategic_analysis: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content_card: Json
+          created_at?: string
+          day: number
+          generation_level?: number
+          id?: string
+          is_active?: boolean | null
+          strategic_analysis?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content_card?: Json
+          created_at?: string
+          day?: number
+          generation_level?: number
+          id?: string
+          is_active?: boolean | null
+          strategic_analysis?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_daily_content: {
         Row: {
           audio_suggestion: string | null

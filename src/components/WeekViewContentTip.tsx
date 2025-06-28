@@ -1,4 +1,4 @@
-
+import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -26,6 +26,24 @@ const WeekViewContentTip = ({
   expandedExamples,
   onExpandExamples
 }: WeekViewContentTipProps) => {
+  const [currentContent, setCurrentContent] = useState<DailyContent | null>(dailyContent);
+  const [currentGenerationLevel, setCurrentGenerationLevel] = useState(0);
+
+  // Update current content when dailyContent changes
+  useEffect(() => {
+    setCurrentContent(dailyContent);
+  }, [dailyContent]);
+
+  const handleContentUpdate = (newContent: DailyContent) => {
+    console.log('Updating content with personalized version:', newContent);
+    setCurrentContent(newContent);
+    
+    // Extract generation level from the content if available
+    const generationLevel = newContent.id?.includes('personalized') ? 
+      parseInt(newContent.title?.match(/Nível (\d+)/)?.[1] || '1') : 0;
+    setCurrentGenerationLevel(generationLevel);
+  };
+
   return (
     <Collapsible open={contentTipOpen} onOpenChange={onContentTipToggle}>
       <CollapsibleTrigger asChild>
@@ -40,13 +58,18 @@ const WeekViewContentTip = ({
                   <h3 className="text-xl font-bold text-white mb-1">
                     Estratégia de Conteúdo - Dia {selectedDay}
                   </h3>
-                  {dailyContent && dailyContent.content_card && (
+                  {currentContent && currentContent.content_card && (
                     <div className="flex items-center gap-3 mt-2">
                       <Badge className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-full px-3 py-1">
-                        {getContentTypeDisplay(dailyContent.content_type)}
+                        {getContentTypeDisplay(currentContent.content_type)}
                       </Badge>
+                      {currentGenerationLevel > 0 && (
+                        <Badge className="bg-green-500/80 backdrop-blur-sm text-white border border-green-400/30 rounded-full px-3 py-1">
+                          Personalizado Nv.{currentGenerationLevel}
+                        </Badge>
+                      )}
                       <div className="flex gap-2">
-                        {getPlatformIcons(dailyContent.content_type).map((platform, index) => (
+                        {getPlatformIcons(currentContent.content_type).map((platform, index) => (
                           <Badge 
                             key={index}
                             className="bg-white/20 backdrop-blur-sm text-white border border-white/30 text-xs px-2 py-1 rounded-full"
@@ -69,7 +92,10 @@ const WeekViewContentTip = ({
             </div>
             {!contentTipOpen && (
               <p className="text-blue-100 mt-3 text-sm font-medium opacity-90">
-                Clique para ver o roteiro completo e estratégias avançadas
+                {currentGenerationLevel > 0 
+                  ? `Conteúdo personalizado (Nível ${currentGenerationLevel}) - Clique para ver detalhes`
+                  : 'Clique para ver o roteiro completo e opções de personalização'
+                }
               </p>
             )}
           </CardContent>
@@ -86,11 +112,14 @@ const WeekViewContentTip = ({
                   <span className="text-slate-600 font-medium">Carregando estratégias de conteúdo...</span>
                 </div>
               </div>
-            ) : dailyContent && dailyContent.content_card ? (
+            ) : currentContent && currentContent.content_card ? (
               <WeekViewContentCard 
-                contentCard={dailyContent.content_card}
+                contentCard={currentContent.content_card}
                 expandedExamples={expandedExamples}
                 onExpandExamples={onExpandExamples}
+                day={selectedDay}
+                onContentUpdate={handleContentUpdate}
+                currentGenerationLevel={currentGenerationLevel}
               />
             ) : (
               <div className="text-center py-12">

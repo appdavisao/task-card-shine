@@ -18,8 +18,15 @@ interface WeekViewContentCardProps {
 const WeekViewContentCard = ({ 
   contentCard, 
   expandedExamples, 
-  onExpandExamples 
-}: WeekViewContentCardProps) => {
+  onExpandExamples,
+  day,
+  onContentUpdate,
+  currentGenerationLevel = 0
+}: WeekViewContentCardProps & {
+  day?: number;
+  onContentUpdate?: (newContent: DailyContent) => void;
+  currentGenerationLevel?: number;
+}) => {
   
   console.log('WeekViewContentCard received contentCard:', contentCard);
   console.log('Content type detected:', (contentCard as any).content_type);
@@ -76,8 +83,13 @@ const WeekViewContentCard = ({
       {/* Day 2 (Roteiro 32) Specific Section 1: Fatores de Decisão Essenciais */}
       <Roteiro32Section1 contentCard={contentCard} />
 
-      {/* Video Structure Section */}
-      <VideoStructure contentCard={contentCard} />
+      {/* Video Structure Section with Personalization */}
+      <VideoStructure 
+        contentCard={contentCard} 
+        day={day}
+        onContentUpdate={onContentUpdate}
+        currentGenerationLevel={currentGenerationLevel}
+      />
 
       {/* Enhanced Examples Section */}
       <WeekViewExamples 

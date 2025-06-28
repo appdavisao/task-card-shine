@@ -1,45 +1,48 @@
 
-import React from 'react';
 import { Badge } from '@/components/ui/badge';
+import { Play, Users, Target, Lightbulb } from 'lucide-react';
+import { ContentCard } from '@/types/weekView';
+import PersonalizationButton from './PersonalizationButton';
+import { DailyContent } from '@/types/weekView';
 
-interface ContentSectionsProps {
-  contentCard: any;
+interface ContentSectionProps {
+  contentCard: ContentCard;
 }
 
-export const ContentFormat = ({ contentCard }: ContentSectionsProps) => (
-  <div className="bg-white p-6 rounded-xl border border-slate-200/60 shadow-sm">
-    <h4 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
-      <span className="text-lg mr-3">🎬</span>
-      Formato de Conteúdo
-    </h4>
-    <div className="flex flex-wrap gap-3">
-      <Badge className="bg-gradient-to-r from-slate-700 to-slate-800 text-white text-sm px-4 py-2 shadow-sm">
-        {contentCard.format}
-      </Badge>
-      {(contentCard as any).content_type === 'case_study' && (
-        <Badge className="bg-gradient-to-r from-slate-600 to-slate-700 text-white text-sm px-4 py-2 shadow-sm">
-          Estudo de Caso
-        </Badge>
-      )}
-    </div>
-  </div>
-);
+interface VideoStructureSectionProps extends ContentSectionProps {
+  day?: number;
+  onContentUpdate?: (newContent: DailyContent) => void;
+  currentGenerationLevel?: number;
+}
 
-export const MainContent = ({ contentCard }: ContentSectionsProps) => {
-  const isCaseStudy = (contentCard as any).content_type === 'case_study';
-  
-  if ((!isCaseStudy || contentCard.main_content) && contentCard.main_content) {
-    return (
-      <div className="bg-white p-6 rounded-xl border border-slate-200/60 shadow-sm">
-        <h4 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
-          <span className="text-lg mr-3">💡</span>
-          Conteúdo Principal
-        </h4>
-        <p className="text-slate-700 leading-relaxed">{contentCard.main_content}</p>
+export const ContentFormat = ({ contentCard }: ContentSectionProps) => {
+  if (!contentCard.format) return null;
+
+  return (
+    <div className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-2xl border border-slate-200/60 shadow-soft">
+      <h4 className="text-lg font-bold text-slate-900 mb-4 flex items-center">
+        <Play className="h-5 w-5 mr-3 text-blue-600" />
+        Formato do Conteúdo
+      </h4>
+      <div className="bg-gradient-to-r from-blue-100 to-indigo-100 p-4 rounded-xl border border-blue-200/60">
+        <p className="text-blue-800 font-medium text-center">{contentCard.format}</p>
       </div>
-    );
-  }
-  return null;
+    </div>
+  );
+};
+
+export const MainContent = ({ contentCard }: ContentSectionProps) => {
+  if (!contentCard.main_content) return null;
+
+  return (
+    <div className="bg-gradient-to-br from-white to-blue-50/30 p-6 rounded-2xl border border-slate-200/60 shadow-soft">
+      <h4 className="text-lg font-bold text-slate-900 mb-4 flex items-center">
+        <Target className="h-5 w-5 mr-3 text-blue-600" />
+        Conceito Principal
+      </h4>
+      <p className="text-slate-700 leading-relaxed">{contentCard.main_content}</p>
+    </div>
+  );
 };
 
 export const ArraySection = ({ 
@@ -49,9 +52,9 @@ export const ArraySection = ({
   icon, 
   bgColor, 
   borderColor, 
-  textColor,
+  textColor, 
   itemIcon 
-}: ContentSectionsProps & {
+}: ContentSectionProps & {
   fieldName: string;
   title: string;
   icon: string;
@@ -60,21 +63,21 @@ export const ArraySection = ({
   textColor: string;
   itemIcon: string;
 }) => {
-  const items = (contentCard as any)[fieldName];
+  const fieldValue = (contentCard as any)[fieldName];
   
-  if (!items || !Array.isArray(items) || items.length === 0) return null;
+  if (!fieldValue || !Array.isArray(fieldValue) || fieldValue.length === 0) return null;
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-slate-200/60 shadow-sm">
-      <h4 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
-        <span className="text-lg mr-3">{icon}</span>
+    <div className={`${bgColor} p-6 rounded-2xl border ${borderColor} shadow-soft`}>
+      <h4 className={`text-lg font-bold ${textColor} mb-4 flex items-center`}>
+        <span className="mr-3 text-lg">{icon}</span>
         {title}
       </h4>
-      <div className={`${bgColor} border ${borderColor} rounded-lg p-4`}>
-        {items.map((item: string, index: number) => (
-          <div key={index} className={`flex items-start mb-3 last:mb-0 p-4 bg-white rounded-lg border-l-4 ${borderColor.replace('border-', 'border-l-')} shadow-sm`}>
-            <span className="text-lg mr-3 flex-shrink-0">{itemIcon}</span>
-            <span className={`${textColor} text-sm leading-relaxed font-medium`}>{item}</span>
+      <div className="space-y-3">
+        {fieldValue.map((item: string, index: number) => (
+          <div key={index} className="flex items-start space-x-3 bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-white/60 shadow-sm">
+            <span className="flex-shrink-0 mt-0.5">{itemIcon}</span>
+            <span className={`${textColor} text-sm font-medium leading-tight`}>{item}</span>
           </div>
         ))}
       </div>
@@ -82,116 +85,90 @@ export const ArraySection = ({
   );
 };
 
-export const HowToStructure = ({ contentCard }: ContentSectionsProps) => {
-  const howToStructure = (contentCard as any).how_to_structure;
-  
-  if (!howToStructure) return null;
+export const HowToStructure = ({ contentCard }: ContentSectionProps) => {
+  if (!contentCard.how_to_structure) return null;
+
+  const structure = contentCard.how_to_structure;
+  const steps = Object.entries(structure).filter(([key]) => key.startsWith('step_'));
+
+  if (steps.length === 0) return null;
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-slate-200/60 shadow-sm">
-      <h4 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
-        <span className="text-lg mr-3">📋</span>
-        Como Criar o Conteúdo
+    <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-2xl border border-green-200/60 shadow-soft">
+      <h4 className="text-lg font-bold text-green-900 mb-4 flex items-center">
+        <Lightbulb className="h-5 w-5 mr-3 text-green-600" />
+        Como Estruturar
       </h4>
-      <div className="bg-gradient-to-r from-slate-50 to-zinc-50 border border-slate-200 rounded-lg p-5">
-        <div className="step-item flex mb-4 items-start">
-          <span className="bg-gradient-to-r from-slate-700 to-slate-800 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold mr-4 flex-shrink-0 mt-0.5 shadow-sm">1</span>
-          <span className="text-slate-700 leading-relaxed">{howToStructure.step_1}</span>
-        </div>
-        <div className="step-item flex mb-4 items-start">
-          <span className="bg-gradient-to-r from-slate-700 to-slate-800 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold mr-4 flex-shrink-0 mt-0.5 shadow-sm">2</span>
-          <span className="text-slate-700 leading-relaxed">{howToStructure.step_2}</span>
-        </div>
-        <div className="step-item flex mb-0 items-start">
-          <span className="bg-gradient-to-r from-slate-700 to-slate-800 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold mr-4 flex-shrink-0 mt-0.5 shadow-sm">3</span>
-          <span className="text-slate-700 leading-relaxed">{howToStructure.step_3}</span>
+      <div className="space-y-4">
+        {steps.map(([key, value], index) => (
+          <div key={key} className="flex items-start space-x-4">
+            <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
+              {index + 1}
+            </div>
+            <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl flex-1 border border-green-200/60 shadow-sm">
+              <p className="text-green-800 font-medium leading-relaxed">{value as string}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export const VideoStructure = ({ 
+  contentCard, 
+  day, 
+  onContentUpdate, 
+  currentGenerationLevel = 0 
+}: VideoStructureSectionProps) => {
+  if (!contentCard.video_structure) return null;
+
+  const structure = contentCard.video_structure;
+  const sections = Object.entries(structure);
+
+  if (sections.length === 0) return null;
+
+  return (
+    <div className="space-y-4">
+      {/* Personalization Button */}
+      {day && onContentUpdate && (
+        <PersonalizationButton
+          day={day}
+          onContentUpdate={onContentUpdate}
+          currentGenerationLevel={currentGenerationLevel}
+        />
+      )}
+
+      {/* Video Structure Content */}
+      <div className="bg-gradient-to-br from-purple-50 to-blue-50 p-6 rounded-2xl border border-purple-200/60 shadow-soft">
+        <h4 className="text-lg font-bold text-purple-900 mb-4 flex items-center">
+          <Play className="h-5 w-5 mr-3 text-purple-600" />
+          Estrutura do Vídeo
+        </h4>
+        <div className="space-y-4">
+          {sections.map(([key, value], index) => {
+            const sectionTitle = key.charAt(0).toUpperCase() + key.slice(1).replace('_', ' ');
+            
+            return (
+              <div key={key} className="bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-purple-200/60 shadow-sm">
+                <div className="flex items-center mb-2">
+                  <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 text-white mr-3">
+                    {index + 1}
+                  </Badge>
+                  <h5 className="font-semibold text-purple-900">{sectionTitle}</h5>
+                </div>
+                <p className="text-purple-800 leading-relaxed">{value as string}</p>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
   );
 };
 
-export const VideoStructure = ({ contentCard }: ContentSectionsProps) => {
-  const videoStructure = (contentCard as any).video_structure;
-  
-  if (!videoStructure) return null;
-
-  return (
-    <div className="bg-white p-6 rounded-xl border border-slate-200/60 shadow-sm">
-      <h4 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
-        <span className="text-lg mr-3">🎬</span>
-        Estrutura do Vídeo
-      </h4>
-      <div className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl p-6 text-white shadow-lg">
-        <div className="bg-white bg-opacity-10 p-4 rounded-lg mb-4 border-l-4 border-amber-400 backdrop-blur-sm">
-          <strong className="block text-amber-200 text-sm uppercase tracking-wide mb-2">1. Hook</strong>
-          <span className="text-white text-sm leading-relaxed">{videoStructure.hook}</span>
-        </div>
-        
-        <div className="bg-white bg-opacity-10 p-4 rounded-lg mb-4 border-l-4 border-emerald-400 backdrop-blur-sm">
-          <strong className="block text-emerald-200 text-sm uppercase tracking-wide mb-2">2. Apresentação</strong>
-          <span className="text-white text-sm leading-relaxed">{videoStructure.apresentacao}</span>
-        </div>
-        
-        <div className="bg-white bg-opacity-10 p-4 rounded-lg mb-4 border-l-4 border-blue-400 backdrop-blur-sm">
-          <strong className="block text-blue-200 text-sm uppercase tracking-wide mb-2">3. Desafio</strong>
-          <span className="text-white text-sm leading-relaxed">{videoStructure.desafio}</span>
-        </div>
-        
-        <div className="bg-white bg-opacity-10 p-4 rounded-lg mb-4 border-l-4 border-purple-400 backdrop-blur-sm">
-          <strong className="block text-purple-200 text-sm uppercase tracking-wide mb-2">4. Revelação</strong>
-          <span className="text-white text-sm leading-relaxed">{videoStructure.revelacao}</span>
-        </div>
-        
-        <div className="bg-white bg-opacity-10 p-4 rounded-lg border-l-4 border-rose-400 backdrop-blur-sm">
-          <strong className="block text-rose-200 text-sm uppercase tracking-wide mb-2">5. Educação</strong>
-          <span className="text-white text-sm leading-relaxed">{videoStructure.educacao}</span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export const NarrativeStructure = ({ contentCard }: ContentSectionsProps) => {
-  const narrativeStructure = (contentCard as any).estrutura_narrativa_detalhada;
-  
-  if (!narrativeStructure) return null;
-
-  return (
-    <div className="bg-white p-6 rounded-xl border border-slate-200/60 shadow-sm">
-      <h4 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
-        <span className="text-lg mr-3">📖</span>
-        Estrutura Narrativa Detalhada
-      </h4>
-      <div className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl p-6 text-white shadow-lg">
-        {narrativeStructure.abertura && (
-          <div className="bg-white bg-opacity-10 p-4 rounded-lg mb-4 border-l-4 border-amber-400 backdrop-blur-sm">
-            <strong className="block text-amber-200 text-sm uppercase tracking-wide mb-2">1. Abertura</strong>
-            <span className="text-white text-sm leading-relaxed">{narrativeStructure.abertura}</span>
-          </div>
-        )}
-        
-        {narrativeStructure.desenvolvimento && (
-          <div className="bg-white bg-opacity-10 p-4 rounded-lg mb-4 border-l-4 border-emerald-400 backdrop-blur-sm">
-            <strong className="block text-emerald-200 text-sm uppercase tracking-wide mb-2">2. Desenvolvimento</strong>
-            <span className="text-white text-sm leading-relaxed">{narrativeStructure.desenvolvimento}</span>
-          </div>
-        )}
-        
-        {narrativeStructure.climax && (
-          <div className="bg-white bg-opacity-10 p-4 rounded-lg mb-4 border-l-4 border-blue-400 backdrop-blur-sm">
-            <strong className="block text-blue-200 text-sm uppercase tracking-wide mb-2">3. Clímax</strong>
-            <span className="text-white text-sm leading-relaxed">{narrativeStructure.climax}</span>
-          </div>
-        )}
-        
-        {narrativeStructure.resolucao && (
-          <div className="bg-white bg-opacity-10 p-4 rounded-lg border-l-4 border-purple-400 backdrop-blur-sm">
-            <strong className="block text-purple-200 text-sm uppercase tracking-wide mb-2">4. Resolução</strong>
-            <span className="text-white text-sm leading-relaxed">{narrativeStructure.resolucao}</span>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+export const NarrativeStructure = ({ contentCard }: ContentSectionProps) => {
+  // This component handles other narrative structures that aren't video_structure
+  // You can expand this for other structure types if needed
+  return null;
 };
