@@ -179,13 +179,37 @@ function personalizeVideoStructure(originalStructure: any, profile: any, keyData
       )
     }
 
-    // Personalize application section
+    // Personalize application section with cleaned work activities
     if (personalizedStructure.aplicacao) {
-      personalizedStructure.aplicacao = `Se você atua em ${currentWork}: ${personalizedStructure.aplicacao}`
+      const cleanedActivities = extractWorkActivities(currentWork)
+      personalizedStructure.aplicacao = personalizedStructure.aplicacao.replace(
+        /Se você atua em [^:]+:/,
+        `Se você atua em ${cleanedActivities}:`
+      )
     }
   }
 
   return personalizedStructure
+}
+
+function extractWorkActivities(currentWork: string): string {
+  // Remove titles, company names, and clean up to extract core activities
+  let cleaned = currentWork
+    // Remove common titles and prefixes
+    .replace(/^(CEO|Diretor|Gerente|Coordenador|Especialista|Consultor)\s+/gi, '')
+    // Remove company names (anything with "GWL" or similar patterns)
+    .replace(/\b[A-Z]{2,}\s+\w+/g, '')
+    // Clean up extra spaces and separators
+    .replace(/\s*,\s*/g, ', ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  // If the cleaned version is too short or empty, provide a fallback
+  if (cleaned.length < 10) {
+    return 'sua área de atuação'
+  }
+
+  return cleaned
 }
 
 function personalizeExamples(originalExamples: any, archetype: string, currentWork: string, segment: string) {
