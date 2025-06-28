@@ -1,6 +1,7 @@
+
 import { Badge } from '@/components/ui/badge';
 import { Play, Users, Sparkles, Target, Lightbulb } from 'lucide-react';
-import { ContentCard } from '@/types/weekView';
+import { ContentCard, DailyContent } from '@/types/weekView';
 import { getIntentionColor } from '@/utils/weekViewUtils';
 import { Roteiro181Section1, Roteiro181Section2, Roteiro181Section3, Roteiro181Section4 } from './WeekViewRoteiro181Sections';
 import { Roteiro32Section1, Roteiro32Section2, Roteiro32Section3, Roteiro32Section4 } from './WeekViewRoteiro32Sections';
