@@ -70,9 +70,53 @@ const Dashboard = () => {
     fetchUserData();
   }, [user, navigate]);
 
+  const parseProfileHighlights = (rawHighlights: any): Array<{icon: string; title: string; content: string}> => {
+    console.log('Raw profile_highlights from database:', rawHighlights);
+    
+    // If it's already in the correct format
+    if (Array.isArray(rawHighlights) && rawHighlights.length > 0) {
+      const firstItem = rawHighlights[0];
+      
+      // Check if it's already in object format with icon, title, content
+      if (typeof firstItem === 'object' && firstItem.icon && firstItem.title && firstItem.content) {
+        console.log('Profile highlights already in correct format');
+        return rawHighlights;
+      }
+      
+      // If it's an array of strings, convert to structured format
+      if (typeof firstItem === 'string') {
+        console.log('Converting string array to structured format');
+        return rawHighlights.map((item: string, index: number) => {
+          const icons = ['🎯', '📋', '⚡', '💖', '🚀', '💡', '🎨', '🔥'];
+          const titles = [
+            'Seu Objetivo Principal',
+            'Sua Expertise', 
+            'Seus Pontos Fortes',
+            'Sua Motivação',
+            'Sua Estratégia',
+            'Sua Inovação',
+            'Sua Criatividade',
+            'Sua Paixão'
+          ];
+          
+          return {
+            icon: icons[index] || '✨',
+            title: titles[index] || `Destaque ${index + 1}`,
+            content: item
+          };
+        });
+      }
+    }
+    
+    console.log('Using default profile highlights');
+    return [];
+  };
+
   const fetchUserData = async () => {
     try {
       if (!user) return;
+
+      console.log('Fetching data for user:', user.id);
 
       // Fetch profile
       const { data: profileData, error: profileError } = await supabase
@@ -84,6 +128,7 @@ const Dashboard = () => {
       if (profileError) {
         console.error('Profile error:', profileError);
       } else {
+        console.log('Profile data:', profileData);
         setProfile(profileData);
       }
 
@@ -96,15 +141,16 @@ const Dashboard = () => {
 
       if (dashboardError) {
         console.error('Dashboard error:', dashboardError);
-        // Set empty dashboard data if none exists
         setDashboardData({});
       } else {
-        // Parse the JSON data properly
+        console.log('Raw dashboard data:', dashboardDataRaw);
+        
+        // Parse the JSON data properly with enhanced profile highlights parsing
         const parsedDashboardData: DashboardData = {
           colors: dashboardDataRaw?.colors as Record<string, any> || {},
           platform_strategy: dashboardDataRaw?.platform_strategy as Record<string, any> || {},
           scores: dashboardDataRaw?.scores as Record<string, any> || {},
-          profile_highlights: (dashboardDataRaw?.profile_highlights as Array<any>) || [],
+          profile_highlights: parseProfileHighlights(dashboardDataRaw?.profile_highlights),
           motivation_quote: dashboardDataRaw?.motivation_quote || '',
           strategy_text: dashboardDataRaw?.strategy_text || '',
           instructions_text: dashboardDataRaw?.instructions_text || '',
@@ -112,6 +158,8 @@ const Dashboard = () => {
           sample_activities: (dashboardDataRaw?.sample_activities as Array<any>) || [],
           key_data: dashboardDataRaw?.key_data as Record<string, any> || {}
         };
+        
+        console.log('Parsed dashboard data:', parsedDashboardData);
         setDashboardData(parsedDashboardData);
       }
 
@@ -125,6 +173,7 @@ const Dashboard = () => {
       if (tasksError) {
         console.error('Tasks error:', tasksError);
       } else {
+        console.log('Tasks data:', tasksData);
         setTasks(tasksData || []);
       }
     } catch (error) {
@@ -248,6 +297,8 @@ const Dashboard = () => {
   const profileHighlights = dashboardData?.profile_highlights && dashboardData.profile_highlights.length > 0 
     ? dashboardData.profile_highlights 
     : defaultProfileHighlights;
+
+  console.log('Final profile highlights to render:', profileHighlights);
 
   return (
     <div className="min-h-screen bg-gray-50">
