@@ -135,23 +135,20 @@ const Dashboard = () => {
       // Check if it's already in object format with icon, title, content
       if (typeof firstItem === 'object' && firstItem.icon && firstItem.title && firstItem.content) {
         console.log('Profile highlights already in correct format');
-        return rawHighlights;
+        // Limit to 4 cards to match Andrea and Rolim pattern
+        return rawHighlights.slice(0, 4);
       }
       
       // If it's an array of strings, convert to structured format
       if (typeof firstItem === 'string') {
         console.log('Converting string array to structured format');
-        return rawHighlights.map((item: string, index: number) => {
-          const icons = ['🎯', '📋', '⚡', '💖', '🚀', '💡', '🎨', '🔥'];
+        return rawHighlights.slice(0, 4).map((item: string, index: number) => {
+          const icons = ['🎯', '📋', '⚡', '💖'];
           const titles = [
             'Seu Objetivo Principal',
             'Sua Expertise', 
             'Seus Pontos Fortes',
-            'Sua Motivação',
-            'Sua Estratégia',
-            'Sua Inovação',
-            'Sua Criatividade',
-            'Sua Paixão'
+            'Sua Motivação'
           ];
           
           return {
@@ -165,7 +162,7 @@ const Dashboard = () => {
       // If it's an array of objects but with different structure, try to adapt
       if (typeof firstItem === 'object') {
         console.log('Converting object array to structured format');
-        return rawHighlights.map((item: any, index: number) => {
+        return rawHighlights.slice(0, 4).map((item: any, index: number) => {
           // Handle different possible object structures
           const content = item.content || item.text || item.description || item.value || JSON.stringify(item);
           const title = item.title || item.name || item.label || `Destaque ${index + 1}`;
@@ -287,7 +284,7 @@ const Dashboard = () => {
     navigate(`/week/${week}`);
   };
 
-  // Default profile highlights when no data exists
+  // Default profile highlights when no data exists - standardized to 4 cards
   const defaultProfileHighlights = [
     {
       icon: "🎯",
@@ -368,9 +365,9 @@ const Dashboard = () => {
   const totalTasks = tasks.length;
   const progressPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
-  // Use profile highlights from database or default ones
+  // Use profile highlights from database or default ones - limit to 4 cards
   const profileHighlights = dashboardData?.profile_highlights && dashboardData.profile_highlights.length > 0 
-    ? dashboardData.profile_highlights 
+    ? parseProfileHighlights(dashboardData.profile_highlights)
     : defaultProfileHighlights;
 
   console.log('Final profile highlights to render:', profileHighlights);
@@ -414,7 +411,7 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Profile Highlights Grid */}
+        {/* Profile Highlights Grid - Standardized to 4 cards */}
         <div className="mb-8 sm:mb-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {profileHighlights.map((highlight, index) => (
