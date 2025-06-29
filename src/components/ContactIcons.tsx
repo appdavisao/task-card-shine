@@ -75,91 +75,95 @@ const ContactIcons: React.FC<ContactIconsProps> = ({
     return `https://www.tiktok.com/@${cleanHandle}`;
   };
 
+  const showUnavailableToast = (type: string) => {
+    toast({
+      title: "Não disponível",
+      description: `${type} não informado para este usuário`,
+      duration: 2000,
+    });
+  };
+
+  // Sempre mostrar todos os ícones, mas com estados diferentes
   const contactItems = [
     {
-      condition: email,
       icon: <Mail size={14} />,
-      onClick: () => copyToClipboard(email!, 'Email'),
-      title: `Email: ${email}`,
-      color: 'hover:text-blue-600'
+      onClick: email ? () => copyToClipboard(email, 'Email') : () => showUnavailableToast('Email'),
+      title: email ? `Email: ${email}` : 'Email não disponível',
+      color: 'hover:text-blue-600',
+      hasData: !!email
     },
     {
-      condition: phone,
       icon: <Phone size={14} />,
-      onClick: () => copyToClipboard(phone!, 'Telefone'),
-      title: `Telefone: ${phone}`,
-      color: 'hover:text-green-600'
+      onClick: phone ? () => copyToClipboard(phone, 'Telefone') : () => showUnavailableToast('Telefone'),
+      title: phone ? `Telefone: ${phone}` : 'Telefone não disponível',
+      color: 'hover:text-green-600',
+      hasData: !!phone
     },
     {
-      condition: instagram,
       icon: <Instagram size={14} />,
-      onClick: () => openLink(formatInstagramUrl(instagram!)),
-      title: `Instagram: ${instagram}`,
-      color: 'hover:text-pink-600'
+      onClick: instagram ? () => openLink(formatInstagramUrl(instagram)) : () => showUnavailableToast('Instagram'),
+      title: instagram ? `Instagram: ${instagram}` : 'Instagram não disponível',
+      color: 'hover:text-pink-600',
+      hasData: !!instagram
     },
     {
-      condition: linkedin,
       icon: <Linkedin size={14} />,
-      onClick: () => openLink(linkedin!),
-      title: `LinkedIn: ${linkedin}`,
-      color: 'hover:text-blue-700'
+      onClick: linkedin ? () => openLink(linkedin) : () => showUnavailableToast('LinkedIn'),
+      title: linkedin ? `LinkedIn: ${linkedin}` : 'LinkedIn não disponível',
+      color: 'hover:text-blue-700',
+      hasData: !!linkedin
     },
     {
-      condition: youtube,
       icon: <Youtube size={14} />,
-      onClick: () => openLink(youtube!),
-      title: `YouTube: ${youtube}`,
-      color: 'hover:text-red-600'
+      onClick: youtube ? () => openLink(youtube) : () => showUnavailableToast('YouTube'),
+      title: youtube ? `YouTube: ${youtube}` : 'YouTube não disponível',
+      color: 'hover:text-red-600',
+      hasData: !!youtube
     },
     {
-      condition: website,
       icon: <Globe size={14} />,
-      onClick: () => openLink(website!),
-      title: `Website: ${website}`,
-      color: 'hover:text-indigo-600'
+      onClick: website ? () => openLink(website) : () => showUnavailableToast('Website'),
+      title: website ? `Website: ${website}` : 'Website não disponível',
+      color: 'hover:text-indigo-600',
+      hasData: !!website
     },
     {
-      condition: tiktok,
       icon: <span className="text-xs font-bold">🎵</span>,
-      onClick: () => openLink(formatTikTokUrl(tiktok!)),
-      title: `TikTok: ${tiktok}`,
-      color: 'hover:text-purple-600'
+      onClick: tiktok ? () => openLink(formatTikTokUrl(tiktok)) : () => showUnavailableToast('TikTok'),
+      title: tiktok ? `TikTok: ${tiktok}` : 'TikTok não disponível',
+      color: 'hover:text-purple-600',
+      hasData: !!tiktok
     },
     {
-      condition: facebook,
       icon: <Facebook size={14} />,
-      onClick: () => openLink(facebook!),
-      title: `Facebook: ${facebook}`,
-      color: 'hover:text-blue-800'
+      onClick: facebook ? () => openLink(facebook) : () => showUnavailableToast('Facebook'),
+      title: facebook ? `Facebook: ${facebook}` : 'Facebook não disponível',
+      color: 'hover:text-blue-800',
+      hasData: !!facebook
     },
     {
-      condition: location,
       icon: <MapPin size={14} />,
-      onClick: () => {},
-      title: `Localização: ${location}`,
-      color: 'hover:text-gray-600'
+      onClick: location ? () => {} : () => showUnavailableToast('Localização'),
+      title: location ? `Localização: ${location}` : 'Localização não disponível',
+      color: 'hover:text-gray-600',
+      hasData: !!location
     }
   ];
 
-  const visibleItems = contactItems.filter(item => item.condition);
-
-  if (visibleItems.length === 0) return null;
-
   return (
     <div className="flex flex-wrap gap-2 mt-3">
-      {visibleItems.map((item, index) => (
+      {contactItems.map((item, index) => (
         <button
           key={index}
           onClick={item.onClick}
-          disabled={!item.condition || item.condition === location}
+          disabled={!item.hasData && item.title.includes('Localização')}
           className={`
-            p-2 rounded-lg bg-slate-50 text-slate-500 transition-all duration-200
-            ${item.condition && item.condition !== location 
-              ? `cursor-pointer ${item.color} hover:bg-slate-100 hover:shadow-sm active:scale-95` 
-              : item.condition === location 
-                ? 'cursor-default text-slate-400' 
-                : 'cursor-not-allowed opacity-50'
+            p-2 rounded-lg transition-all duration-200
+            ${item.hasData 
+              ? `bg-slate-50 text-slate-600 cursor-pointer ${item.color} hover:bg-slate-100 hover:shadow-sm active:scale-95` 
+              : 'bg-gray-100 text-gray-400 cursor-pointer hover:bg-gray-200'
             }
+            ${item.title.includes('Localização') && !item.hasData ? 'cursor-not-allowed opacity-50' : ''}
           `}
           title={item.title}
         >
