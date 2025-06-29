@@ -70,10 +70,65 @@ const Dashboard = () => {
     fetchUserData();
   }, [user, navigate]);
 
+  const analyzeProfileHighlightsPatterns = async () => {
+    try {
+      console.log('=== ANALYZING PROFILE HIGHLIGHTS PATTERNS ===');
+      
+      // Fetch Andrea's data
+      const { data: andreaProfiles } = await supabase
+        .from('profiles')
+        .select('*')
+        .ilike('display_name', '%Andrea%');
+      
+      if (andreaProfiles && andreaProfiles.length > 0) {
+        console.log('Andrea profiles found:', andreaProfiles);
+        
+        const { data: andreaDashboard } = await supabase
+          .from('user_dashboard')
+          .select('profile_highlights')
+          .eq('user_id', andreaProfiles[0].user_id)
+          .single();
+        
+        console.log('Andrea profile_highlights structure:', andreaDashboard?.profile_highlights);
+        console.log('Andrea profile_highlights type:', typeof andreaDashboard?.profile_highlights);
+        console.log('Andrea profile_highlights array check:', Array.isArray(andreaDashboard?.profile_highlights));
+      }
+      
+      // Fetch Rolim's data
+      const { data: rolimProfiles } = await supabase
+        .from('profiles')
+        .select('*')
+        .ilike('display_name', '%Rolim%');
+      
+      if (rolimProfiles && rolimProfiles.length > 0) {
+        console.log('Rolim profiles found:', rolimProfiles);
+        
+        const { data: rolimDashboard } = await supabase
+          .from('user_dashboard')
+          .select('profile_highlights')
+          .eq('user_id', rolimProfiles[0].user_id)
+          .single();
+        
+        console.log('Rolim profile_highlights structure:', rolimDashboard?.profile_highlights);
+        console.log('Rolim profile_highlights type:', typeof rolimDashboard?.profile_highlights);
+        console.log('Rolim profile_highlights array check:', Array.isArray(rolimDashboard?.profile_highlights));
+      }
+      
+      // Compare with current user (Elisabete)
+      console.log('=== CURRENT USER DATA COMPARISON ===');
+      console.log('Current user ID:', user?.id);
+      
+    } catch (error) {
+      console.error('Error analyzing patterns:', error);
+    }
+  };
+
   const parseProfileHighlights = (rawHighlights: any): Array<{icon: string; title: string; content: string}> => {
     console.log('Raw profile_highlights from database:', rawHighlights);
+    console.log('Type of raw highlights:', typeof rawHighlights);
+    console.log('Is array:', Array.isArray(rawHighlights));
     
-    // If it's already in the correct format
+    // If it's already in the correct format (array of objects with icon, title, content)
     if (Array.isArray(rawHighlights) && rawHighlights.length > 0) {
       const firstItem = rawHighlights[0];
       
@@ -106,6 +161,23 @@ const Dashboard = () => {
           };
         });
       }
+      
+      // If it's an array of objects but with different structure, try to adapt
+      if (typeof firstItem === 'object') {
+        console.log('Converting object array to structured format');
+        return rawHighlights.map((item: any, index: number) => {
+          // Handle different possible object structures
+          const content = item.content || item.text || item.description || item.value || JSON.stringify(item);
+          const title = item.title || item.name || item.label || `Destaque ${index + 1}`;
+          const icon = item.icon || item.emoji || ['🎯', '📋', '⚡', '💖'][index] || '✨';
+          
+          return {
+            icon,
+            title,
+            content
+          };
+        });
+      }
     }
     
     console.log('Using default profile highlights');
@@ -117,6 +189,9 @@ const Dashboard = () => {
       if (!user) return;
 
       console.log('Fetching data for user:', user.id);
+      
+      // First analyze patterns from other users
+      await analyzeProfileHighlightsPatterns();
 
       // Fetch profile
       const { data: profileData, error: profileError } = await supabase
