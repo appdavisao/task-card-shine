@@ -126,39 +126,66 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           display_name: string
+          email: string | null
+          facebook: string | null
           focus: string | null
           id: string
+          instagram: string | null
+          linkedin: string | null
+          location: string | null
+          phone: string | null
           student_name: string
           subtitle: string | null
+          tiktok: string | null
           title: string | null
           updated_at: string
           user_id: string
+          website: string | null
+          youtube: string | null
         }
         Insert: {
           archetype?: string | null
           avatar_url?: string | null
           created_at?: string
           display_name: string
+          email?: string | null
+          facebook?: string | null
           focus?: string | null
           id?: string
+          instagram?: string | null
+          linkedin?: string | null
+          location?: string | null
+          phone?: string | null
           student_name: string
           subtitle?: string | null
+          tiktok?: string | null
           title?: string | null
           updated_at?: string
           user_id: string
+          website?: string | null
+          youtube?: string | null
         }
         Update: {
           archetype?: string | null
           avatar_url?: string | null
           created_at?: string
           display_name?: string
+          email?: string | null
+          facebook?: string | null
           focus?: string | null
           id?: string
+          instagram?: string | null
+          linkedin?: string | null
+          location?: string | null
+          phone?: string | null
           student_name?: string
           subtitle?: string | null
+          tiktok?: string | null
           title?: string | null
           updated_at?: string
           user_id?: string
+          website?: string | null
+          youtube?: string | null
         }
         Relationships: []
       }
@@ -249,6 +276,57 @@ export type Database = {
           title?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_contacts: {
+        Row: {
+          created_at: string | null
+          display_name: string
+          email: string
+          facebook: string | null
+          id: string
+          instagram: string | null
+          linkedin: string | null
+          phone: string | null
+          tiktok: string | null
+          twitter: string | null
+          updated_at: string | null
+          user_id: string
+          website: string | null
+          youtube: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          display_name: string
+          email: string
+          facebook?: string | null
+          id?: string
+          instagram?: string | null
+          linkedin?: string | null
+          phone?: string | null
+          tiktok?: string | null
+          twitter?: string | null
+          updated_at?: string | null
+          user_id: string
+          website?: string | null
+          youtube?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          display_name?: string
+          email?: string
+          facebook?: string | null
+          id?: string
+          instagram?: string | null
+          linkedin?: string | null
+          phone?: string | null
+          tiktok?: string | null
+          twitter?: string | null
+          updated_at?: string | null
+          user_id?: string
+          website?: string | null
+          youtube?: string | null
         }
         Relationships: []
       }
@@ -399,6 +477,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_dashboard_backup: {
+        Row: {
+          backup_timestamp: string | null
+          id: string
+          modified_by: string | null
+          original_instructions_text: string | null
+          original_motivation_quote: string | null
+          original_profile_highlights: Json | null
+          original_strategy_text: string | null
+          user_id: string
+        }
+        Insert: {
+          backup_timestamp?: string | null
+          id?: string
+          modified_by?: string | null
+          original_instructions_text?: string | null
+          original_motivation_quote?: string | null
+          original_profile_highlights?: Json | null
+          original_strategy_text?: string | null
+          user_id: string
+        }
+        Update: {
+          backup_timestamp?: string | null
+          id?: string
+          modified_by?: string | null
+          original_instructions_text?: string | null
+          original_motivation_quote?: string | null
+          original_profile_highlights?: Json | null
+          original_strategy_text?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_tasks: {
         Row: {
           completed: boolean | null
@@ -455,6 +566,38 @@ export type Database = {
       generate_enhanced_content_card: {
         Args: { template_roteiro: number; user_archetype?: string }
         Returns: Json
+      }
+      gtrgm_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_decompress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_options: {
+        Args: { "": unknown }
+        Returns: undefined
+      }
+      gtrgm_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      set_limit: {
+        Args: { "": number }
+        Returns: number
+      }
+      show_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      show_trgm: {
+        Args: { "": string }
+        Returns: string[]
       }
     }
     Enums: {

@@ -12,6 +12,7 @@ import { Trophy, Home, FileText, Calendar, LogOut } from 'lucide-react';
 import { Case } from '@/components/ui/cases-with-infinite-scroll';
 import { NavBar } from '@/components/ui/tubelight-navbar';
 import ContentChatbot from '@/components/ContentChatbot';
+import ContactIcons from '@/components/ContactIcons';
 
 interface Profile {
   id: string;
@@ -22,6 +23,15 @@ interface Profile {
   archetype?: string;
   focus?: string;
   avatar_url?: string;
+  email?: string;
+  phone?: string;
+  instagram?: string;
+  linkedin?: string;
+  youtube?: string;
+  website?: string;
+  tiktok?: string;
+  facebook?: string;
+  location?: string;
 }
 
 interface DashboardData {
@@ -190,17 +200,28 @@ const Dashboard = () => {
       // First analyze patterns from other users
       await analyzeProfileHighlightsPatterns();
 
-      // Fetch profile
+      // Fetch profile with new contact fields
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('*')
+        .select(`
+          *,
+          email,
+          phone,
+          instagram,
+          linkedin,
+          youtube,
+          website,
+          tiktok,
+          facebook,
+          location
+        `)
         .eq('user_id', user.id)
         .single();
 
       if (profileError) {
         console.error('Profile error:', profileError);
       } else {
-        console.log('Profile data:', profileData);
+        console.log('Profile data with contacts:', profileData);
         setProfile(profileData);
       }
 
@@ -404,6 +425,21 @@ const Dashboard = () => {
                       <Trophy size={14} className="sm:w-4 sm:h-4" />
                       <span>1808 pts</span>
                     </Button>
+                    
+                    {/* Contact Icons - positioned in the bottom right area */}
+                    <div className="ml-4">
+                      <ContactIcons
+                        email={profile?.email}
+                        phone={profile?.phone}
+                        instagram={profile?.instagram}
+                        linkedin={profile?.linkedin}
+                        youtube={profile?.youtube}
+                        website={profile?.website}
+                        tiktok={profile?.tiktok}
+                        facebook={profile?.facebook}
+                        location={profile?.location}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
