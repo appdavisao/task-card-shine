@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Users, Database, TrendingUp } from 'lucide-react';
+import { CheckCircle, Users, Database, TrendingUp, UserCheck } from 'lucide-react';
 
 interface RecoveryStats {
   total_usuarios_recuperados: number;
@@ -13,6 +13,7 @@ interface RecoveryStats {
   com_youtube: number;
   com_website: number;
   com_localizacao: number;
+  usuarios_sem_nome_usuario: number;
 }
 
 interface DashboardStats {
@@ -32,31 +33,40 @@ const DataRecoveryStats: React.FC = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        // Verificar usuários recuperados
+        // Verificar usuários recuperados (excluindo os que ainda estão como "Usuário")
         const { data: recoveryData, error: recoveryError } = await supabase
           .from('profiles')
           .select(`
             student_name,
+            display_name,
             phone,
             instagram,
             linkedin,
             youtube,
             website,
             location
-          `)
-          .neq('student_name', 'Usuário')
-          .neq('display_name', 'Usuário');
+          `);
 
         if (recoveryError) throw recoveryError;
 
+        // Separar usuários com nomes válidos dos que ainda estão como "Usuário"
+        const usuariosComNomesValidos = recoveryData?.filter(p => 
+          p.student_name !== 'Usuário' && p.display_name !== 'Usuário'
+        ) || [];
+
+        const usuariosSemNome = recoveryData?.filter(p => 
+          p.student_name === 'Usuário' || p.display_name === 'Usuário'
+        ) || [];
+
         const recoveryStats: RecoveryStats = {
-          total_usuarios_recuperados: recoveryData?.length || 0,
-          com_telefone: recoveryData?.filter(p => p.phone).length || 0,
-          com_instagram: recoveryData?.filter(p => p.instagram).length || 0,
-          com_linkedin: recoveryData?.filter(p => p.linkedin).length || 0,
-          com_youtube: recoveryData?.filter(p => p.youtube).length || 0,
-          com_website: recoveryData?.filter(p => p.website).length || 0,
-          com_localizacao: recoveryData?.filter(p => p.location).length || 0,
+          total_usuarios_recuperados: usuariosComNomesValidos.length,
+          usuarios_sem_nome_usuario: usuariosSemNome.length,
+          com_telefone: usuariosComNomesValidos.filter(p => p.phone && p.phone.trim() !== '').length,
+          com_instagram: usuariosComNomesValidos.filter(p => p.instagram && p.instagram.trim() !== '').length,
+          com_linkedin: usuariosComNomesValidos.filter(p => p.linkedin && p.linkedin.trim() !== '').length,
+          com_youtube: usuariosComNomesValidos.filter(p => p.youtube && p.youtube.trim() !== '').length,
+          com_website: usuariosComNomesValidos.filter(p => p.website && p.website.trim() !== '').length,
+          com_localizacao: usuariosComNomesValidos.filter(p => p.location && p.location.trim() !== '').length,
         };
 
         // Verificar dashboards completos
@@ -109,63 +119,88 @@ const DataRecoveryStats: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center gap-2 mb-6">
         <CheckCircle className="h-6 w-6 text-green-600" />
-        <h2 className="text-2xl font-bold text-gray-900">Recuperação de Dados - Resultados</h2>
+        <h2 className="text-2xl font-bold text-gray-900">Recuperação de Dados - Resultados Atualizados</h2>
       </div>
 
-      {/* Estatísticas de Recuperação */}
+      {/* Status da Recuperação de Nomes */}
+      <Card className="border-green-200 bg-green-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-green-800">
+            <UserCheck className="h-5 w-5" />
+            Status da Recuperação de Nomes
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="text-center">
+              <div className="text-4xl font-bold text-green-600">
+                {recoveryStats?.total_usuarios_recuperados || 0}
+              </div>
+              <div className="text-sm text-green-700 font-medium">Usuários com Nomes Restaurados</div>
+              <Badge variant="secondary" className="mt-2 bg-green-100 text-green-800">
+                ✅ Recuperação Completa
+              </Badge>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-semibold text-amber-600">
+                {recoveryStats?.usuarios_sem_nome_usuario || 0}
+              </div>
+              <div className="text-sm text-amber-700">Ainda como "Usuário"</div>
+              {(recoveryStats?.usuarios_sem_nome_usuario || 0) > 0 && (
+                <Badge variant="outline" className="mt-2 border-amber-300 text-amber-700">
+                  ⚠️ Pendente
+                </Badge>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Estatísticas de Contatos */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Usuários Recuperados
+            Dados de Contato Disponíveis
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">
-                {recoveryStats?.total_usuarios_recuperados || 0}
-              </div>
-              <div className="text-sm text-gray-600">Total Recuperados</div>
-            </div>
-            <div className="text-center">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="text-center p-4 bg-gray-50 rounded-lg">
               <div className="text-2xl font-semibold text-green-600">
                 {recoveryStats?.com_telefone || 0}
               </div>
-              <div className="text-sm text-gray-600">Com Telefone</div>
+              <div className="text-sm text-gray-600">📱 Com Telefone</div>
             </div>
-            <div className="text-center">
+            <div className="text-center p-4 bg-pink-50 rounded-lg">
               <div className="text-2xl font-semibold text-pink-600">
                 {recoveryStats?.com_instagram || 0}
               </div>
-              <div className="text-sm text-gray-600">Com Instagram</div>
+              <div className="text-sm text-gray-600">📸 Com Instagram</div>
             </div>
-            <div className="text-center">
+            <div className="text-center p-4 bg-blue-50 rounded-lg">
               <div className="text-2xl font-semibold text-blue-700">
                 {recoveryStats?.com_linkedin || 0}
               </div>
-              <div className="text-sm text-gray-600">Com LinkedIn</div>
+              <div className="text-sm text-gray-600">💼 Com LinkedIn</div>
             </div>
-          </div>
-          
-          <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t">
-            <div className="text-center">
+            <div className="text-center p-4 bg-red-50 rounded-lg">
               <div className="text-xl font-semibold text-red-600">
                 {recoveryStats?.com_youtube || 0}
               </div>
-              <div className="text-sm text-gray-600">Com YouTube</div>
+              <div className="text-sm text-gray-600">🎥 Com YouTube</div>
             </div>
-            <div className="text-center">
+            <div className="text-center p-4 bg-indigo-50 rounded-lg">
               <div className="text-xl font-semibold text-indigo-600">
                 {recoveryStats?.com_website || 0}
               </div>
-              <div className="text-sm text-gray-600">Com Website</div>
+              <div className="text-sm text-gray-600">🌐 Com Website</div>
             </div>
-            <div className="text-center">
+            <div className="text-center p-4 bg-gray-100 rounded-lg">
               <div className="text-xl font-semibold text-gray-600">
                 {recoveryStats?.com_localizacao || 0}
               </div>
-              <div className="text-sm text-gray-600">Com Localização</div>
+              <div className="text-sm text-gray-600">📍 Com Localização</div>
             </div>
           </div>
         </CardContent>
@@ -199,7 +234,7 @@ const DataRecoveryStats: React.FC = () => {
             </div>
             <div className="text-center">
               <div className="text-xl font-semibold text-orange-600">
-                {dashboardStats ? 
+                {dashboardStats && dashboardStats.total_dashboards > 0 ? 
                   Math.round((dashboardStats.dashboards_completos / dashboardStats.total_dashboards) * 100) : 0
                 }%
               </div>
@@ -239,14 +274,17 @@ const DataRecoveryStats: React.FC = () => {
       <div className="bg-green-50 border border-green-200 rounded-lg p-4">
         <div className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-green-600" />
-          <h3 className="font-semibold text-green-800">Resumo da Recuperação</h3>
+          <h3 className="font-semibold text-green-800">Resumo da Recuperação Atualizada</h3>
         </div>
         <ul className="mt-3 text-sm text-green-700 space-y-1">
-          <li>✅ Restauração completa dos 43 usuários da lista original</li>
-          <li>✅ Recuperação de usuários com nomes perdidos usando display_name</li>
-          <li>✅ Adição de dados de contato (telefone, Instagram, LinkedIn, etc.)</li>
+          <li>✅ Restauração completa dos nomes de usuários (excluindo Dani Pires conforme solicitado)</li>
+          <li>✅ {recoveryStats?.total_usuarios_recuperados || 0} usuários com nomes válidos restaurados</li>
+          <li>✅ Dados de contato preservados: telefones, Instagram, LinkedIn, etc.</li>
           <li>✅ Correção de inconsistências entre student_name e display_name</li>
           <li>📊 {dashboardStats?.dashboards_completos || 0} usuários com dashboards 100% completos</li>
+          {(recoveryStats?.usuarios_sem_nome_usuario || 0) > 0 && (
+            <li className="text-amber-700">⚠️ {recoveryStats?.usuarios_sem_nome_usuario} usuários ainda precisam de recuperação manual</li>
+          )}
         </ul>
       </div>
     </div>
